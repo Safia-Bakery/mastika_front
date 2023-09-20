@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import BaseInput from "src/components/BaseInputs";
 import MainInput from "src/components/BaseInputs/MainInput";
 import MainSelectBtn from "src/components/BaseInputs/MainSelectBtn";
+import BranchSelect from "src/components/BranchSelect";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
@@ -36,6 +37,24 @@ const AddOrder = () => {
   const onSubmit = () => {
     console.log("first");
   };
+
+  const renderOrderType = useMemo(() => {
+    if (deliveryType === OrderType.delivery)
+      return (
+        <>
+          <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
+          <YandexMap />
+        </>
+      );
+    else {
+      return (
+        <>
+          {" "}
+          <BranchSelect />
+        </>
+      );
+    }
+  }, [deliveryType]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header title="Детали заказа" />
@@ -43,7 +62,7 @@ const AddOrder = () => {
       <Card className="p-8">
         <Typography className="text-2xl ">Новый заказ</Typography>
         <div className="flex flex-1">
-          <div className="pr-10 border-r flex-col flex-4">
+          <div className="w-80 pr-10 border-r">
             <BaseInput label="Имя" className="my-2">
               <MainInput
                 placeholder={"Введите имя"}
@@ -92,21 +111,30 @@ const AddOrder = () => {
                 />
               </BaseInput>
             </div>
-            <BaseInput label="Квартира" className="mb-2">
+            <BaseInput label="Ориентир" className="mb-2">
               <MainInput
-                register={register("home", { required: "Обязательное поле" })}
+                register={register("refAddr", {
+                  required: "Обязательное поле",
+                })}
               />
             </BaseInput>
-          </div>
-          <div className="flex z-10  flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
-            <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
-            <YandexMap />
-          </div>
-        </div>
 
-        <Button className="bg-darkYellow" type="submit">
-          Создать заказ
-        </Button>
+            {deliveryType === OrderType.pickup && (
+              <BranchSelect enabled label="Выберите филиал" />
+            )}
+          </div>
+          {deliveryType === OrderType.delivery && (
+            <div className="h-[400px] z-10  flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
+              <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
+              <YandexMap />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-1 justify-end">
+          <Button className="bg-darkYellow mt-4 w-64" type="submit">
+            Создать заказ
+          </Button>
+        </div>
       </Card>
     </form>
   );

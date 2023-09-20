@@ -18,3 +18,25 @@ export enum OrderType {
   pickup = 1,
   delivery = 2,
 }
+
+export interface BranchType {
+  id: string;
+  name: string;
+  longtitude: number | null;
+  latitude: number | null;
+  country: string;
+  status: number;
+  // origin: number;
+  fillial_department: {
+    id: string;
+    name: string;
+    origin: number;
+    parentfillial: {
+      name: string;
+    };
+  }[];
+  is_fabrica: number;
+}
+export interface BranchTypes extends BasePaginatedRes {
+  items: BranchType[];
+}
