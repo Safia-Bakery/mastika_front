@@ -50,7 +50,7 @@ const Sidebar = () => {
           return (
             <Fragment key={route.name}>
               <li
-                onClick={() => handleActive(route.name)}
+                onClick={() => navigate(route.url)}
                 className={cl(
                   "py-2 px-4  my-2 rounded-[16px] hover:bg-white cursor-pointer",
                   {
@@ -58,14 +58,13 @@ const Sidebar = () => {
                   }
                 )}
               >
-                <Link
-                  to={route.url}
+                <span
                   className={cl("text-darkGray font-medium ", {
                     ["!text-black"]: selected,
                   })}
                 >
                   {route.name}
-                </Link>
+                </span>
               </li>
 
               {route.hasline && <div className={styles.line} />}

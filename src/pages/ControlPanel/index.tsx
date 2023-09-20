@@ -25,22 +25,22 @@ const ControlPanel = () => {
 
       <div className="flex flex-3 mt-8 gap-4">
         <div className="flex flex-col gap-4 flex-[1]">
-          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center">
+          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center cursor-pointer">
             <Typography size={TextSize.XXL}>Дашборд</Typography>
             <img src="/assets/images/dashboard.png" alt="dashboard-img" />
           </div>
-          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center">
+          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center cursor-pointer">
             <Typography size={TextSize.XXL}>Настройки</Typography>
             <img src="/assets/images/settings.png" alt="settings-img" />
           </div>
-          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center">
+          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center cursor-pointer">
             <Typography size={TextSize.XXL}>Отзывы</Typography>
             <img src="/assets/images/comments.png" alt="comments-img" />
           </div>
         </div>
 
         <div className="flex flex-col gap-4 flex-[2]">
-          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center">
+          <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center cursor-pointer">
             <Typography size={TextSize.XXL}>Персональные данные</Typography>
             <img
               src="/assets/images/personal-data.png"
