@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "src/main";
-import { Category } from "src/utils/types";
+// import { Category } from "src/utils/types";
 
 export const useCategory = ({
   id,
@@ -14,7 +14,7 @@ export const useCategory = ({
     queryFn: () =>
       apiClient
         .get(`/category/${id}`)
-        .then(({ data: response }) => (response as Category) || null),
+        .then(({ data: response }) => (response as any) || null),
     enabled: !!id && enabled,
     refetchOnMount: true,
   });

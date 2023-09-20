@@ -43,27 +43,27 @@ const AddOrder = () => {
       <Card className="p-8">
         <Typography className="text-2xl ">Новый заказ</Typography>
         <div className="flex flex-1">
-          <div className="w-80 pr-10 border-r flex-col flex-4">
-            <BaseInput label="Имя" className="my-4">
+          <div className="pr-10 border-r flex-col flex-4">
+            <BaseInput label="Имя" className="my-2">
               <MainInput
                 placeholder={"Введите имя"}
                 register={register("name", { required: "Обязательное поле" })}
               />
             </BaseInput>
-            <BaseInput label="Номер телефона" className="mb-4">
+            <BaseInput label="Номер телефона" className="mb-2">
               <MainInput
                 placeholder={"Введите номер"}
                 register={register("phone", { required: "Обязательное поле" })}
               />
             </BaseInput>
-            <BaseInput label="Доп. номер" className="mb-4">
+            <BaseInput label="Доп. номер" className="mb-2">
               <MainInput
                 placeholder={"Введите номер"}
                 register={register("phone", { required: "Обязательное поле" })}
               />
             </BaseInput>
             <div className="border-b w-full mb-10" />
-            <BaseInput label="Тип заказа" className="mb-4">
+            <BaseInput label="Тип заказа" className="mb-2">
               <MainSelectBtn
                 value={deliveryType}
                 onChange={(val) => handleDeliveryType(val.id)}
@@ -71,7 +71,7 @@ const AddOrder = () => {
               />
             </BaseInput>
 
-            <BaseInput label="Адрес" className="mb-4">
+            <BaseInput label="Адрес" className="mb-2">
               <MainInput
                 register={register("address", {
                   required: "Обязательное поле",
@@ -79,26 +79,26 @@ const AddOrder = () => {
               />
             </BaseInput>
             <div className="flex gap-3">
-              <BaseInput label="Дом" className="mb-4 flex-1">
+              <BaseInput label="Дом" className="mb-2 flex-1">
                 <MainInput
                   register={register("house", {
                     required: "Обязательное поле",
                   })}
                 />
               </BaseInput>
-              <BaseInput label="Квартира" className="mb-4 flex-1">
+              <BaseInput label="Квартира" className="mb-2 flex-1">
                 <MainInput
                   register={register("home", { required: "Обязательное поле" })}
                 />
               </BaseInput>
             </div>
-            <BaseInput label="Квартира" className="mb-4">
+            <BaseInput label="Квартира" className="mb-2">
               <MainInput
                 register={register("home", { required: "Обязательное поле" })}
               />
             </BaseInput>
           </div>
-          <div className="w-50 z-10 h-80 flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
+          <div className="flex z-10  flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
             <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
             <YandexMap />
           </div>

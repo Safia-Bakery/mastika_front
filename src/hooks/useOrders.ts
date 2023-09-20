@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "src/main";
-import { OrderType, RequestFilter } from "src/utils/types";
+import { OrderType } from "src/utils/types";
 
 export const useOrders = ({
   enabled = true,
@@ -15,7 +15,7 @@ export const useOrders = ({
   page?: number;
   sub_id?: number | string;
   department?: number | string;
-  body?: RequestFilter;
+  body?: any;
 }) => {
   return useQuery({
     queryKey: ["requests", page, sub_id, department],

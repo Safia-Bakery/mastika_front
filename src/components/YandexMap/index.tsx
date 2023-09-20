@@ -83,7 +83,7 @@ const YandexMap = () => {
             zoom: 12,
           }}
           width={"100%"}
-          className="h-full"
+          className="h-80"
           height={"100%"}
           onClick={handleMapClick}
           modules={["control.SearchControl"]}
@@ -113,9 +113,9 @@ const YandexMap = () => {
             }}
           />
         </Map>
-        <button className={styles.currentBtn} onClick={handleButtonClick}>
+        {/* <button className={styles.currentBtn} onClick={handleButtonClick}>
           Get Current Position
-        </button>
+        </button> */}
       </div>
     </YMaps>
   );
