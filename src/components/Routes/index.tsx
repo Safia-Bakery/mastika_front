@@ -7,6 +7,8 @@ import Sidebar from "../Sidebar";
 import Orders from "src/pages/Orders";
 import AddPhone from "src/pages/AddPhone";
 import AddOrder from "src/pages/AddOrder";
+import ShowOrder from "src/pages/ShowOrder";
+import ControlPanel from "src/pages/ControlPanel";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -35,9 +37,11 @@ const Navigation = () => {
       <div className="flex flex-col flex-1">
         <Routes>
           <Route element={<Login />} path={"/login"} />
-          <Route element={<Orders />} path={"/"} />
+          <Route element={<ControlPanel />} index path={"/"} />
+          <Route element={<Orders />} path={"/orders"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
           <Route element={<AddOrder />} path={"/orders/add"} />
+          <Route element={<ShowOrder />} path={"/orders/:id"} />
         </Routes>
       </div>
     </div>

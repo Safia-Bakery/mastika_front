@@ -208,3 +208,11 @@ table {
   padding: 0.166rem;
   margin: 0 !important;
 }
+.react-tel-input {
+  .form-control {
+    width: 100% !important;
+  }
+  .flag-dropdown {
+    border: none !important;
+  }
+}

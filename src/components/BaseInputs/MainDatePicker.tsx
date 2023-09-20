@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import cl from "classnames";
 import { UseFormRegisterReturn } from "react-hook-form";
 import styles from "./index.module.scss";
+import { InputStyle } from "./MainInput";
 
 interface Props {
   onChange?: any;
@@ -14,6 +15,7 @@ interface Props {
   startDate?: Date;
   endDate?: Date;
   selectsRange?: boolean;
+  inputStyle?: InputStyle;
 }
 
 const MainDatePicker: FC<Props> = ({
@@ -24,12 +26,19 @@ const MainDatePicker: FC<Props> = ({
   startDate,
   endDate,
   selectsRange,
+  inputStyle = InputStyle.primary,
 }) => {
   return (
     <DatePicker
       selected={selected}
       onChange={onChange}
-      className={cl(styles.inputBox, className)}
+      className={cl(
+        styles.inputBox,
+        "w-full rounded-lg",
+        styles[inputStyle],
+        className
+      )}
+      wrapperClassName="mb-2 w-full"
       startDate={startDate}
       endDate={endDate}
       isClearable

@@ -3,6 +3,7 @@
 }
 .textArea {
   height: initial !important;
+  padding: 8px;
 }
 .formControl {
   display: flex !important;
@@ -22,7 +23,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-
   border-radius: 12px;
   padding: 8px;
   outline: none;
@@ -32,6 +32,12 @@
   box-shadow: 0px 2px 2px 0px #00000040;
   background-color: #eff2f7;
 }
+.white {
+  background-color: var(--white);
+}
 .activeBtn {
   background-color: var(--white) !important;
+}
+.phoneInput {
+  border: none !important;
 }

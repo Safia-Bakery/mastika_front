@@ -5,6 +5,7 @@ import styles from "./index.module.scss";
 
 export enum InputStyle {
   primary = "primary",
+  white = "white",
 }
 
 interface Props {
@@ -32,7 +33,7 @@ const MainInput: FC<Props> = ({
   return (
     <input
       className={cl(
-        "form-control mb-2 w-full rounded-lg",
+        "mb-2 w-full rounded-lg",
         styles.inputBox,
         styles[inputStyle],
         className

@@ -2,6 +2,7 @@ import { ChangeEvent, FC, ReactNode } from "react";
 import cl from "classnames";
 import styles from "./index.module.scss";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { InputStyle } from "./MainInput";
 
 interface Props {
   onChange?: (val: ChangeEvent<HTMLSelectElement>) => void;
@@ -12,6 +13,7 @@ interface Props {
   values?: { id: number | string; name: string; status?: number }[];
   children?: ReactNode;
   onFocus?: () => void;
+  inputStyle?: InputStyle;
 }
 
 const MainSelect: FC<Props> = ({
@@ -20,11 +22,16 @@ const MainSelect: FC<Props> = ({
   values,
   children,
   onFocus,
+  inputStyle = InputStyle.primary,
   ...others
 }) => {
   return (
     <select
-      className={cl("form-select form-control", styles.inputBox)}
+      className={cl(
+        "mb-2 w-full rounded-lg",
+        styles.inputBox,
+        styles[inputStyle]
+      )}
       onFocus={onFocus}
       {...others}
       {...register}

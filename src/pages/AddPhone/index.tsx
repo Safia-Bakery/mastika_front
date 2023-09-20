@@ -40,7 +40,7 @@ const AddPhone = () => {
             )}
           </div>
           <Button
-            className="bg-yellow h-[40px] ml-2 w-[110px]"
+            className="bg-yellow ml-2 w-[110px]"
             textClassName="text-black"
             textSize={TextSize.L}
             type="submit"

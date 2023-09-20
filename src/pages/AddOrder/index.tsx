@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import BaseInput from "src/components/BaseInputs";
 import MainInput from "src/components/BaseInputs/MainInput";
 import MainSelectBtn from "src/components/BaseInputs/MainSelectBtn";
+import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import BranchSelect from "src/components/BranchSelect";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
@@ -37,30 +38,12 @@ const AddOrder = () => {
   const onSubmit = () => {
     console.log("first");
   };
-
-  const renderOrderType = useMemo(() => {
-    if (deliveryType === OrderType.delivery)
-      return (
-        <>
-          <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
-          <YandexMap />
-        </>
-      );
-    else {
-      return (
-        <>
-          {" "}
-          <BranchSelect />
-        </>
-      );
-    }
-  }, [deliveryType]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header title="Детали заказа" />
 
       <Card className="p-8">
-        <Typography className="text-2xl ">Новый заказ</Typography>
+        <Typography size={TextSize.XXL}>Новый заказ</Typography>
         <div className="flex flex-1">
           <div className="w-80 pr-10 border-r">
             <BaseInput label="Имя" className="my-2">
@@ -70,15 +53,15 @@ const AddOrder = () => {
               />
             </BaseInput>
             <BaseInput label="Номер телефона" className="mb-2">
-              <MainInput
+              <PhoneInput
                 placeholder={"Введите номер"}
                 register={register("phone", { required: "Обязательное поле" })}
               />
             </BaseInput>
             <BaseInput label="Доп. номер" className="mb-2">
-              <MainInput
+              <PhoneInput
                 placeholder={"Введите номер"}
-                register={register("phone", { required: "Обязательное поле" })}
+                register={register("phone")}
               />
             </BaseInput>
             <div className="border-b w-full mb-10" />

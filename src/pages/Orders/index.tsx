@@ -6,6 +6,7 @@ import styles from "./index.module.scss";
 import dayjs from "dayjs";
 import Typography, { TextSize } from "src/components/Typography";
 import Card from "src/components/Card";
+import { Link } from "react-router-dom";
 
 const column = [
   { name: "Все заявки", key: "" },
@@ -57,7 +58,7 @@ const Orders = () => {
             {[...Array(4)].map((branch, idx) => (
               <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
                 <td>
-                  <div className="">№ {idx + 1}</div>
+                  <Link to={idx.toString()}>№ {idx + 1}</Link>
                   <div className="flex gap-2 mt-2">
                     <div className="flex items-center">
                       <img src="/assets/icons/tg.svg" alt="" />

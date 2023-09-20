@@ -4,6 +4,7 @@ import "react-phone-input-2/lib/style.css";
 import cl from "classnames";
 import styles from "./index.module.scss";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { InputStyle } from "./MainInput";
 
 interface Props {
   onChange?: any;
@@ -16,6 +17,7 @@ interface Props {
   register?: UseFormRegisterReturn;
   onFocus?: () => void;
   ref?: any;
+  inputStyle?: InputStyle;
 }
 
 const PhoneInput: FC<Props> = ({
@@ -24,6 +26,7 @@ const PhoneInput: FC<Props> = ({
   register,
   autoFocus,
   onChange,
+  inputStyle = InputStyle.primary,
   ...others
 }) => {
   return (
@@ -35,7 +38,9 @@ const PhoneInput: FC<Props> = ({
         className: cl(
           className,
           "form-control mb-2 !bg-mainGray ",
-          styles.inputBox
+          styles.inputBox,
+          styles.phoneInput,
+          styles[inputStyle]
         ),
       }}
       country={"uz"}
