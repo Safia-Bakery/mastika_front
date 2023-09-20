@@ -1,0 +1,56 @@
+import { FormEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import PhoneInput from "src/components/BaseInputs/PhoneInput";
+import Button from "src/components/Button";
+import Card from "src/components/Card";
+import Header from "src/components/Header";
+import Typography, { TextSize } from "src/components/Typography";
+
+const AddPhone = () => {
+  const navigate = useNavigate();
+  const [phone, $phone] = useState("");
+  const [error, $error] = useState("");
+
+  const { register } = useForm();
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (phone.split("").length < 7) $error("input valid number");
+    else {
+      $error("");
+      navigate("/orders/add");
+    }
+  };
+
+  return (
+    <>
+      <Header title="Создать заказ" />
+
+      <Card className="p-24">
+        <form onSubmit={handleSubmit} className="flex gap-3 justify-center">
+          <Typography size={TextSize.XL}>Получатель</Typography>
+          <div className="">
+            <PhoneInput autoFocus onChange={(val: string) => $phone(val)} />
+
+            {!!error && (
+              <Typography size={TextSize.XS} className="text-red-500">
+                {error}
+              </Typography>
+            )}
+          </div>
+          <Button
+            className="bg-yellow h-[40px] ml-2 w-[110px]"
+            textClassName="text-black"
+            textSize={TextSize.L}
+            type="submit"
+          >
+            Создать
+          </Button>
+        </form>
+      </Card>
+    </>
+  );
+};
+
+export default AddPhone;

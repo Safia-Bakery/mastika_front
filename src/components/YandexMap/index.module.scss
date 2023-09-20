@@ -1,0 +1,15 @@
+.mapBlock {
+  height: 100%;
+  margin-top: 10px;
+  position: relative;
+  input {
+    height: 100%;
+    width: 100%;
+    color: black;
+  }
+}
+.currentBtn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}

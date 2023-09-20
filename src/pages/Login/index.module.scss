@@ -1,0 +1,27 @@
+.content {
+  max-width: 350px;
+  width: 100%;
+}
+.loginForm {
+  flex: 1;
+  display: flex;
+  gap: 25px;
+  flex-direction: column;
+}
+.login_wrap {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("/assets/images/bg.JPG");
+  background-size: cover;
+  background-position: center;
+}
+.error {
+  // margin-top: 10px;
+  font-size: 12px;
+  display: block;
+  margin-bottom: 10px;
+  color: #a94442;
+}

@@ -1,0 +1,116 @@
+.base {
+  // line-height: 150%;
+  font-feature-settings: "pnum" on, "lnum" on;
+}
+
+.medium {
+  font-weight: 500;
+}
+.semiBold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.extraBold {
+  font-weight: 800;
+}
+
+.xxl {
+  font-size: 24px;
+
+  @media (max-width: 760px) {
+    font-size: 18px;
+  }
+}
+
+.xl {
+  font-size: 20px;
+
+  @media (max-width: 760px) {
+    font-size: 16px;
+  }
+}
+
+.l {
+  font-size: 18px;
+
+  @media (max-width: 760px) {
+    font-size: 14px;
+  }
+}
+
+.m {
+  font-size: 16px;
+
+  @media (max-width: 760px) {
+    font-size: 12px;
+  }
+}
+
+.s {
+  font-size: 14px;
+
+  @media (max-width: 760px) {
+    font-size: 10px;
+  }
+}
+
+.xs {
+  font-size: 12px;
+
+  @media (max-width: 760px) {
+    font-size: 8px;
+  }
+}
+
+.eight {
+  font-size: 8px;
+}
+
+.thirty {
+  font-size: 30px;
+
+  @media (max-width: 920px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 720px) {
+    font-size: 18px;
+  }
+}
+
+.fourty {
+  font-size: 40px;
+
+  @media (max-width: 920px) {
+    font-size: 30px;
+  }
+
+  @media (max-width: 720px) {
+    font-size: 22px;
+  }
+}
+
+.sixty {
+  font-size: 60px;
+
+  @media (max-width: 920px) {
+    font-size: 40px;
+  }
+
+  @media (max-width: 720px) {
+    font-size: 24px;
+  }
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.alignCenter {
+  text-align: center;
+  display: block;
+}
