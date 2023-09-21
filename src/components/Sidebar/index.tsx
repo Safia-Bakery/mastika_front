@@ -1,11 +1,10 @@
-import { Link, useMatch, useNavigate } from "react-router-dom";
-import Typography, { TextSize } from "../Typography";
+import { useMatch, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import cl from "classnames";
 import { Fragment, useState } from "react";
 
 const routes = [
-  { name: "Все сервисы", url: "/all-services" },
+  { name: "Главная страница", url: "/" },
   { name: "Поиск", url: "/search", hasline: true },
   { name: "Все заявки", url: "/orders" },
   { name: "Принятые заказы", url: "/recieved-orders" },
@@ -34,14 +33,10 @@ const Sidebar = () => {
         onClick={() => navigate("/")}
       >
         <img
-          height={36}
-          width={36}
-          src="/assets/images/safia.png"
+          className="w-full"
+          src="/assets/images/main-logo.png"
           alt="safia-logo"
         />
-        <Typography size={TextSize.XXL} className="font-medium text-black">
-          МАСТИКА
-        </Typography>
       </div>
 
       <ul className="p-2">
