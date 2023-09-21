@@ -34,7 +34,7 @@ const Sidebar = () => {
       >
         <img
           className="w-full"
-          src="/assets/images/main-logo.png"
+          src="/assets/icons/main-logo.svg"
           alt="safia-logo"
         />
       </div>
