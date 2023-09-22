@@ -1,12 +1,14 @@
 import Container from "src/components/Container";
 import OrdersFilter from "./filter";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import TableHead from "src/components/TableHead";
 import styles from "./index.module.scss";
 import dayjs from "dayjs";
 import Typography, { TextSize } from "src/components/Typography";
 import Card from "src/components/Card";
 import { Link } from "react-router-dom";
+import Loading from "src/components/Loader";
+import Pagination from "src/components/Pagination";
 
 const column = [
   { name: "Все заявки", key: "" },
@@ -43,7 +45,6 @@ const Orders = () => {
   return (
     <Container>
       <OrdersFilter />
-      {/* <div className="bg-white rounded-2xl "> */}
       <Card>
         <table>
           <TableHead
@@ -87,8 +88,22 @@ const Orders = () => {
                 <td>{!"branch.status" ? "Не активный" : "Активный"}</td>
               </tr>
             ))}
+            {false && (
+              <tr>
+                <td>
+                  <Loading />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+
+        {false && <Pagination totalPages={1} />}
+        {false && (
+          <div className="w-100">
+            <p className="text-center w-100 ">Спосок пуст</p>
+          </div>
+        )}
       </Card>
     </Container>
   );

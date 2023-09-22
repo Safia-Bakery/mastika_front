@@ -41,12 +41,9 @@ const ShowOrder = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header />
 
-      <Card className="p-8">
+      <Card title={`Заказ №${id}`} className="px-8 pt-4">
         <div className="flex flex-col">
-          <Typography size={TextSize.XXL}>Заказ №{id}</Typography>
-          <Typography className=" " size={TextSize.S}>
-            Статус: Новый
-          </Typography>
+          <Typography size={TextSize.S}>Статус: Новый</Typography>
         </div>
         <div className="flex flex-1">
           <div className="w-80 pr-10 border-r">

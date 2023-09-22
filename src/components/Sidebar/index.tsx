@@ -13,11 +13,12 @@ const routes = [
   { name: "Палитры", url: "/recieved-orders2" },
   { name: "Товары", url: "/recieved-orders4" },
   { name: "Отчёты", url: "/recieved-orders5", hasline: true },
-  { name: "Клиенты", url: "/clients", hasline: true },
-  { name: "Отзывы", url: "/recieved-orders6" },
-  { name: "Уведомления", url: "/recieved-orders7" },
-  { name: "Пользователи", url: "/recieved-orders8" },
-  { name: "Настройки", url: "/recieved-orders9" },
+  { name: "Клиенты", url: "/clients" },
+  { name: "Отзывы", url: "/comments", hasline: true },
+  { name: "Пользователи", url: "/users" },
+  { name: "Роли", url: "/roles" },
+  { name: "Уведомления", url: "/notifications" },
+  { name: "Настройки", url: "/settings" },
 ];
 
 const Sidebar = () => {
@@ -47,7 +48,7 @@ const Sidebar = () => {
               <li
                 onClick={() => navigate(route.url)}
                 className={cl(
-                  "py-2 px-4  my-2 rounded-[16px] hover:bg-white cursor-pointer",
+                  "py-2 px-4 rounded-[16px] hover:bg-white cursor-pointer",
                   {
                     ["bg-white"]: useMatch(route.url),
                   }

@@ -9,6 +9,10 @@ import AddPhone from "src/pages/AddPhone";
 import AddOrder from "src/pages/AddOrder";
 import ShowOrder from "src/pages/ShowOrder";
 import ControlPanel from "src/pages/ControlPanel";
+import Users from "src/pages/Users";
+import Categories from "src/pages/Categories";
+import EditAddCategories from "src/pages/EditAddCategories";
+import Comments from "src/pages/Comments";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -39,9 +43,15 @@ const Navigation = () => {
           <Route element={<Login />} path={"/login"} />
           <Route element={<ControlPanel />} index path={"/"} />
           <Route element={<Orders />} path={"/orders"} />
+          <Route element={<Users />} path={"/users"} />
+          <Route element={<Users />} path={"/clients"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
           <Route element={<AddOrder />} path={"/orders/add"} />
           <Route element={<ShowOrder />} path={"/orders/:id"} />
+          <Route element={<Categories />} path={"/categories"} />
+          <Route element={<Comments />} path={"/comments"} />
+          <Route element={<EditAddCategories />} path={"/categories/add"} />
+          <Route element={<EditAddCategories />} path={"/categories/:id"} />
         </Routes>
       </div>
     </div>

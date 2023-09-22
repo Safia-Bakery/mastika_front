@@ -1,50 +1,41 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
+import ReactPaginate from "react-paginate";
+import { useNavigateParams } from "src/hooks/useCustomNavigate";
+import useQueryString from "src/hooks/useQueryString";
 
 interface PaginationProps {
-  totalItems: number;
-  itemsPerPage: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
+  totalPages?: number;
   refetch?: () => void;
 }
 
-const Pagination: FC<PaginationProps> = ({
-  totalItems,
-  itemsPerPage,
-  currentPage,
-  onPageChange,
-  refetch,
-}) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const pageNumbers = Array.from(
-    { length: totalPages },
-    (_, index) => index + 1
-  );
-
-  // useEffect(() => {
-  //   if (refetch) refetch();
-  // }, [currentPage]);
+const Pagination: FC<PaginationProps> = ({ totalPages }) => {
+  const navigate = useNavigateParams();
+  const currentPage = Number(useQueryString("page")) || 1;
+  const handleChange = ({ selected }: { selected: number }) =>
+    navigate({ page: selected + 1 });
 
   return (
     <nav>
-      <ul className="pagination">
-        {pageNumbers.map((pageNumber) => (
-          <li
-            key={pageNumber}
-            className={`page-item ${
-              currentPage === pageNumber ? "active" : ""
-            }`}
-          >
-            <button
-              className="page-link"
-              onClick={() => onPageChange(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel=">"
+        nextClassName="page-item"
+        nextLinkClassName="page-link"
+        previousLinkClassName="page-link"
+        previousClassName="page-item"
+        breakClassName="page-item"
+        breakLinkClassName="page-link"
+        onPageChange={handleChange}
+        pageRangeDisplayed={2}
+        className="pagination"
+        activeClassName="active"
+        pageLinkClassName="page-link"
+        pageCount={totalPages!}
+        pageClassName={`page-item`}
+        previousLabel="<"
+        renderOnZeroPageCount={null}
+        forcePage={currentPage - 1}
+      />
     </nav>
   );
 };

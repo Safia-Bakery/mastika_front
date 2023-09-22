@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import BaseInput from "src/components/BaseInputs";
 import MainInput from "src/components/BaseInputs/MainInput";
@@ -42,8 +42,7 @@ const AddOrder = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header title="Детали заказа" />
 
-      <Card className="p-8">
-        <Typography size={TextSize.XXL}>Новый заказ</Typography>
+      <Card className="p-8" title="Новый заказ">
         <div className="flex flex-1">
           <div className="w-80 pr-10 border-r">
             <BaseInput label="Имя" className="my-2">

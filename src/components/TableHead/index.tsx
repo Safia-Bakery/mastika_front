@@ -25,7 +25,6 @@ const TableHead: FC<Props> = ({
             return (
               <th onClick={() => sort(key)} key={name}>
                 <Typography size={TextSize.L} weight={Weight.medium}>
-                  {" "}
                   {name} {sortKey === key && (sortOrder === "asc" ? "▲" : "▼")}
                 </Typography>
               </th>
