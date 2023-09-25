@@ -218,4 +218,9 @@ table {
 }
 td {
   padding: 8px 5px;
+  text-align: center;
+
+  &:first-child {
+    padding-left: 4rem;
+  }
 }

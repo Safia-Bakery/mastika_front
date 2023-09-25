@@ -45,7 +45,7 @@ const PhoneInput: FC<Props> = ({
       }}
       country={"uz"}
       onChange={onChange}
-      onlyCountries={["uz", "kz"]}
+      onlyCountries={["uz", "kz", "ru"]}
       placeholder={placeholder || ""}
       {...register}
       {...others}

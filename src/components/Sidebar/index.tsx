@@ -8,17 +8,17 @@ const routes = [
   { name: "Поиск", url: "/search", hasline: true },
   { name: "Все заявки", url: "/orders" },
   { name: "Принятые заказы", url: "/recieved-orders" },
-  { name: "Категории", url: "/categories" },
-  { name: "Начинки", url: "/recieved-orders1" },
   { name: "Палитры", url: "/recieved-orders2" },
   { name: "Товары", url: "/recieved-orders4" },
-  { name: "Отчёты", url: "/recieved-orders5", hasline: true },
+  { name: "Категории", url: "/categories" },
+  { name: "Начинки", url: "/recieved-orders1" },
+  // { name: "Отчёты", url: "/recieved-orders5", hasline: true },
   { name: "Клиенты", url: "/clients" },
   { name: "Отзывы", url: "/comments", hasline: true },
   { name: "Пользователи", url: "/users" },
   { name: "Роли", url: "/roles" },
-  { name: "Уведомления", url: "/notifications" },
-  { name: "Настройки", url: "/settings" },
+  // { name: "Уведомления", url: "/notifications" },
+  { name: "Филиалы", url: "/branches" },
 ];
 
 const Sidebar = () => {
@@ -48,7 +48,7 @@ const Sidebar = () => {
               <li
                 onClick={() => navigate(route.url)}
                 className={cl(
-                  "py-2 px-4 rounded-[16px] hover:bg-white cursor-pointer",
+                  "py-2 px-4 rounded-[16px] hover:bg-white cursor-pointer my-1",
                   {
                     ["bg-white"]: useMatch(route.url),
                   }

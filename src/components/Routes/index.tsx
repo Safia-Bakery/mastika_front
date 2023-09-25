@@ -13,6 +13,8 @@ import Users from "src/pages/Users";
 import Categories from "src/pages/Categories";
 import EditAddCategories from "src/pages/EditAddCategories";
 import Comments from "src/pages/Comments";
+import Roles from "src/pages/Roles";
+import AddRole from "src/pages/AddRole";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -52,6 +54,9 @@ const Navigation = () => {
           <Route element={<Comments />} path={"/comments"} />
           <Route element={<EditAddCategories />} path={"/categories/add"} />
           <Route element={<EditAddCategories />} path={"/categories/:id"} />
+          <Route element={<Roles />} path={"/roles"} />
+          <Route element={<AddRole />} path={"/roles/add"} />
+          <Route element={<AddRole />} path={"/roles/:id"} />
         </Routes>
       </div>
     </div>
