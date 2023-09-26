@@ -6,6 +6,10 @@ import Loading from "src/components/Loader";
 import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
 import UsersFilter from "./filter";
+import Header from "src/components/Header";
+
+import { TextSize } from "src/components/Typography";
+import Button from "src/components/Button";
 
 const column = [
   { name: "№", key: "" },
@@ -36,6 +40,16 @@ const Users = () => {
     <Container>
       <UsersFilter />
       <Card>
+        <Header title="Пользователи">
+          <Button
+            className="bg-yellow ml-2 w-24"
+            textClassName="text-black"
+            textSize={TextSize.L}
+            onClick={handleNavigate("add")}
+          >
+            Создать
+          </Button>
+        </Header>
         <table>
           <TableHead
             column={column}

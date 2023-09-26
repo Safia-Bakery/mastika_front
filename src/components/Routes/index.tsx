@@ -17,6 +17,7 @@ import Roles from "src/pages/Roles";
 import EditAddRole from "src/pages/EditAddRole";
 import Branches from "src/pages/Branches";
 import EditAddBranch from "src/pages/EditAddBranch";
+import EditAddUser from "src/pages/EditAddUser";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -47,7 +48,7 @@ const Navigation = () => {
           <Route element={<Login />} path={"/login"} />
           <Route element={<ControlPanel />} index path={"/"} />
           <Route element={<Orders />} path={"/orders"} />
-          <Route element={<Users />} path={"/users"} />
+
           <Route element={<Users />} path={"/clients"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
           <Route element={<AddOrder />} path={"/orders/add"} />
@@ -63,6 +64,10 @@ const Navigation = () => {
           <Route element={<Branches />} path={"/branches"} />
           <Route element={<EditAddBranch />} path={"/branches/add"} />
           <Route element={<EditAddBranch />} path={"/branches/:id"} />
+
+          <Route element={<Users />} path={"/users"} />
+          <Route element={<EditAddUser />} path={"/users/add"} />
+          <Route element={<EditAddUser />} path={"/users/:id"} />
         </Routes>
       </div>
     </div>
