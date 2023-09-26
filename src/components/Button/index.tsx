@@ -50,6 +50,7 @@ const Button: FC<Props> = ({
       disabled={disabled}
       className={clx(
         className,
+        "w-52",
         textClassName,
         styles.block,
         {

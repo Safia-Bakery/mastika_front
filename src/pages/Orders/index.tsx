@@ -58,7 +58,7 @@ const Orders = () => {
             {/* {(sortData?.length ? sortData : branches.items)?.map( */}
             {[...Array(4)].map((branch, idx) => (
               <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
-                <td>
+                <td className="text-start">
                   <Link to={idx.toString()}>№ {idx + 1}</Link>
                   <div className="flex gap-2 mt-2">
                     <div className="flex items-center">
@@ -68,7 +68,7 @@ const Orders = () => {
                       </Typography>
                     </div>
                     <div className="flex items-center">
-                      <img src="/assets/icons/users.svg" alt="" />
+                      <img src="/assets/icons/users.svg" alt="users" />
                       <Typography className="ml-1" size={TextSize.XS}>
                         Махмуд Салимов
                       </Typography>

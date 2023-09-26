@@ -1,7 +1,4 @@
 import { FC, PropsWithChildren } from "react";
-import styles from "./index.module.scss";
-import cl from "classnames";
-import { useLocation } from "react-router-dom";
 import Typography, { TextSize } from "../Typography";
 
 interface Props extends PropsWithChildren {
@@ -9,12 +6,14 @@ interface Props extends PropsWithChildren {
   subTitle?: string;
 }
 
-const Header: FC<Props> = ({ children, title, subTitle }) => {
+const Header: FC<Props> = ({ children, title }) => {
   return (
-    <div className="flex items-center gap-2 bg-mainGray w-full py-3">
-      <Typography size={TextSize.XXL} className="font-medium text-black">
+    <div className="flex items-center justify-between w-full px-8 py-4">
+      <Typography className="flex" size={TextSize.XXL}>
         {title}
       </Typography>
+
+      {children}
     </div>
   );
 };

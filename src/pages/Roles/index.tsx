@@ -49,59 +49,51 @@ const Roles = () => {
   if (orderLoading) return <Loading />;
 
   return (
-    <div className="flex flex-col justify-end mr-4">
-      <Button
-        className="bg-yellow my-4 w-24 self-end flex"
-        textClassName="text-black"
-        textSize={TextSize.L}
-        onClick={() => navigate("add")}
-      >
-        Создать
-      </Button>
-      <Card title={"Роли"}>
-        {/* <Header title={"Роли"}>
-        <button
-          className="btn btn-success btn-fill"
-          onClick={handleNavigate("add")}
+    // <div className="flex flex-col justify-end mr-4">
+    <Card>
+      <Header title="Роли">
+        <Button
+          className="bg-yellow"
+          textClassName="text-black"
+          textSize={TextSize.L}
+          onClick={() => navigate("add")}
         >
-          Добавить
-        </button>
-      </Header> */}
+          Создать
+        </Button>
+      </Header>
+      <div className="table-responsive grid-view content">
+        <table className="table table-hover">
+          <TableHead
+            column={column}
+            sort={handleSort}
+            sortKey={sortKey}
+            sortOrder={sortOrder}
+          />
 
-        <div className="table-responsive grid-view content">
-          <table className="table table-hover">
-            <TableHead
-              column={column}
-              sort={handleSort}
-              sortKey={sortKey}
-              sortOrder={sortOrder}
-            />
-
-            <tbody>
-              {[...Array(4)]?.map((role, idx) => (
-                <tr className="bg-blue" key={idx}>
-                  <td className="first:pl-16" width="40">
-                    {idx + 1}
-                  </td>
-                  <td>
-                    <Link to={`/roles/${2}`}>{"role.name"}</Link>
-                  </td>
-                  <td>{true ? "Не активный" : "Активный"}</td>
-                  <td width={40}>
-                    <TableViewBtn onClick={handleNavigate(`edit/${2}`)} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {/* {!roles?.length && !orderLoading && (
+          <tbody>
+            {[...Array(4)]?.map((role, idx) => (
+              <tr className="bg-blue" key={idx}>
+                <td className="first:pl-16" width="40">
+                  {idx + 1}
+                </td>
+                <td>
+                  <Link to={`/roles/${2}`}>{"role.name"}</Link>
+                </td>
+                <td>{true ? "Не активный" : "Активный"}</td>
+                <td width={40}>
+                  <TableViewBtn onClick={handleNavigate(`edit/${2}`)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {/* {!roles?.length && !orderLoading && (
           <div className="w-100">
             <p className="text-center w-100">Спосок пуст</p>
           </div>
         )} */}
-        </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 };
 

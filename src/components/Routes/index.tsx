@@ -14,7 +14,9 @@ import Categories from "src/pages/Categories";
 import EditAddCategories from "src/pages/EditAddCategories";
 import Comments from "src/pages/Comments";
 import Roles from "src/pages/Roles";
-import AddRole from "src/pages/AddRole";
+import EditAddRole from "src/pages/EditAddRole";
+import Branches from "src/pages/Branches";
+import EditAddBranch from "src/pages/EditAddBranch";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -55,8 +57,12 @@ const Navigation = () => {
           <Route element={<EditAddCategories />} path={"/categories/add"} />
           <Route element={<EditAddCategories />} path={"/categories/:id"} />
           <Route element={<Roles />} path={"/roles"} />
-          <Route element={<AddRole />} path={"/roles/add"} />
-          <Route element={<AddRole />} path={"/roles/:id"} />
+          <Route element={<EditAddRole />} path={"/roles/add"} />
+          <Route element={<EditAddRole />} path={"/roles/:id"} />
+
+          <Route element={<Branches />} path={"/branches"} />
+          <Route element={<EditAddBranch />} path={"/branches/add"} />
+          <Route element={<EditAddBranch />} path={"/branches/:id"} />
         </Routes>
       </div>
     </div>

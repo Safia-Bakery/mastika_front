@@ -7,6 +7,7 @@ import MainInput from "src/components/BaseInputs/MainInput";
 import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
+import Header from "src/components/Header";
 
 import Typography, { TextSize } from "src/components/Typography";
 
@@ -29,11 +30,13 @@ const EditAddCategories = () => {
 
   return (
     <form>
-      <Typography size={TextSize.XXL} className="flex my-4 ml-1">
-        Добавить
-      </Typography>
-      <Card className="px-8 py-4">
-        <div className="flex flex-1 gap-4 flex-col">
+      <Card>
+        <Header title="Добавить">
+          <Button className="bg-primary" textClassName="text-white">
+            Назад
+          </Button>
+        </Header>
+        <div className="flex flex-1 gap-4 flex-col px-8 pb-4">
           <BaseInput label="НАИМЕНОВАНИЕ" className="mt-4">
             <MainInput
               // placeholder={"Введите имя"}
@@ -47,16 +50,17 @@ const EditAddCategories = () => {
             />
           </BaseInput>
 
-          <MainCheckBox label="Срочно" register={register("urgent")} />
-
+          <BaseInput label="СТАТУС">
+            <MainCheckBox label="Активный" register={register("status")} />
+          </BaseInput>
           <MainCheckBox
-            className="mt-2"
-            label="Активный"
-            register={register("status")}
+            label="Срочно"
+            className="mt-4"
+            register={register("urgent")}
           />
         </div>
         <div className="flex flex-1 justify-end">
-          <Button className="bg-darkYellow mt-4 w-64" type="submit">
+          <Button className="bg-darkYellow mt-4 mr-8" type="submit">
             Создать
           </Button>
         </div>

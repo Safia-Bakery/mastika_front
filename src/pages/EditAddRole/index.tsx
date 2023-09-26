@@ -9,7 +9,7 @@ import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
 
-const AddRole = () => {
+const EditAddRole = () => {
   const { id } = useParams();
   const {
     register,
@@ -52,4 +52,4 @@ const AddRole = () => {
   );
 };
 
-export default AddRole;
+export default EditAddRole;

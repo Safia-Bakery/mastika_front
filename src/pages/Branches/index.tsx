@@ -4,10 +4,8 @@ import Card from "src/components/Card";
 import Pagination from "src/components/Pagination";
 import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
-import CategoriesFilter from "./filter";
 import Header from "src/components/Header";
-import Button from "src/components/Button";
-import { TextSize } from "src/components/Typography";
+import BranchFilter from "./filter";
 
 const column = [
   { name: "№", key: "" },
@@ -17,12 +15,11 @@ const column = [
   { name: "", key: "" },
 ];
 
-const Categories = () => {
+const Branches = () => {
   const navigate = useNavigate();
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const handleNavigate = (url: string) => navigate(url);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortKey, setSortKey] = useState();
 
   const handleSort = (key: any) => {
     if (key === sortKey) {
@@ -33,31 +30,21 @@ const Categories = () => {
     }
   };
 
-  const sortData = () => {
-    // if (categories?.items && sortKey) {
-    //   const sortedData = [...categories?.items].sort((a, b) => {
-    //     if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-    //     if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-    //     else return 0;
-    //   });
-    //   return sortedData;
-    // }
-  };
-
+  const handleNavigate = (url: string) => navigate(url);
   return (
     <>
-      {/* <CategoriesFilter /> */}
+      <BranchFilter />
 
-      <Card className="mt-8">
-        <Header title="Категории">
-          <Button
+      <Card>
+        <Header title="Филиалы">
+          {/* <Button
             className="bg-yellow ml-2 w-24"
             textClassName="text-black"
             textSize={TextSize.L}
             onClick={() => handleNavigate("add")}
           >
             Создать
-          </Button>
+          </Button> */}
         </Header>
         <div className="content">
           <div className="table-responsive grid-view">
@@ -103,4 +90,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Branches;
