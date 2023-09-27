@@ -3,9 +3,16 @@ import styles from "./index.module.scss";
 import useToken from "src/hooks/useToken";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const ControlPanel = () => {
+const Home = () => {
   const { data: user } = useToken({ enabled: false });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.location.pathname === "/") navigate("/home");
+  }, []);
 
   return (
     <Card className="p-4 mt-28">
@@ -58,4 +65,4 @@ const ControlPanel = () => {
   );
 };
 
-export default ControlPanel;
+export default Home;

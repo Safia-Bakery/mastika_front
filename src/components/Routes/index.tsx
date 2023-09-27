@@ -8,7 +8,7 @@ import Orders from "src/pages/Orders";
 import AddPhone from "src/pages/AddPhone";
 import AddOrder from "src/pages/AddOrder";
 import ShowOrder from "src/pages/ShowOrder";
-import ControlPanel from "src/pages/ControlPanel";
+import Home from "src/pages/Home";
 import Users from "src/pages/Users";
 import Categories from "src/pages/Categories";
 import EditAddCategories from "src/pages/EditAddCategories";
@@ -43,20 +43,26 @@ const Navigation = () => {
   return (
     <div className="flex">
       {renderSidebar}
+      {/* <Sidebar /> */}
       <div className="flex flex-col flex-1">
         <Routes>
           <Route element={<Login />} path={"/login"} />
-          <Route element={<ControlPanel />} index path={"/"} />
+          <Route element={<Home />} index path={"/home"} />
+          <Route element={<Home />} path={"*"} />
           <Route element={<Orders />} path={"/orders"} />
+
+          <Route element={<Orders />} path={"/received-orders"} />
 
           <Route element={<Users />} path={"/clients"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
           <Route element={<AddOrder />} path={"/orders/add"} />
           <Route element={<ShowOrder />} path={"/orders/:id"} />
-          <Route element={<Categories />} path={"/categories"} />
           <Route element={<Comments />} path={"/comments"} />
+
+          <Route element={<Categories />} path={"/categories"} />
           <Route element={<EditAddCategories />} path={"/categories/add"} />
           <Route element={<EditAddCategories />} path={"/categories/:id"} />
+
           <Route element={<Roles />} path={"/roles"} />
           <Route element={<EditAddRole />} path={"/roles/add"} />
           <Route element={<EditAddRole />} path={"/roles/:id"} />

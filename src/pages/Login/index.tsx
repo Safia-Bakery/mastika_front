@@ -30,7 +30,7 @@ const Login = () => {
   const { mutate } = loginMutation();
 
   useEffect(() => {
-    if (token) navigate("/");
+    if (token) navigate("/home");
   }, [navigate, token]);
 
   const onSubmit = () => {
@@ -42,7 +42,7 @@ const Login = () => {
         onSuccess: (data) => {
           dispatch(loginHandler(data.access_token));
           refetch();
-          navigate("/");
+          navigate("/home");
           successToast("Добро пожаловать");
           if (error) $error(false);
         },
