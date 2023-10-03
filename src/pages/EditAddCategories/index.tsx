@@ -43,13 +43,22 @@ const EditAddCategories = () => {
               register={register("name", { required: "Обязательное поле" })}
             />
           </BaseInput>
-          <BaseInput label="ОПИСАНИЕ">
-            <MainTextArea
-              placeholder={"Комментарии"}
-              register={register("comments", { required: "Обязательное поле" })}
-            />
-          </BaseInput>
 
+          {/* <BaseInput label="СТАТУС">
+            <MainCheckBox label="Активный" register={register("status")} />
+          </BaseInput> */}
+          <BaseInput>
+            <MainCheckBox label="Сложность" register={register("status")} />
+          </BaseInput>
+          <BaseInput>
+            <MainCheckBox label="Этажность" register={register("status")} />
+          </BaseInput>
+          <BaseInput>
+            <MainCheckBox label="Тип начинки" register={register("status")} />
+          </BaseInput>
+          <BaseInput>
+            <MainCheckBox label="Выбор палитры" register={register("status")} />
+          </BaseInput>
           <BaseInput label="СТАТУС">
             <MainCheckBox label="Активный" register={register("status")} />
           </BaseInput>
@@ -58,6 +67,12 @@ const EditAddCategories = () => {
             className="mt-4"
             register={register("urgent")}
           />
+          <BaseInput label="ОПИСАНИЕ">
+            <MainTextArea
+              placeholder={"Комментарии"}
+              register={register("comments", { required: "Обязательное поле" })}
+            />
+          </BaseInput>
         </div>
         <div className="flex flex-1 justify-end">
           <Button className="bg-darkYellow mt-4 mr-8" type="submit">

@@ -1,4 +1,4 @@
-import { useState, FC, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   YMaps,
   Map,
@@ -8,15 +8,43 @@ import {
   YMapsApi,
 } from "react-yandex-maps";
 import styles from "./index.module.scss";
-import Typography, { TextSize } from "../Typography";
 import "./index.scss";
+import { useNavigateParams } from "src/hooks/useCustomNavigate";
+
+interface GeocodeResult {
+  name: string;
+}
 
 const YandexMap = () => {
   const ymaps = useRef<any>();
   const map = useRef<any>();
+  const navigate = useNavigateParams();
   const [markerCoords, setMarkerCoords] = useState<number[]>([
     41.30524669891599, 69.24100608330389,
   ]);
+  const [address, setAddress] = useState<string | null>(null);
+
+  console.log(address, "address");
+
+  // Your Yandex Geocoding API key
+  const apiKey = "51697f82-c9b3-463e-8305-c7ed2bfe3ad3";
+
+  useEffect(() => {
+    // Fetch the address using the Yandex Geocoding API
+    fetch(
+      `https://geocode-maps.yandex.ru/1.x/?apikey=${apiKey}&geocode=${markerCoords.reverse()}&format=json`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const geocodeResult: GeocodeResult =
+          data.response.GeoObjectCollection.featureMember[0].GeoObject;
+        navigate({ address_name: geocodeResult.name });
+        // setAddress(geocodeResult.name);
+      })
+      .catch((error) => {
+        console.error("Error fetching address:", error);
+      });
+  }, [markerCoords]);
 
   const addSearchControlEvents = () => {
     const searchControl = new ymaps.current.control.SearchControl({
@@ -49,33 +77,8 @@ const YandexMap = () => {
     setMarkerCoords(coordinates);
   };
 
-  const handleButtonClick = () => {
-    console.log(navigator, "navigator");
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coordinates = [
-            position.coords.latitude,
-            position.coords.longitude,
-          ];
-          setMarkerCoords(coordinates);
-        },
-        (error) => {
-          console.error("Error getting geolocation:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by your browser.");
-    }
-  };
-
   return (
-    <YMaps
-      query={{
-        lang: "en_RU",
-        apikey: "8b56a857-f05f-4dc6-a91b-bc58f302ff21",
-      }}
-    >
+    <YMaps>
       <div className={styles.mapBlock}>
         <Map
           defaultState={{

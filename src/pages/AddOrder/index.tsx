@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import BaseInput from "src/components/BaseInputs";
 import MainInput from "src/components/BaseInputs/MainInput";
@@ -10,6 +10,7 @@ import Card from "src/components/Card";
 import Header from "src/components/Header";
 import Typography, { TextSize } from "src/components/Typography";
 import YandexMap from "src/components/YandexMap";
+import useQueryString from "src/hooks/useQueryString";
 import { OrderType } from "src/utils/types";
 
 const orderArray = [
@@ -25,10 +26,14 @@ const orderArray = [
 
 const AddOrder = () => {
   const [deliveryType, $deliveryType] = useState(OrderType.delivery);
+  const address_name = useQueryString("address_name");
+
   const {
     register,
     formState: { errors },
     handleSubmit,
+    getValues,
+    reset,
   } = useForm();
 
   const handleDeliveryType = (id: number) => {
@@ -37,7 +42,27 @@ const AddOrder = () => {
 
   const onSubmit = () => {
     console.log("first");
+    console.log(errors, "errors");
+    console.log(getValues("address"), "adress");
   };
+
+  useEffect(() => {
+    reset({
+      address: address_name,
+    });
+  }, [address_name]);
+
+  const renderAddressName = useMemo(() => {
+    return (
+      <MainInput
+        value={address_name || ""}
+        register={register("address", {
+          required: "Обязательное поле",
+        })}
+      />
+    );
+  }, [address_name]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header title="Детали заказа" />
@@ -73,11 +98,13 @@ const AddOrder = () => {
             </BaseInput>
 
             <BaseInput label="Адрес" className="mb-2">
-              <MainInput
+              {/* <MainInput
                 register={register("address", {
                   required: "Обязательное поле",
+                  value: address_name,
                 })}
-              />
+              /> */}
+              {renderAddressName}
             </BaseInput>
             <div className="flex gap-3">
               <BaseInput label="Дом" className="mb-2 flex-1">

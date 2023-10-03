@@ -1,5 +1,3 @@
-import Container from "src/components/Container";
-import styles from "./index.module.scss";
 import useToken from "src/hooks/useToken";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";

@@ -18,6 +18,10 @@ import EditAddRole from "src/pages/EditAddRole";
 import Branches from "src/pages/Branches";
 import EditAddBranch from "src/pages/EditAddBranch";
 import EditAddUser from "src/pages/EditAddUser";
+import FillingsComplexity from "src/pages/FillingsComplexity";
+import FillingInfo from "src/pages/FillingInfo";
+import EditAddComplexity from "src/pages/EditAddComplexity";
+import EditAddFillingInfo from "src/pages/EditAddFillingInfo";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -74,6 +78,24 @@ const Navigation = () => {
           <Route element={<Users />} path={"/users"} />
           <Route element={<EditAddUser />} path={"/users/add"} />
           <Route element={<EditAddUser />} path={"/users/:id"} />
+
+          <Route
+            // element={<FillingsComplexity />}
+            path={"/fillings"}
+          >
+            <Route element={<FillingsComplexity />} path={":complexity"} />
+            <Route element={<EditAddComplexity />} path={":complexity/edit"} />
+            <Route element={<EditAddComplexity />} path={":complexity/add"} />
+            <Route element={<FillingInfo />} path={":complexity/:filling"} />
+            <Route
+              element={<EditAddFillingInfo />}
+              path={":complexity/:filling/edit"}
+            />
+            <Route
+              element={<EditAddFillingInfo />}
+              path={":complexity/:filling/add"}
+            />
+          </Route>
         </Routes>
       </div>
     </div>

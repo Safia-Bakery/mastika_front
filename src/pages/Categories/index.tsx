@@ -11,8 +11,11 @@ import { TextSize } from "src/components/Typography";
 
 const column = [
   { name: "№", key: "" },
-  { name: "Наименование", key: "name" },
-  { name: "Отдел", key: "department" },
+  { name: "Категория", key: "name" },
+  { name: "Сложность", key: "department" },
+  { name: "Этажность", key: "status" },
+  { name: "Тип начинки", key: "status" },
+  { name: "Выбор палитры", key: "status" },
   { name: "Статус", key: "status" },
   { name: "", key: "" },
 ];
@@ -78,7 +81,10 @@ const Categories = () => {
                       {idx + 1}
                     </td>
                     <td className="text-center">{"category?.name"}</td>
-                    <td className="text-center">dep</td>
+                    <td className="text-center">da</td>
+                    <td className="text-center">net</td>
+                    <td className="text-center">da</td>
+                    <td className="text-center">da</td>
                     <td className="text-center">
                       {!!category?.status ? "Активный" : "Неактивный"}
                     </td>

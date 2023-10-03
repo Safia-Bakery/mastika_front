@@ -1,30 +1,41 @@
-import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import cl from "classnames";
-import { Fragment, useState } from "react";
-
-const routes = [
-  { name: "Главная страница", url: "/home" },
-  { name: "Поиск", url: "/search", hasline: true },
-  { name: "Все заявки", url: "/orders" },
-  { name: "Принятые заказы", url: "/received-orders" },
-  { name: "Палитры", url: "/received-orders2" },
-  { name: "Товары", url: "/received-orders4" },
-  { name: "Категории", url: "/categories" },
-  { name: "Начинки", url: "/received-orders1" },
-  // { name: "Отчёты", url: "/received-orders5", hasline: true },
-  { name: "Клиенты", url: "/clients" },
-  { name: "Отзывы", url: "/comments", hasline: true },
-  { name: "Пользователи", url: "/users" },
-  { name: "Роли", url: "/roles" },
-  // { name: "Уведомления", url: "/notifications" },
-  { name: "Филиалы", url: "/branches" },
-];
+import { Fragment, useMemo } from "react";
 
 const Sidebar = () => {
   const navigate = useNavigate();
 
   const { pathname } = useLocation();
+
+  const routes = useMemo(() => {
+    return [
+      { name: "Главная страница", url: "/home" },
+      { name: "Поиск", url: "/search", hasline: true },
+      { name: "Все заявки", url: "/orders" },
+      { name: "Принятые заказы", url: "/received-orders" },
+      { name: "Палитры", url: "/received-orders2" },
+      { name: "Товары", url: "/received-orders4" },
+      { name: "Категории", url: "/categories" },
+      {
+        name: "Начинки",
+        url: "/fillings",
+        subroutes: [
+          {
+            name: "Стандарт",
+            url: "/standart",
+          },
+        ],
+      },
+      // { name: "Отчёты", url: "/received-orders5", hasline: true },
+      { name: "Клиенты", url: "/clients" },
+      { name: "Отзывы", url: "/comments", hasline: true },
+      { name: "Пользователи", url: "/users" },
+      { name: "Роли", url: "/roles" },
+      // { name: "Уведомления", url: "/notifications" },
+      { name: "Филиалы", url: "/branches" },
+    ];
+  }, []);
 
   return (
     <div className="p-3 relative top-0 bottom-0 left-0 h-[100lvh] overflow-y-auto mr-4 flex flex-col justify-between">

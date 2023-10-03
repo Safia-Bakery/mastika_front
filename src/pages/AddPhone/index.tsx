@@ -12,10 +12,10 @@ const AddPhone = () => {
   const [phone, $phone] = useState("");
   const [error, $error] = useState("");
 
-  const { register } = useForm();
+  const { register, handleSubmit } = useForm();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = () => {
+    // e.preventDefault();
     if (phone.split("").length < 7) $error("input valid number");
     else {
       $error("");
@@ -28,7 +28,10 @@ const AddPhone = () => {
       <Header title="Создать заказ" />
 
       <Card className="p-24">
-        <form onSubmit={handleSubmit} className="flex gap-3 justify-center">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex gap-3 justify-center"
+        >
           <Typography size={TextSize.XL}>Получатель</Typography>
           <div className="">
             <PhoneInput autoFocus onChange={(val: string) => $phone(val)} />
