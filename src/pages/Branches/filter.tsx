@@ -20,14 +20,12 @@ const BranchFilter: FC = () => {
   const [category_status, $category_status] = useState<string>();
 
   const { refetch } = useCategories({
-    size: itemsPerPage,
-    page: currentPage,
     enabled: false,
-    body: {
-      ...(!!name && { name }),
-      ...(!!category_status && { category_status }),
-      ...(!!department && { department }),
-    },
+    // body: {
+    //   ...(!!name && { name }),
+    //   ...(!!category_status && { category_status }),
+    //   ...(!!department && { department }),
+    // },
   });
 
   useUpdateEffect(() => {

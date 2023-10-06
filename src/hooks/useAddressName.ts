@@ -11,12 +11,12 @@ export const useAddressName = ({
   coords: number[];
 }) => {
   return useQuery({
-    queryKey: ["address_name", id],
+    queryKey: ["address_name"],
     queryFn: () =>
       apiClient
-        .get(`/category/${id}`)
+        .get(`/category`)
         .then(({ data: response }) => (response as any) || null),
-    enabled: !!id && enabled,
+    enabled,
     refetchOnMount: true,
   });
 };
