@@ -11,10 +11,7 @@ const Card: FC<Props> = ({ children, className, title }) => {
   return (
     <>
       <div
-        className={cl(
-          "bg-white rounded-2xl w-full h-full mb-4 mt-4 ",
-          className
-        )}
+        className={cl("bg-white rounded-2xl w-full mb-4 mt-4 pb-4 ", className)}
       >
         <div className="flex justify-between ">
           {title && (

@@ -1,30 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "src/main";
-import { useAppDispatch } from "src/redux/utils/types";
-// import { CategoryTypes } from "src/utils/types";
+import { CategoryTypes } from "src/utils/types";
 
 export const useCategories = ({
   enabled = true,
-  size,
-  page = 1,
-  body,
-  department,
-  sub_id,
+  name,
+  id,
+  status,
+  price,
 }: {
   enabled?: boolean;
-  size?: number;
-  page?: number;
-  department?: number | string;
-  sub_id?: number | string;
-  body?: { name?: string; category_status?: string };
+  name?: string;
+  id?: number;
+  status?: number;
+  price?: number;
 }) => {
   return useQuery({
-    queryKey: ["categories", page, department, sub_id],
+    queryKey: ["categories", name, id, status, price],
     queryFn: () =>
       apiClient
-        .get("/category", { size, page, department, sub_id, ...body })
+        .get("/v1/category", { name, id, status, price })
         .then(({ data: response }) => {
-          return response as any;
+          return response as CategoryTypes[];
         }),
     enabled,
     refetchOnMount: true,

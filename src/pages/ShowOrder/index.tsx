@@ -192,43 +192,81 @@ const ShowOrder = () => {
           </BaseInput>
         </div>
 
-        <div className="flex">
-          <BaseInput label="Сложность" className="mb-2">
-            <MainSelect
-              values={systems}
-              inputStyle={InputStyle.primary}
-              register={register("system", {
-                required: "Обязательное поле",
-              })}
-            />
-          </BaseInput>
-          <BaseInput label="Этажность" className="mb-2">
-            <MainSelect
-              values={systems}
-              inputStyle={InputStyle.primary}
-              register={register("system", {
-                required: "Обязательное поле",
-              })}
-            />
-          </BaseInput>
-          <BaseInput label="Тип начинки:" className="mb-2">
-            <MainSelect
-              values={systems}
-              inputStyle={InputStyle.primary}
-              register={register("system", {
-                required: "Обязательное поле",
-              })}
-            />
-          </BaseInput>
-          <BaseInput label="Тип начинки 1 этаж:" className="mb-2">
-            <MainSelect
-              values={systems}
-              inputStyle={InputStyle.primary}
-              register={register("system", {
-                required: "Обязательное поле",
-              })}
-            />
-          </BaseInput>
+        <div className="flex flex-[4] gap-4 mt-8">
+          <div className="flex flex-col flex-[3]">
+            <div className="flex flex-wrap gap-3">
+              <BaseInput
+                label="Сложность"
+                className="mb-2 flex flex-1 flex-col"
+              >
+                <MainSelect
+                  values={systems}
+                  inputStyle={InputStyle.primary}
+                  register={register("system", {
+                    required: "Обязательное поле",
+                  })}
+                />
+              </BaseInput>
+              <BaseInput
+                label="Этажность"
+                className="mb-2 flex flex-1 flex-col"
+              >
+                <MainSelect
+                  values={systems}
+                  inputStyle={InputStyle.primary}
+                  register={register("system", {
+                    required: "Обязательное поле",
+                  })}
+                />
+              </BaseInput>
+              <BaseInput
+                label="Тип начинки:"
+                className="mb-2 flex flex-1 flex-col"
+              >
+                <MainSelect
+                  values={systems}
+                  inputStyle={InputStyle.primary}
+                  register={register("system", {
+                    required: "Обязательное поле",
+                  })}
+                />
+              </BaseInput>
+            </div>
+            <BaseInput label="Палитра" className="mb-2 flex flex-1 flex-col">
+              <input
+                type="color"
+                className="w-[210px] flex bg-white text-white border-2 border-black"
+                defaultValue={"#FFFFFF"}
+                placeholder="Введите номер палитры"
+              />
+            </BaseInput>
+          </div>
+          <div className="flex flex-col flex-1">
+            <BaseInput
+              label="Тип начинки 1 этаж:"
+              className="mb-2 flex flex-1 flex-col"
+            >
+              <MainSelect
+                values={systems}
+                inputStyle={InputStyle.primary}
+                register={register("system", {
+                  required: "Обязательное поле",
+                })}
+              />
+            </BaseInput>
+            <BaseInput
+              label="Тип начинки 2 этаж:"
+              className="mb-2 flex flex-1 flex-col"
+            >
+              <MainSelect
+                values={systems}
+                inputStyle={InputStyle.primary}
+                register={register("system", {
+                  required: "Обязательное поле",
+                })}
+              />
+            </BaseInput>
+          </div>
         </div>
       </Card>
     </form>

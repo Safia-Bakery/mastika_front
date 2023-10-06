@@ -31,7 +31,7 @@ const Login = () => {
 
   useEffect(() => {
     if (token) navigate("/home");
-  }, [navigate, token]);
+  }, [token]);
 
   const onSubmit = () => {
     const { username, password } = getValues();
@@ -75,7 +75,7 @@ const Login = () => {
             )}
           </BaseInput>
 
-          <Button className="bg-yellow" type="submit">
+          <Button className="bg-yellow w-full" type="submit">
             Логин
           </Button>
         </form>

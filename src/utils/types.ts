@@ -40,3 +40,34 @@ export interface BranchType {
 export interface BranchTypes extends BasePaginatedRes {
   items: BranchType[];
 }
+
+export enum MainPermissions {
+  fillings = 1,
+  filling = 2,
+}
+export interface MeTypes {
+  username: string;
+  status: number;
+  created_at: string;
+  id: number;
+}
+
+export interface CategoryTypes {
+  name: string;
+  id: number;
+  status: number;
+  price: number;
+}
+
+export interface ContentTypes {
+  name: string;
+  id: number;
+  status: number;
+}
+
+export enum ContentType {
+  string = 1,
+  image = 2,
+  number = 3,
+  select = 4,
+}

@@ -1,6 +1,6 @@
 import Card from "src/components/Card";
 import Header from "src/components/Header";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Loading from "src/components/Loader";
 import { useState } from "react";
@@ -16,7 +16,8 @@ const column = [
   { name: "", key: "" },
 ];
 
-const FillingsComplexity = () => {
+const ShowSubCategory = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const handleNavigate = (route: string) => () => navigate(route);
 
@@ -51,21 +52,13 @@ const FillingsComplexity = () => {
   return (
     // <div className="flex flex-col justify-end mr-4">
     <Card>
-      <Header title="Стандарт">
+      <Header title="Бенто">
         <div className="flex gap-2">
-          <Button
-            className="bg-blue-300"
-            textClassName="text-black"
-            textSize={TextSize.L}
-            onClick={handleNavigate("/fillings/edit/1")}
-          >
-            Edit
-          </Button>
           <Button
             className="bg-yellow"
             textClassName="text-black"
             textSize={TextSize.L}
-            onClick={handleNavigate("add")}
+            onClick={handleNavigate(`/categories/${id}/addsub`)}
           >
             Создать
           </Button>
@@ -87,13 +80,15 @@ const FillingsComplexity = () => {
                   {idx + 1}
                 </td>
                 <td>
-                  <Link to={`${idx + 1}`} className="text-sky-600">
-                    {idx % 2 ? "Радуга" : "Рафаелло"}
-                  </Link>
+                  {/* <Link to={`${idx + 1}`} className="text-sky-600"> */}
+                  {idx % 2 ? "Мастика" : "Песочный"}
+                  {/* </Link> */}
                 </td>
                 <td>{false ? "Не активный" : "Активный"}</td>
                 <td width={40}>
-                  <TableViewBtn onClick={handleNavigate("1/edit")} />
+                  <TableViewBtn
+                    onClick={handleNavigate(`/categories/${id}/editsub/${idx}`)}
+                  />
                 </td>
               </tr>
             ))}
@@ -109,4 +104,4 @@ const FillingsComplexity = () => {
   );
 };
 
-export default FillingsComplexity;
+export default ShowSubCategory;

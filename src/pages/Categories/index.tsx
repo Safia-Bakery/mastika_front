@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "src/components/Card";
 import Pagination from "src/components/Pagination";
 import TableHead from "src/components/TableHead";
@@ -8,14 +8,12 @@ import CategoriesFilter from "./filter";
 import Header from "src/components/Header";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
+import useCategories from "src/hooks/useCategories";
+import useQueryString from "src/hooks/useQueryString";
 
 const column = [
   { name: "№", key: "" },
   { name: "Категория", key: "name" },
-  { name: "Сложность", key: "department" },
-  { name: "Этажность", key: "status" },
-  { name: "Тип начинки", key: "status" },
-  { name: "Выбор палитры", key: "status" },
   { name: "Статус", key: "status" },
   { name: "", key: "" },
 ];
@@ -24,6 +22,9 @@ const Categories = () => {
   const navigate = useNavigate();
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const update = useQueryString("update");
+
+  const { data: categories, refetch } = useCategories({});
 
   const handleNavigate = (url: string) => navigate(url);
 
@@ -46,6 +47,10 @@ const Categories = () => {
     //   return sortedData;
     // }
   };
+
+  useEffect(() => {
+    if (update) refetch();
+  }, [update]);
 
   return (
     <>
@@ -73,31 +78,32 @@ const Categories = () => {
                 sortOrder={sortOrder}
               />
 
-              {/* {!!categories?.items?.length && ( */}
-              <tbody>
-                {[...Array(4)]?.map((category, idx) => (
-                  <tr key={idx} className="bg-blue">
-                    <td className="first:pl-16" width="40">
-                      {idx + 1}
-                    </td>
-                    <td className="text-center">{"category?.name"}</td>
-                    <td className="text-center">da</td>
-                    <td className="text-center">net</td>
-                    <td className="text-center">da</td>
-                    <td className="text-center">da</td>
-                    <td className="text-center">
-                      {!!category?.status ? "Активный" : "Неактивный"}
-                    </td>
-                    <td className="text-center" width={40}>
-                      <TableViewBtn onClick={() => handleNavigate(`${idx}`)} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              {/* )} */}
+              {!!categories?.length && (
+                <tbody>
+                  {categories?.map((category, idx) => (
+                    <tr key={idx} className="bg-blue">
+                      <td className="first:pl-16" width="40">
+                        {idx + 1}
+                      </td>
+                      <td className="text-center">
+                        <Link to={`${category.id}/show`}>{category?.name}</Link>
+                      </td>
+                      <td className="text-center">
+                        {!!category?.status ? "Активный" : "Неактивный"}
+                      </td>
+                      <td className="text-center" width={40}>
+                        <TableViewBtn
+                          onClick={() => handleNavigate(`${category.id}`)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
+
+              {}
             </table>
-            {false && <Pagination totalPages={2} />}
-            {false && (
+            {!categories?.length && (
               <div className="w-100">
                 <p className="text-center w-100 ">Спосок пуст</p>
               </div>

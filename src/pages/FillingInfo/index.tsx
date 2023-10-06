@@ -81,7 +81,7 @@ const FillingInfo = () => {
                 <td>9</td>
                 <td>{false ? "Не активный" : "Активный"}</td>
                 <td width={40}>
-                  <TableViewBtn onClick={handleNavigate("edit")} />
+                  <TableViewBtn onClick={handleNavigate("1/edit")} />
                 </td>
               </tr>
             ))}

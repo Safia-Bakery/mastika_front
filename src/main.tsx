@@ -8,8 +8,8 @@ import BaseAPIClient from "./api/axiosConfig.ts";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-input-2/lib/style.css";
 
-export const baseURL = "https://backend.service.safiabakery.uz";
-// export const baseURL = "http://10.0.0.51:8000";
+// export const baseURL = "https://backend.service.safiabakery.uz";
+export const baseURL = "http://10.0.0.165:8000";
 export default new BaseAPIClient(baseURL, store);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

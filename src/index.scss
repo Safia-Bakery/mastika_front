@@ -60,21 +60,24 @@ body {
   font-family: "Rubik";
 }
 
+a {
+  color: rgb(13, 110, 253);
+}
 .color-purple {
   color: #ce3df3;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #eff2f7;
+  background: #fff;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 10px;
 }
 
