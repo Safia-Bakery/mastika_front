@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "src/components/Card";
+import EmptyList from "src/components/EmptyList";
 import Pagination from "src/components/Pagination";
 import TableHead from "src/components/TableHead";
 import Typography, { TextSize } from "src/components/Typography";
@@ -79,11 +80,7 @@ const Comments = () => {
               {/* )} */}
             </table>
             {false && <Pagination totalPages={2} />}
-            {false && (
-              <div className="w-100">
-                <p className="text-center w-100 ">Спосок пуст</p>
-              </div>
-            )}
+            {false && <EmptyList />}
           </div>
         </div>
       </Card>

@@ -1,16 +1,34 @@
-import { ChangeEvent, forwardRef, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { forwardRef, useEffect, useMemo } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainCheckBox from "src/components/BaseInputs/MainCheckBox";
 import MainInput from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
-import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
+import subCategoryMutation from "src/hooks/mutation/subCategory";
 import useContentType from "src/hooks/useContentType";
+import useSelectVal from "src/hooks/useSelectVal";
+import useSubCategories from "src/hooks/useSubCategories";
 import { ContentType } from "src/utils/types";
+
+const InputWrapper = forwardRef<
+  HTMLInputElement,
+  {
+    field: any;
+    type?: string;
+    index: number;
+  }
+>(({ field, type = "text", index }, ref) => {
+  return (
+    <BaseInput label={`Название опции №${index + 1}`} className="w-full">
+      <MainInput {...field} ref={ref} type={type} />
+    </BaseInput>
+  );
+});
 
 interface InputFields {
   content: string;
@@ -28,9 +46,24 @@ const initialValues: InputFields = {
 };
 
 const EditAddSubCategories = () => {
-  const { id } = useParams();
+  const { id, subid } = useParams();
   const navigate = useNavigate();
-  const { data: contentType } = useContentType({});
+  const { data: contentType, isLoading: contentLoading } = useContentType({});
+  const { mutate } = subCategoryMutation();
+  const {
+    data,
+    refetch,
+    isLoading: subLoading,
+  } = useSubCategories({
+    enabled: !!subid,
+    id: Number(subid),
+  });
+
+  const subCategory = data?.[0];
+
+  const { data: selectVals, isLoading: selectLoading } = useSelectVal({
+    enabled: !!subid && subCategory?.contenttype_id === ContentType.select,
+  });
 
   const {
     register,
@@ -48,32 +81,6 @@ const EditAddSubCategories = () => {
     control,
     name: "inputFields",
   });
-
-  const InputWrapper = forwardRef<
-    HTMLInputElement,
-    {
-      field: any;
-      type?: string;
-      index: number;
-    }
-  >(({ field, type = "text", index }, ref) => {
-    return (
-      <BaseInput label={`Название опции №${index + 1}`} className="w-full">
-        {/* <input type={type} {...field} ref={ref} /> */}
-        <MainInput {...field} ref={ref} type={type} />
-      </BaseInput>
-    );
-  });
-
-  useEffect(() => {
-    if (id) {
-      reset({
-        name: "name edited",
-      });
-    }
-  }, [id]);
-
-  // console.log(watch("inputFields"), 'watch("inputFields"');
 
   const renderContentType = useMemo(() => {
     if (Number(watch("content_type")) === ContentType.select)
@@ -110,16 +117,67 @@ const EditAddSubCategories = () => {
           ))}
         </>
       );
-  }, [watch("content_type"), fields, initialValues]);
+  }, [watch("content_type"), fields, selectVals, watch("inputFields")]);
 
   const onSubmit = () => {
-    console.log(getValues("inputFields"), "submit");
+    const { status, name, content_type } = getValues();
+    mutate(
+      {
+        name,
+        category_id: Number(id),
+        status: String(+status),
+        contenttype_id: +content_type,
+        ...(!!id && { id: Number(subid) }),
+      },
+      {
+        onSuccess: () => {
+          navigate(`/categories/${id}/show${!subid ? "?update=1" : ""}`);
+        },
+      }
+    );
   };
+
+  useEffect(() => {
+    if (subid && subCategory) {
+      reset({
+        name: subCategory.name,
+        content_type: subCategory.contenttype_id,
+        status: !!subCategory.subcategory_vs_contenttype?.status,
+      });
+    }
+  }, [subid, subCategory]);
+
+  useEffect(() => {
+    if (selectVals?.length) {
+      reset({
+        inputFields: selectVals.map((item) => {
+          return { content: item.content };
+        }),
+      });
+    }
+  }, [subid, selectVals]);
+
+  useEffect(() => {
+    if (subid) {
+      return () => {
+        window.location.reload();
+      };
+    }
+  }, []);
+
+  if (
+    (selectLoading &&
+      !!subid &&
+      subCategory?.contenttype_id === ContentType.select) ||
+    (subLoading && subid) ||
+    contentLoading
+  )
+    return <div>loading</div>;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
-        <Header title="Добавить">
+        <Header title={subid ? `Изменить ${subCategory?.name}` : "Добавить"}>
           <Button className="bg-primary" textClassName="text-white">
             Назад
           </Button>

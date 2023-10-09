@@ -3,11 +3,15 @@ import Header from "src/components/Header";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Loading from "src/components/Loader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
+import useCategories from "src/hooks/useCategories";
+import useSubCategories from "src/hooks/useSubCategories";
+import useQueryString from "src/hooks/useQueryString";
+import EmptyList from "src/components/EmptyList";
 
 const column = [
   { name: "№", key: "" },
@@ -19,7 +23,13 @@ const column = [
 const ShowSubCategory = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const update = useQueryString("update");
   const handleNavigate = (route: string) => () => navigate(route);
+
+  const { data: parent } = useCategories({ id: Number(id) });
+  const parentCategry = parent?.[0];
+
+  const { data, isLoading, refetch } = useSubCategories({ category_id: id });
 
   const roles: any[] = [];
   const orderLoading = false;
@@ -47,12 +57,16 @@ const ShowSubCategory = () => {
     }
   };
 
+  useEffect(() => {
+    if (update) refetch();
+  }, [update]);
+
   if (orderLoading) return <Loading />;
 
   return (
     // <div className="flex flex-col justify-end mr-4">
     <Card>
-      <Header title="Бенто">
+      <Header title={parentCategry?.name}>
         <div className="flex gap-2">
           <Button
             className="bg-yellow"
@@ -74,29 +88,36 @@ const ShowSubCategory = () => {
           />
 
           <tbody>
-            {[...Array(4)]?.map((role, idx) => (
+            {data?.map((sub, idx) => (
               <tr className="bg-blue" key={idx}>
                 <td className="first:pl-16" width="40">
                   {idx + 1}
                 </td>
                 <td>
                   {/* <Link to={`${idx + 1}`} className="text-sky-600"> */}
-                  {idx % 2 ? "Мастика" : "Песочный"}
+                  {sub.name}
                   {/* </Link> */}
                 </td>
-                <td>{false ? "Не активный" : "Активный"}</td>
+                <td>
+                  {sub.subcategory_vs_category.status
+                    ? "Активный"
+                    : "Не активный"}
+                </td>
                 <td width={40}>
                   <TableViewBtn
-                    onClick={handleNavigate(`/categories/${id}/editsub/${idx}`)}
+                    onClick={handleNavigate(
+                      `/categories/${id}/editsub/${sub.id}`
+                    )}
                   />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {/* {!roles?.length && !orderLoading && (
-          <div className="w-100">
-            <p className="text-center w-100">Спосок пуст</p>
+        {!data?.length && !isLoading && <EmptyList />}
+        {/* {!isLoading && (
+          <div className="w-100 my-4">
+            <Loading />
           </div>
         )} */}
       </div>

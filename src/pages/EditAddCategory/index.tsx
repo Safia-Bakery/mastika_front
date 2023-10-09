@@ -7,7 +7,7 @@ import MainInput from "src/components/BaseInputs/MainInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
-import categoryMutation from "src/hooks/mutation/categoryMutation";
+import categoryMutation from "src/hooks/mutation/category";
 import useCategories from "src/hooks/useCategories";
 
 const EditAddCategory = () => {

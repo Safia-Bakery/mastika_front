@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import styles from "./index.module.scss";
 import cl from "classnames";
-import loginMutation from "src/hooks/mutation/loginMutation";
+import loginMutation from "src/hooks/mutation/login";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { loginHandler, tokenSelector } from "src/redux/reducers/auth";
 import { useNavigate } from "react-router-dom";

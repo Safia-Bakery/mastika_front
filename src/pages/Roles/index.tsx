@@ -88,9 +88,7 @@ const Roles = () => {
           </tbody>
         </table>
         {/* {!roles?.length && !orderLoading && (
-          <div className="w-100">
-            <p className="text-center w-100">Спосок пуст</p>
-          </div>
+          <EmptyList />
         )} */}
       </div>
     </Card>

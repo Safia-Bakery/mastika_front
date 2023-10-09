@@ -9,6 +9,7 @@ import Card from "src/components/Card";
 import { Link } from "react-router-dom";
 import Loading from "src/components/Loader";
 import Pagination from "src/components/Pagination";
+import EmptyList from "src/components/EmptyList";
 
 const column = [
   { name: "Все заявки", key: "" },
@@ -99,11 +100,7 @@ const Orders = () => {
         </table>
 
         {false && <Pagination totalPages={1} />}
-        {false && (
-          <div className="w-100">
-            <p className="text-center w-100 ">Спосок пуст</p>
-          </div>
-        )}
+        {false && <EmptyList />}
       </Card>
     </Container>
   );

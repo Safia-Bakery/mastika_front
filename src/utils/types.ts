@@ -71,3 +71,43 @@ export enum ContentType {
   number = 3,
   select = 4,
 }
+export interface SubCategoryTypes {
+  id: number;
+  name: string;
+  category_id: number;
+  contenttype_id: number;
+  subcategory_vs_category: {
+    name: string;
+    price: number;
+    id: number;
+    status: number;
+  };
+  subcategory_vs_contenttype: {
+    id: number;
+    name: string;
+    status: number;
+  };
+}
+
+export interface SubCatSelectVals {
+  id: number;
+  content: string;
+  value: string;
+  selval_vs_subcat: {
+    id: number;
+    name: string;
+    category_id: number;
+    contenttype_id: number;
+    subcategory_vs_category: {
+      name: string;
+      price: number;
+      id: number;
+      status: number;
+    };
+    subcategory_vs_contenttype: {
+      id: number;
+      name: string;
+      status: number;
+    };
+  };
+}

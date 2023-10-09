@@ -6,6 +6,7 @@ import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
 import Header from "src/components/Header";
 import BranchFilter from "./filter";
+import EmptyList from "src/components/EmptyList";
 
 const column = [
   { name: "№", key: "" },
@@ -78,11 +79,7 @@ const Branches = () => {
               {/* )} */}
             </table>
             {false && <Pagination totalPages={2} />}
-            {false && (
-              <div className="w-100">
-                <p className="text-center w-100 ">Спосок пуст</p>
-              </div>
-            )}
+            {false && <EmptyList />}
           </div>
         </div>
       </Card>

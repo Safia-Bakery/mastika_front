@@ -41,8 +41,6 @@ const AddOrder = () => {
   };
 
   const onSubmit = () => {
-    console.log("first");
-    console.log(errors, "errors");
     console.log(getValues("address"), "adress");
   };
 

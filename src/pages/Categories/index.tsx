@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Card from "src/components/Card";
-import Pagination from "src/components/Pagination";
 import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
-import CategoriesFilter from "./filter";
 import Header from "src/components/Header";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
 import useCategories from "src/hooks/useCategories";
 import useQueryString from "src/hooks/useQueryString";
+import EmptyList from "src/components/EmptyList";
+import categorySyncMutation from "src/hooks/mutation/categorySync";
+import Loading from "src/components/Loader";
 
 const column = [
   { name: "№", key: "" },
@@ -23,6 +24,8 @@ const Categories = () => {
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const update = useQueryString("update");
+
+  const { mutate: syncIIco, isLoading } = categorySyncMutation();
 
   const { data: categories, refetch } = useCategories({});
 
@@ -48,9 +51,13 @@ const Categories = () => {
     // }
   };
 
+  const handleSync = () => syncIIco();
+
   useEffect(() => {
     if (update) refetch();
   }, [update]);
+
+  if (isLoading) return <Loading absolute />;
 
   return (
     <>
@@ -58,14 +65,25 @@ const Categories = () => {
 
       <Card className="mt-8">
         <Header title="Категории">
-          <Button
-            className="bg-yellow ml-2 w-24"
-            textClassName="text-black"
-            textSize={TextSize.L}
-            onClick={() => handleNavigate("add")}
-          >
-            Создать
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              className="bg-blue-400 ml-2 w-24"
+              textClassName="text-white"
+              textSize={TextSize.L}
+              mainIcon="/assets/icons/sync.svg"
+              onClick={handleSync}
+            >
+              Update
+            </Button>
+            <Button
+              className="bg-yellow ml-2 w-24"
+              textClassName="text-black"
+              textSize={TextSize.L}
+              onClick={() => handleNavigate("add")}
+            >
+              Создать
+            </Button>
+          </div>
         </Header>
         <div className="content">
           <div className="table-responsive grid-view">
@@ -103,11 +121,7 @@ const Categories = () => {
 
               {}
             </table>
-            {!categories?.length && (
-              <div className="w-100">
-                <p className="text-center w-100 ">Спосок пуст</p>
-              </div>
-            )}
+            {!categories?.length && <EmptyList />}
           </div>
         </div>
       </Card>
