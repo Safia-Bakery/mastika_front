@@ -35,6 +35,7 @@ const InputWrapper = forwardRef<
 
 interface InputFields {
   content: string;
+  edited: boolean;
 }
 
 interface FormData {
@@ -46,6 +47,7 @@ interface FormData {
 
 const initialValues: InputFields = {
   content: "",
+  edited: false,
 };
 
 const EditAddSubCategories = () => {
@@ -65,7 +67,12 @@ const EditAddSubCategories = () => {
 
   const subCategory = data?.[0];
 
-  const { data: selectVals, isLoading: selectLoading } = useSelectVal({
+  const {
+    data: selectVals,
+    isLoading: selectLoading,
+    refetch: selectRefetch,
+  } = useSelectVal({
+    subcat_id: Number(subid),
     enabled: !!subid && subCategory?.contenttype_id === ContentType.select,
   });
 
@@ -96,7 +103,8 @@ const EditAddSubCategories = () => {
       },
       {
         onSuccess: () => {
-          refetch();
+          // refetch();
+          selectRefetch();
           successToast("added");
         },
       }
@@ -104,7 +112,7 @@ const EditAddSubCategories = () => {
   };
 
   const renderContentType = useMemo(() => {
-    if (Number(watch("content_type")) === ContentType.select)
+    if (Number(watch("content_type")) === ContentType.select && !!subid)
       return (
         <>
           <div className="flex justify-end">
@@ -134,13 +142,15 @@ const EditAddSubCategories = () => {
               >
                 <img src="/assets/icons/delete.svg" alt="delete" />
               </Button>
-              <Button
-                // disabled={fields.length < 2}
-                className="bg-darkYellow w-9 mb-2"
-                onClick={() => hanldleSelectVals(index)}
-              >
-                save
-              </Button>
+              {!field.edited && (
+                <Button
+                  // disabled={fields.length < 2}
+                  className="bg-darkYellow w-9 mb-2"
+                  onClick={() => hanldleSelectVals(index)}
+                >
+                  save
+                </Button>
+              )}
             </div>
           ))}
         </>
@@ -160,6 +170,7 @@ const EditAddSubCategories = () => {
       {
         onSuccess: () => {
           navigate(`/categories/${id}/show${!subid ? "?update=1" : ""}`);
+          // if (subid) window.location.reload();
         },
         onError: (e: any) => errorToast(e.message),
       }
@@ -180,7 +191,7 @@ const EditAddSubCategories = () => {
     if (selectVals?.length) {
       reset({
         inputFields: selectVals.map((item) => {
-          return { content: item.content };
+          return { content: item.content, edited: !!item.id };
         }),
       });
     }
