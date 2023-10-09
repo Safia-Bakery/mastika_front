@@ -9,10 +9,13 @@ import MainSelect from "src/components/BaseInputs/MainSelect";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
+import Loading from "src/components/Loader";
+import selectValsMutation from "src/hooks/mutation/selectValues";
 import subCategoryMutation from "src/hooks/mutation/subCategory";
 import useContentType from "src/hooks/useContentType";
 import useSelectVal from "src/hooks/useSelectVal";
 import useSubCategories from "src/hooks/useSubCategories";
+import { errorToast, successToast } from "src/utils/toast";
 import { ContentType } from "src/utils/types";
 
 const InputWrapper = forwardRef<
@@ -50,6 +53,7 @@ const EditAddSubCategories = () => {
   const navigate = useNavigate();
   const { data: contentType, isLoading: contentLoading } = useContentType({});
   const { mutate } = subCategoryMutation();
+  const { mutate: mutateSelectVals } = selectValsMutation();
   const {
     data,
     refetch,
@@ -82,6 +86,23 @@ const EditAddSubCategories = () => {
     name: "inputFields",
   });
 
+  const hanldleSelectVals = (index: number) => {
+    const { inputFields } = getValues();
+    mutateSelectVals(
+      {
+        subcat_id: Number(subid),
+        content: inputFields[index].content,
+        // value: "",
+      },
+      {
+        onSuccess: () => {
+          refetch();
+          successToast("added");
+        },
+      }
+    );
+  };
+
   const renderContentType = useMemo(() => {
     if (Number(watch("content_type")) === ContentType.select)
       return (
@@ -113,6 +134,13 @@ const EditAddSubCategories = () => {
               >
                 <img src="/assets/icons/delete.svg" alt="delete" />
               </Button>
+              <Button
+                // disabled={fields.length < 2}
+                className="bg-darkYellow w-9 mb-2"
+                onClick={() => hanldleSelectVals(index)}
+              >
+                save
+              </Button>
             </div>
           ))}
         </>
@@ -133,6 +161,7 @@ const EditAddSubCategories = () => {
         onSuccess: () => {
           navigate(`/categories/${id}/show${!subid ? "?update=1" : ""}`);
         },
+        onError: (e: any) => errorToast(e.message),
       }
     );
   };
@@ -172,7 +201,7 @@ const EditAddSubCategories = () => {
     (subLoading && subid) ||
     contentLoading
   )
-    return <div>loading</div>;
+    return <Loading absolute />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

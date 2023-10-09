@@ -54,7 +54,7 @@ const Navigation = () => {
     if (!!error) dispatch(logoutHandler());
   }, [token, error]);
 
-  if (isLoading && token) return <Loading />;
+  if (isLoading && token) return <Loading absolute />;
 
   return (
     <div className="flex">

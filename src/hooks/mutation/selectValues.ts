@@ -4,7 +4,7 @@ import { errorToast } from "src/utils/toast";
 
 interface Body {
   content: string;
-  value: string;
+  value?: string;
   subcat_id: number;
 }
 
