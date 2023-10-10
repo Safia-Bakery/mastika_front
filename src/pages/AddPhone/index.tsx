@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
@@ -6,11 +6,18 @@ import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
 import Typography, { TextSize } from "src/components/Typography";
+import useUser from "src/hooks/useUser";
 
 const AddPhone = () => {
   const navigate = useNavigate();
   const [phone, $phone] = useState("");
   const [error, $error] = useState("");
+
+  const {
+    data: user,
+    refetch,
+    isSuccess,
+  } = useUser({ phone_number: phone, enabled: false });
 
   const { register, handleSubmit } = useForm();
 
@@ -19,9 +26,13 @@ const AddPhone = () => {
     if (phone.split("").length < 7) $error("input valid number");
     else {
       $error("");
-      navigate("/orders/add");
+      refetch();
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) navigate(`/orders/add?phone=${phone}`);
+  }, [isSuccess]);
 
   return (
     <>

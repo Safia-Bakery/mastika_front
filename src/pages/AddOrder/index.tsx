@@ -8,9 +8,11 @@ import BranchSelect from "src/components/BranchSelect";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
+import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
 import YandexMap from "src/components/YandexMap";
 import useQueryString from "src/hooks/useQueryString";
+import useUser from "src/hooks/useUser";
 import { OrderType } from "src/utils/types";
 
 const orderArray = [
@@ -27,6 +29,13 @@ const orderArray = [
 const AddOrder = () => {
   const [deliveryType, $deliveryType] = useState(OrderType.delivery);
   const address_name = useQueryString("address_name");
+  const phone = useQueryString("phone");
+
+  const {
+    data: user,
+    isSuccess,
+    isLoading: userLoading,
+  } = useUser({ phone_number: phone!, enabled: !!phone });
 
   const {
     register,
@@ -49,6 +58,14 @@ const AddOrder = () => {
     setValue("address", address_name);
   }, [address_name]);
 
+  useEffect(() => {
+    if (isSuccess)
+      reset({
+        name: user.username,
+        phone,
+      });
+  }, []);
+
   const renderAddressName = useMemo(() => {
     return (
       <MainInput
@@ -59,6 +76,8 @@ const AddOrder = () => {
       />
     );
   }, [address_name]);
+
+  if (userLoading) return <Loading absolute />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
