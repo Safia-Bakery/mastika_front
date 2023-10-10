@@ -51,7 +51,7 @@ const Navigation = () => {
   }, [permission, token]);
 
   useEffect(() => {
-    // if (!token) navigate("/login");
+    if (!token) navigate("/login");
     if (!!error) dispatch(logoutHandler());
   }, [token, error]);
 
