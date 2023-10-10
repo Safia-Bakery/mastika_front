@@ -46,7 +46,7 @@ const Roles = () => {
     }
   };
 
-  if (orderLoading) return <Loading />;
+  if (orderLoading) return <Loading absolute />;
 
   return (
     // <div className="flex flex-col justify-end mr-4">

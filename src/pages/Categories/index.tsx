@@ -25,9 +25,9 @@ const Categories = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const update = useQueryString("update");
 
-  const { mutate: syncIIco, isLoading } = categorySyncMutation();
+  const { mutate: syncIIco, isLoading: synLoading } = categorySyncMutation();
 
-  const { data: categories, refetch } = useCategories({});
+  const { data: categories, refetch, isLoading } = useCategories({});
 
   const handleNavigate = (url: string) => navigate(url);
 
@@ -57,7 +57,7 @@ const Categories = () => {
     if (update) refetch();
   }, [update]);
 
-  if (isLoading) return <Loading absolute />;
+  if (synLoading) return <Loading absolute />;
 
   return (
     <>
@@ -118,10 +118,10 @@ const Categories = () => {
                   ))}
                 </tbody>
               )}
-
-              {}
             </table>
-            {!categories?.length && <EmptyList />}
+
+            {isLoading && <Loading />}
+            {!categories?.length && !isLoading && <EmptyList />}
           </div>
         </div>
       </Card>

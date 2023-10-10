@@ -31,6 +31,7 @@ import useToken from "src/hooks/useToken";
 import Loading from "../Loader";
 import EditAddCategory from "src/pages/EditAddCategory";
 import ShowSubCategory from "src/pages/ShowSubCategory";
+import ShowRole from "src/pages/ShowRole";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -50,7 +51,7 @@ const Navigation = () => {
   }, [permission, token]);
 
   useEffect(() => {
-    if (!token) navigate("/login");
+    // if (!token) navigate("/login");
     if (!!error) dispatch(logoutHandler());
   }, [token, error]);
 
@@ -69,6 +70,8 @@ const Navigation = () => {
           <Route element={<Orders />} path={"/received-orders"} />
 
           <Route element={<Users />} path={"/clients"} />
+          <Route element={<EditAddUser />} path={"/clients/add"} />
+          <Route element={<EditAddUser />} path={"/clients/:clientid"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
           <Route element={<AddOrder />} path={"/orders/add"} />
           <Route element={<ShowOrder />} path={"/orders/:id"} />
@@ -95,7 +98,8 @@ const Navigation = () => {
 
           <Route element={<Roles />} path={"/roles"} />
           <Route element={<EditAddRole />} path={"/roles/add"} />
-          <Route element={<EditAddRole />} path={"/roles/:id"} />
+          <Route element={<EditAddRole />} path={"/roles/add"} />
+          <Route element={<ShowRole />} path={"/roles/:id"} />
 
           <Route element={<Branches />} path={"/branches"} />
           <Route element={<EditAddBranch />} path={"/branches/add"} />

@@ -136,7 +136,7 @@ const EditAddSubCategories = () => {
               />
 
               <Button
-                disabled={fields.length < 2}
+                disabled
                 className="bg-red-400 w-9 mb-2"
                 onClick={() => remove(index)}
               >
@@ -188,22 +188,19 @@ const EditAddSubCategories = () => {
   }, [subid, subCategory]);
 
   useEffect(() => {
-    if (selectVals?.length) {
-      reset({
-        inputFields: selectVals.map((item) => {
-          return { content: item.content, edited: !!item.id };
-        }),
-      });
-    }
-  }, [subid, selectVals]);
-
-  useEffect(() => {
-    if (subid) {
-      return () => {
-        window.location.reload();
-      };
-    }
-  }, []);
+    setTimeout(() => {
+      if (
+        selectVals?.length &&
+        subCategory?.contenttype_id === ContentType.select
+      ) {
+        reset({
+          inputFields: selectVals.map((item) => {
+            return { content: item.content, edited: !!item.id };
+          }),
+        });
+      }
+    }, 100);
+  }, [selectVals, subCategory?.category_id]);
 
   if (
     (selectLoading &&

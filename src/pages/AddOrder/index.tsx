@@ -34,6 +34,7 @@ const AddOrder = () => {
     handleSubmit,
     getValues,
     reset,
+    setValue,
   } = useForm();
 
   const handleDeliveryType = (id: number) => {
@@ -45,9 +46,7 @@ const AddOrder = () => {
   };
 
   useEffect(() => {
-    reset({
-      address: address_name,
-    });
+    setValue("address", address_name);
   }, [address_name]);
 
   const renderAddressName = useMemo(() => {

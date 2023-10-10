@@ -111,3 +111,11 @@ export interface SubCatSelectVals {
     };
   };
 }
+
+export interface UserTypes {
+  username: string | null;
+  status: number;
+  created_at: string;
+  id: number;
+  phone_number: string;
+}
