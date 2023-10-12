@@ -13,7 +13,7 @@ export const useUser = ({
     queryKey: ["get_create_user"],
     queryFn: () =>
       apiClient
-        .get("/user/get/create", { phone_number })
+        .get({ url: "/user/get/create", params: { phone_number } })
         .then(({ data: response }) => response as UserTypes),
     enabled,
   });

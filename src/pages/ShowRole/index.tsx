@@ -5,7 +5,7 @@ import { Fragment, useEffect, useState } from "react";
 import Loading from "src/components/Loader";
 import { successToast } from "src/utils/toast";
 import useRolePermission from "src/hooks/useRolePermission";
-import permissionMutation from "src/hooks/mutation/permissionMutation";
+import permissionMutation from "src/hooks/mutation/permission";
 import usePermissions from "src/hooks/usePermissions";
 
 const ShowRole = () => {

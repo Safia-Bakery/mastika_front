@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
@@ -11,18 +11,22 @@ import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
+import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
+import useCategories from "src/hooks/useCategories";
+import useSubCategories from "src/hooks/useSubCategories";
+import { PaymentTypes, SystemTypes } from "src/utils/types";
 
 const payments = [
-  { id: 1, name: "Payme" },
-  { id: 2, name: "Uzum" },
-  { id: 3, name: "click" },
+  { id: PaymentTypes.payme, name: "Payme" },
+  { id: PaymentTypes.cash, name: "Наличные" },
+  { id: PaymentTypes.click, name: "click" },
 ];
 
 const systems = [
-  { id: 1, name: "Отдел Мастики" },
-  { id: 2, name: "Телеграм бот" },
-  { id: 3, name: "Сайт" },
+  { id: SystemTypes.mastika, name: "Отдел Мастики" },
+  { id: SystemTypes.tg, name: "Телеграм бот" },
+  { id: SystemTypes.web, name: "Сайт" },
 ];
 const directions = [
   { id: 1, name: "Бенто" },
@@ -36,15 +40,122 @@ const directions = [
 const ShowOrder = () => {
   const { id } = useParams();
   const [prepay, $prepay] = useState(true);
+  const [activeCateg, $activeCateg] = useState<number>();
+
+  const contentTypes = (key: number) => {
+    console.log(key, "key");
+    switch (key) {
+      case 1: {
+        return 1;
+      }
+      case 2: {
+        return 2;
+      }
+
+      default:
+        break;
+    }
+  };
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
 
-  //   const handleDeliveryType = (id: number) => {
-  //     $deliveryType(id);
-  //   };
+  const { data: categories } = useCategories({});
+  const { data: subCategories, isLoading: subLoading } = useSubCategories({
+    category_id: activeCateg,
+    enabled: !!activeCateg,
+  });
+
+  const renderCategories = useMemo(() => {
+    if (subLoading && !!activeCateg) return <Loading />;
+    // if (subCategories)
+    return subCategories?.map((sub) => {
+      return <div>{contentTypes(sub.contenttype_id)}</div>;
+    });
+
+    // return (
+    //   <>
+    //     <div className="flex flex-[4] gap-4 mt-8">
+    //       <div className="flex flex-col flex-[3]">
+    //         <div className="flex flex-wrap gap-3">
+    //           <BaseInput
+    //             label="Сложность"
+    //             className="mb-2 flex flex-1 flex-col"
+    //           >
+    //             <MainSelect
+    //               values={systems}
+    //               inputStyle={InputStyle.primary}
+    //               register={register("system", {
+    //                 required: "Обязательное поле",
+    //               })}
+    //             />
+    //           </BaseInput>
+    //           <BaseInput
+    //             label="Этажность"
+    //             className="mb-2 flex flex-1 flex-col"
+    //           >
+    //             <MainSelect
+    //               values={systems}
+    //               inputStyle={InputStyle.primary}
+    //               register={register("system", {
+    //                 required: "Обязательное поле",
+    //               })}
+    //             />
+    //           </BaseInput>
+    //           <BaseInput
+    //             label="Тип начинки:"
+    //             className="mb-2 flex flex-1 flex-col"
+    //           >
+    //             <MainSelect
+    //               values={systems}
+    //               inputStyle={InputStyle.primary}
+    //               register={register("system", {
+    //                 required: "Обязательное поле",
+    //               })}
+    //             />
+    //           </BaseInput>
+    //         </div>
+    //         <BaseInput label="Палитра" className="mb-2 flex flex-1 flex-col">
+    //           <input
+    //             type="color"
+    //             className="w-[210px] flex bg-white text-white border-2 border-black"
+    //             defaultValue={"#FFFFFF"}
+    //             placeholder="Введите номер палитры"
+    //           />
+    //         </BaseInput>
+    //       </div>
+    //       <div className="flex flex-col flex-1">
+    //         <BaseInput
+    //           label="Тип начинки 1 этаж:"
+    //           className="mb-2 flex flex-1 flex-col"
+    //         >
+    //           <MainSelect
+    //             values={systems}
+    //             inputStyle={InputStyle.primary}
+    //             register={register("system", {
+    //               required: "Обязательное поле",
+    //             })}
+    //           />
+    //         </BaseInput>
+    //         <BaseInput
+    //           label="Тип начинки 2 этаж:"
+    //           className="mb-2 flex flex-1 flex-col"
+    //         >
+    //           <MainSelect
+    //             values={systems}
+    //             inputStyle={InputStyle.primary}
+    //             register={register("system", {
+    //               required: "Обязательное поле",
+    //             })}
+    //           />
+    //         </BaseInput>
+    //       </div>
+    //     </div>
+    //   </>
+    // );
+  }, [activeCateg, subLoading, subCategories]);
 
   const onSubmit = () => {
     console.log("first");
@@ -175,13 +286,18 @@ const ShowOrder = () => {
           <BaseInput
             className={"flex w-full gap-10 bg-mainGray py-1 px-2 rounded"}
           >
-            {directions.map((item, idx) => {
+            {/* <MainSelect values={categories} value={activeCateg} onChange={(e) => $activeCateg(Number(e.target.value))} /> */}
+            {categories?.map((item, idx) => {
               return (
-                <label key={idx} className="flex gap-2">
+                <label
+                  onClick={() => $activeCateg(item.id)}
+                  key={idx}
+                  className="flex gap-2"
+                >
                   <input
                     type="radio"
-                    value={item.id}
-                    name="radioGroup"
+                    // onChange={() => null}
+                    checked={item.id === activeCateg}
                     // checked={value === !!item.id}
                     // onChange={handleCheckboxChange}
                   />
@@ -191,83 +307,7 @@ const ShowOrder = () => {
             })}
           </BaseInput>
         </div>
-
-        <div className="flex flex-[4] gap-4 mt-8">
-          <div className="flex flex-col flex-[3]">
-            <div className="flex flex-wrap gap-3">
-              <BaseInput
-                label="Сложность"
-                className="mb-2 flex flex-1 flex-col"
-              >
-                <MainSelect
-                  values={systems}
-                  inputStyle={InputStyle.primary}
-                  register={register("system", {
-                    required: "Обязательное поле",
-                  })}
-                />
-              </BaseInput>
-              <BaseInput
-                label="Этажность"
-                className="mb-2 flex flex-1 flex-col"
-              >
-                <MainSelect
-                  values={systems}
-                  inputStyle={InputStyle.primary}
-                  register={register("system", {
-                    required: "Обязательное поле",
-                  })}
-                />
-              </BaseInput>
-              <BaseInput
-                label="Тип начинки:"
-                className="mb-2 flex flex-1 flex-col"
-              >
-                <MainSelect
-                  values={systems}
-                  inputStyle={InputStyle.primary}
-                  register={register("system", {
-                    required: "Обязательное поле",
-                  })}
-                />
-              </BaseInput>
-            </div>
-            <BaseInput label="Палитра" className="mb-2 flex flex-1 flex-col">
-              <input
-                type="color"
-                className="w-[210px] flex bg-white text-white border-2 border-black"
-                defaultValue={"#FFFFFF"}
-                placeholder="Введите номер палитры"
-              />
-            </BaseInput>
-          </div>
-          <div className="flex flex-col flex-1">
-            <BaseInput
-              label="Тип начинки 1 этаж:"
-              className="mb-2 flex flex-1 flex-col"
-            >
-              <MainSelect
-                values={systems}
-                inputStyle={InputStyle.primary}
-                register={register("system", {
-                  required: "Обязательное поле",
-                })}
-              />
-            </BaseInput>
-            <BaseInput
-              label="Тип начинки 2 этаж:"
-              className="mb-2 flex flex-1 flex-col"
-            >
-              <MainSelect
-                values={systems}
-                inputStyle={InputStyle.primary}
-                register={register("system", {
-                  required: "Обязательное поле",
-                })}
-              />
-            </BaseInput>
-          </div>
-        </div>
+        {renderCategories}
       </Card>
     </form>
   );

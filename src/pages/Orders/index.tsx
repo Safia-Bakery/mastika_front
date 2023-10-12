@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import Loading from "src/components/Loader";
 import Pagination from "src/components/Pagination";
 import EmptyList from "src/components/EmptyList";
+import useOrders from "src/hooks/useOrders";
 
 const column = [
   { name: "Все заявки", key: "" },
@@ -23,6 +24,8 @@ const column = [
 const Orders = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
+
+  const { data: orders } = useOrders({});
 
   const handleSort = (key: any) => {
     if (key === sortKey) {

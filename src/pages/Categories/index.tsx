@@ -111,7 +111,7 @@ const Categories = () => {
                       </td>
                       <td className="text-center" width={40}>
                         <TableViewBtn
-                          onClick={() => handleNavigate(`${category.id}`)}
+                          onClick={() => handleNavigate(`${category.id}/edit`)}
                         />
                       </td>
                     </tr>

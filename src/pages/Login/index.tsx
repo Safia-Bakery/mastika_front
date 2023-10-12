@@ -27,7 +27,7 @@ const Login = () => {
     getValues,
   } = useForm();
 
-  const { mutate } = loginMutation();
+  const { mutate, isLoading } = loginMutation();
 
   useEffect(() => {
     if (token) navigate("/home");
@@ -75,7 +75,23 @@ const Login = () => {
             )}
           </BaseInput>
 
-          <Button className="bg-yellow w-full" type="submit">
+          {/* <button
+            onClick={() =>
+              dispatch(
+                loginHandler(
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc1NDA4NTQsInN1YiI6InRlc3QifQ.MfExu598BBcw3fSC2uiYzeVwSiyrrPHcDl84s0Imgc0"
+                )
+              )
+            }
+          >
+            submit
+          </button> */}
+
+          <Button
+            isLoading={isLoading}
+            className="bg-yellow w-full"
+            type="submit"
+          >
             Логин
           </Button>
         </form>

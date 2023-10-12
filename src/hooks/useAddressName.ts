@@ -14,7 +14,7 @@ export const useAddressName = ({
     queryKey: ["address_name"],
     queryFn: () =>
       apiClient
-        .get(`/category`)
+        .get({ url: `/category` })
         .then(({ data: response }) => (response as any) || null),
     enabled,
     refetchOnMount: true,

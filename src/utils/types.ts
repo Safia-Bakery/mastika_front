@@ -119,3 +119,121 @@ export interface UserTypes {
   id: number;
   phone_number: string;
 }
+export interface SubCategoryChildTypes {
+  id: number;
+  selval_id: number;
+  content: string;
+  value: string;
+  childselval_vs_selval: {
+    id: number;
+    content: string;
+    value: null;
+    selval_vs_subcat: {
+      id: number;
+      name: string;
+      category_id: number;
+      contenttype_id: number;
+      subcategory_vs_category: {
+        name: string;
+        id: number;
+        status: number;
+      };
+      subcategory_vs_contenttype: {
+        id: number;
+        name: string;
+        status: number;
+      };
+    };
+  };
+}
+
+export interface OrdersType {
+  order: [
+    {
+      id: number;
+      order_vs_user: {
+        username: string;
+        status: number;
+        created_at: Date;
+        id: number;
+        phone_number: string;
+      };
+      phone_number: string;
+      order_vs_category: {
+        name: string;
+        id: number;
+        status: number;
+      };
+    }
+  ];
+  value: [
+    {
+      id: number;
+      content: string;
+      order_id: number;
+      subcat_id: number;
+      value_vs_subcat: {
+        id: number;
+        name: string;
+        category_id: number;
+        contenttype_id: number;
+        subcategory_vs_category: {
+          name: string;
+          id: number;
+          status: number;
+        };
+        subcategory_vs_contenttype: {
+          id: number;
+          name: string;
+          status: number;
+        };
+      };
+      select_id: number;
+      value_vs_select: {
+        id: number;
+        content: string;
+        value: string;
+        selval_vs_subcat: {
+          id: number;
+          name: string;
+          category_id: number;
+          contenttype_id: number;
+          subcategory_vs_category: {
+            name: string;
+            id: number;
+            status: number;
+          };
+          subcategory_vs_contenttype: {
+            id: number;
+            name: string;
+            status: number;
+          };
+        };
+      };
+      selchild_id: number;
+      value_vs_selchild: {
+        id: number;
+        content: string;
+        value: string;
+        status: number;
+      };
+    }
+  ];
+}
+
+export enum OrderStatus {
+  new = 0,
+  accepted = 1,
+  rejected = 2,
+}
+export enum PaymentTypes {
+  cash = 0,
+  payme = 1,
+  click = 2,
+}
+
+export enum SystemTypes {
+  mastika = 0,
+  tg = 1,
+  web = 2,
+}

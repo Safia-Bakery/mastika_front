@@ -31,6 +31,10 @@ const AddPhone = () => {
   };
 
   useEffect(() => {
+    $phone("998909520009");
+  }, []);
+
+  useEffect(() => {
     if (isSuccess) navigate(`/orders/add?phone=${phone}`);
   }, [isSuccess]);
 
@@ -44,8 +48,12 @@ const AddPhone = () => {
           className="flex gap-3 justify-center"
         >
           <Typography size={TextSize.XL}>Получатель</Typography>
-          <div className="">
-            <PhoneInput autoFocus onChange={(val: string) => $phone(val)} />
+          <div>
+            <PhoneInput
+              autoFocus
+              value={phone}
+              onChange={(val: string) => $phone(val)}
+            />
 
             {!!error && (
               <Typography size={TextSize.XS} className="text-red-500">

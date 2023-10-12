@@ -8,14 +8,10 @@ import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
-import useCategories from "src/hooks/useCategories";
 import useSubCategories from "src/hooks/useSubCategories";
 import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
-
-interface Props {
-  child?: boolean;
-}
+import useSubCategsChild from "src/hooks/useSubCategsChild";
 
 const column = [
   { name: "№", key: "" },
@@ -24,21 +20,23 @@ const column = [
   { name: "", key: "" },
 ];
 
-const ShowSubCategory: FC<Props> = ({ child }) => {
-  const { id } = useParams();
+const ShowSubCategChild: FC = () => {
+  const { id, subid } = useParams();
   const navigate = useNavigate();
   const update = useQueryString("update");
   const handleNavigate = (route: string) => () => navigate(route);
 
-  const { data: parent } = useCategories({ id: Number(id) });
+  const { data } = useSubCategsChild({ selval_id: Number(subid) });
+
+  const {
+    data: parent,
+    isLoading,
+    refetch,
+  } = useSubCategories({
+    id: Number(subid),
+  });
   const parentCategry = parent?.[0];
 
-  const { data, isLoading, refetch } = useSubCategories({
-    category_id: id,
-    // child,
-  });
-
-  const roles: any[] = [];
   const orderLoading = false;
 
   const [sortKey, setSortKey] = useState();
@@ -54,8 +52,8 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
   };
 
   const sortData = () => {
-    if (roles && sortKey) {
-      const sortedData = [...roles].sort((a, b) => {
+    if (data && sortKey) {
+      const sortedData = [...data].sort((a, b) => {
         if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
         if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
         else return 0;
@@ -79,7 +77,7 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
             className="bg-yellow"
             textClassName="text-black"
             textSize={TextSize.L}
-            onClick={handleNavigate(`/categories/${id}/addsub`)}
+            onClick={handleNavigate(`/categories/${id}/${subid}/add`)}
           >
             Создать
           </Button>
@@ -101,22 +99,22 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
                   {idx + 1}
                 </td>
                 <td>
-                  {/* <Link
+                  <Link
                     to={`/categories/${id}/${sub.id}/show`}
                     className="text-sky-600"
-                  > */}
-                  {sub.name}
-                  {/* </Link> */}
+                  >
+                    {sub?.name}
+                  </Link>
                 </td>
                 <td>
-                  {sub.subcategory_vs_category.status
+                  {sub?.subcategory_vs_category?.status
                     ? "Активный"
                     : "Не активный"}
                 </td>
                 <td width={40}>
                   <TableViewBtn
                     onClick={handleNavigate(
-                      `/categories/${id}/editsub/${sub.id}`
+                      `/categories/${id}/${subid}/${sub?.id}/edit`
                     )}
                   />
                 </td>
@@ -135,4 +133,4 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
   );
 };
 
-export default ShowSubCategory;
+export default ShowSubCategChild;

@@ -24,7 +24,6 @@ import EditAddBranch from "src/pages/EditAddBranch";
 import EditAddUser from "src/pages/EditAddUser";
 import FillingsComplexity from "src/pages/FillingsComplexity";
 import FillingInfo from "src/pages/FillingInfo";
-import EditAddComplexity from "src/pages/EditAddComplexity";
 import EditAddFillingInfo from "src/pages/EditAddFillingInfo";
 import EditAddFillings from "src/pages/EditAddFillings";
 import useToken from "src/hooks/useToken";
@@ -32,6 +31,8 @@ import Loading from "../Loader";
 import EditAddCategory from "src/pages/EditAddCategory";
 import ShowSubCategory from "src/pages/ShowSubCategory";
 import ShowRole from "src/pages/ShowRole";
+import ShowSubCategChild from "src/pages/ShowSubCategChild";
+import EditAddSubCategsChild from "src/pages/EditAddSubCategsChild";
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -77,20 +78,34 @@ const Navigation = () => {
           <Route element={<ShowOrder />} path={"/orders/:id"} />
           <Route element={<Comments />} path={"/comments"} />
 
-          <Route element={<Categories />} path={"/categories"} />
-          <Route element={<EditAddCategory />} path={"/categories/add"} />
-          <Route element={<EditAddCategory />} path={"/categories/:id"} />
+          <Route path={"/categories"}>
+            <Route element={<Categories />} index />
+            <Route element={<EditAddCategory />} path={"add"} />
+            <Route element={<EditAddCategory />} path={":id/edit"} />
 
-          {/* show subcategory */}
-          <Route element={<ShowSubCategory />} path={"/categories/:id/show"} />
-          <Route
-            element={<EditAddSubCategories />}
-            path={"/categories/:id/editsub/:subid"}
-          />
-          <Route
-            element={<EditAddSubCategories />}
-            path={"/categories/:id/addsub"}
-          />
+            {/* show subcategory */}
+            <Route element={<ShowSubCategory />} path={":id/show"} />
+            <Route
+              element={<EditAddSubCategories />}
+              path={":id/editsub/:subid"}
+            />
+            <Route element={<EditAddSubCategories />} path={":id/addsub"} />
+
+            {/* <Route
+              element={<ShowSubCategory child />}
+              path={":id/:subid/show"}
+            /> */}
+            <Route element={<ShowSubCategChild />} path={":id/:subid/show"} />
+            <Route
+              element={<EditAddSubCategsChild />}
+              path={":id/:subid/add"}
+            />
+            <Route
+              element={<EditAddSubCategsChild />}
+              path={":id/:subid/:child/edit"}
+            />
+            {/* <Route element={<ShowSubCategChild />} path={":id/:subid/show"} /> */}
+          </Route>
 
           {/*           
           <Route element={<EditAddSubCategories />} path={"/categories/add"} />

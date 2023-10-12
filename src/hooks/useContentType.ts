@@ -6,7 +6,7 @@ export const useContentType = ({ enabled = true }: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["content_types"],
     queryFn: () =>
-      apiClient.get("/v1/content/types").then(({ data: response }) => {
+      apiClient.get({ url: "/v1/content/types" }).then(({ data: response }) => {
         return response as ContentTypes[];
       }),
     enabled,

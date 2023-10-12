@@ -21,7 +21,10 @@ export const useSelectVal = ({
     queryKey: ["select_values", content, id, status, value, subcat_id],
     queryFn: () =>
       apiClient
-        .get("/v1/sel/value", { content, id, status, value, subcat_id })
+        .get({
+          url: "/v1/sel/value",
+          params: { content, id, status, value, subcat_id },
+        })
         .then(({ data: response }) => {
           return response as SubCatSelectVals[];
         }),

@@ -28,11 +28,11 @@ const Sidebar = () => {
         url: "/received-orders",
         screen: MainPermissions.fillings,
       },
-      {
-        name: "Палитры",
-        url: "/received-orders2",
-        screen: MainPermissions.fillings,
-      },
+      // {
+      //   name: "Палитры",
+      //   url: "/received-orders2",
+      //   screen: MainPermissions.fillings,
+      // },
       {
         name: "Товары",
         url: "/received-orders4",

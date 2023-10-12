@@ -16,12 +16,9 @@ import subCategoryMutation from "src/hooks/mutation/subCategory";
 import useContentType from "src/hooks/useContentType";
 import useSelectVal from "src/hooks/useSelectVal";
 import useSubCategories from "src/hooks/useSubCategories";
+import useSubCategsChild from "src/hooks/useSubCategsChild";
 import { errorToast, successToast } from "src/utils/toast";
 import { ContentType } from "src/utils/types";
-
-interface Props {
-  child?: boolean;
-}
 
 const InputWrapper = forwardRef<
   HTMLInputElement,
@@ -41,7 +38,6 @@ const InputWrapper = forwardRef<
 interface InputFields {
   content: string;
   edited: boolean;
-  ids?: number;
 }
 
 interface FormData {
@@ -56,31 +52,41 @@ const initialValues: InputFields = {
   edited: false,
 };
 
-const EditAddSubCategories: FC = () => {
-  const { id, subid } = useParams();
+const EditAddSubCategsChild: FC = () => {
+  const { id, subid, child } = useParams();
   const navigate = useNavigate();
   const { data: contentType, isLoading: contentLoading } = useContentType({});
   const { mutate: subMutate } = subCategoryMutation();
-  const { mutate: mutateSelectVals } = selectValsMutation();
+  const { mutate: mutateSelectVals } = childSubCategoryMutation();
+  // const { mutate: mutateSelectVals } = selectValsMutation();
+
   const {
     data,
     refetch,
     isLoading: subLoading,
-  } = useSubCategories({
-    enabled: false,
-    id: Number(subid),
+  } = useSubCategsChild({
+    enabled: !!child,
+    // selval_id: Number(7),
+    selval_id: Number(child),
   });
 
-  const subCategory = data?.[0];
+  const selectChild = data?.[0];
+
+  // const { data: parent, isLoading } = useSubCategsChild({
+  //   id: Number(child),
+  //   selval_id: Number(subid),
+  // });
+  // const categry = data?.[0];
 
   const {
-    data: selectVals,
+    data: parentSelect,
     isLoading: selectLoading,
     refetch: selectRefetch,
   } = useSelectVal({
-    subcat_id: Number(subid),
-    enabled: !!subid && subCategory?.contenttype_id === ContentType.select,
+    id: Number(child),
+    // enabled: !!child && selectChild?.contenttype_id === ContentType.select,
   });
+  const parent = parentSelect?.[0];
 
   const {
     register,
@@ -100,15 +106,18 @@ const EditAddSubCategories: FC = () => {
   });
 
   const hanldleSelectVals = (index: number) => {
-    const { inputFields } = getValues();
+    const { inputFields, status } = getValues();
     mutateSelectVals(
       {
-        subcat_id: Number(subid),
+        // id: Number(child),
         content: inputFields[index].content,
-        // id: Number(subid),
+        status: Number(status),
+        value: "ss",
+        selval_id: Number(child),
       },
       {
         onSuccess: () => {
+          // refetch();
           selectRefetch();
           successToast("added");
         },
@@ -117,7 +126,7 @@ const EditAddSubCategories: FC = () => {
   };
 
   const renderContentType = useMemo(() => {
-    if (Number(watch("content_type")) === ContentType.select && !!subid)
+    if (Number(watch("content_type")) === ContentType.select && !!child)
       return (
         <>
           <div className="flex justify-end">
@@ -147,15 +156,6 @@ const EditAddSubCategories: FC = () => {
               >
                 <img src="/assets/icons/delete.svg" alt="delete" />
               </Button>
-              <Button
-                // disabled={fields.length < 2}
-                className="bg-primary w-9 mb-2 text-white"
-                onClick={() =>
-                  navigate(`/categories/${id}/${subid}/${field?.ids}/edit`)
-                }
-              >
-                edit
-              </Button>
               {!field.edited && (
                 <Button
                   // disabled={fields.length < 2}
@@ -169,21 +169,24 @@ const EditAddSubCategories: FC = () => {
           ))}
         </>
       );
-  }, [watch("content_type"), fields, selectVals, watch("inputFields")]);
+  }, [watch("content_type"), fields, selectChild, watch("inputFields")]);
 
   const onSubmit = () => {
     const { status, name, content_type } = getValues();
-    subMutate(
+
+    // status, id, content, value, selval_id
+    mutateSelectVals(
       {
-        name,
-        category_id: Number(id),
-        status: String(+status),
-        contenttype_id: +content_type,
-        ...(!!id && { id: Number(subid) }),
+        content: name,
+        selval_id: Number(subid),
+        status: Number(status),
+        value: name,
+        ...(!!id && { id: Number(child) }),
       },
       {
         onSuccess: () => {
-          navigate(`/categories/${id}/show${!!subid ? "?update=1" : ""}`);
+          navigate(`/categories/${id}/${subid}/show`);
+          // if (subid) window.location.reload();
         },
         onError: (e: any) => errorToast(e.message),
       }
@@ -191,47 +194,34 @@ const EditAddSubCategories: FC = () => {
   };
 
   useEffect(() => {
-    if (subid) refetch();
-  }, [subid]);
-
-  useEffect(() => {
-    if (subCategory) {
+    if (child && parent) {
       reset({
-        name: subCategory.name,
-        content_type: subCategory.contenttype_id,
-        status: !!subCategory.subcategory_vs_contenttype?.status,
+        name: parent.content,
+        content_type: 4,
+        status: false,
       });
     }
-  }, [subCategory]);
+  }, [child, parent]);
 
   useEffect(() => {
     setTimeout(() => {
-      if (
-        selectVals?.length &&
-        subCategory?.contenttype_id === ContentType.select
-      ) {
+      if (data?.length) {
         reset({
-          inputFields: selectVals.map((item) => {
-            return { content: item.content, edited: !!item.id, ids: item.id };
+          inputFields: data.map((item) => {
+            return { content: item.content, edited: !!item.id };
           }),
         });
       }
     }, 100);
-  }, [selectVals, subCategory?.category_id]);
+  }, [data]);
 
-  if (
-    (selectLoading &&
-      !!subid &&
-      subCategory?.contenttype_id === ContentType.select) ||
-    (subLoading && subid) ||
-    contentLoading
-  )
+  if ((selectLoading && !!child) || (subLoading && child) || contentLoading)
     return <Loading absolute />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
-        <Header title={subid ? "Изменить" : "Добавить"}>
+        <Header title={child ? `Изменить ${parent?.content}` : "Добавить"}>
           <Button className="bg-primary" textClassName="text-white">
             Назад
           </Button>
@@ -255,17 +245,6 @@ const EditAddSubCategories: FC = () => {
           <BaseInput label="СТАТУС">
             <MainCheckBox label="Активный" register={register("status")} />
           </BaseInput>
-          {/* <MainCheckBox
-            label="Срочно"
-            className="mt-4"
-            register={register("status")}
-          /> */}
-          {/* <BaseInput label="ОПИСАНИЕ">
-            <MainTextArea
-              placeholder={"Комментарии"}
-              register={register("comments", { required: "Обязательное поле" })}
-            />
-          </BaseInput> */}
         </div>
         <div className="flex flex-1 justify-end">
           <Button className="bg-darkYellow mt-4 mr-8" type="submit">
@@ -277,4 +256,4 @@ const EditAddSubCategories: FC = () => {
   );
 };
 
-export default EditAddSubCategories;
+export default EditAddSubCategsChild;

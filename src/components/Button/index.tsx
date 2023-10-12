@@ -47,7 +47,7 @@ const Button: FC<Props> = ({
     <button
       onClick={onClick}
       type={type}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       className={clx(
         className,
         "w-52",

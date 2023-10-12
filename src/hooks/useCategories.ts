@@ -19,7 +19,7 @@ export const useCategories = ({
     queryKey: ["categories", name, id, status, price],
     queryFn: () =>
       apiClient
-        .get("/v1/category", { name, id, status, price })
+        .get({ url: "/v1/category", params: { name, id, status, price } })
         .then(({ data: response }) => {
           return response as CategoryTypes[];
         }),

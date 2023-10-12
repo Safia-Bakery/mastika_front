@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
@@ -10,7 +10,7 @@ import Typography, { TextSize } from "src/components/Typography";
 import categoryMutation from "src/hooks/mutation/category";
 import useCategories from "src/hooks/useCategories";
 
-const EditAddCategory = () => {
+const EditAddCategory: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const {
@@ -25,7 +25,7 @@ const EditAddCategory = () => {
     id: Number(id),
     enabled: !!id,
   });
-  const { mutate } = categoryMutation();
+  const { mutate, isLoading: mutateLoading } = categoryMutation();
 
   const onSubmit = () => {
     const { name, status } = getValues();
@@ -37,6 +37,7 @@ const EditAddCategory = () => {
       },
       {
         onSuccess: () => {
+          refetch();
           navigate("/categories?update=1");
         },
       }
@@ -51,6 +52,7 @@ const EditAddCategory = () => {
       });
     }
   }, [id, data]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Typography size={TextSize.XXL} className="flex my-4 ml-1">
@@ -69,7 +71,11 @@ const EditAddCategory = () => {
           </BaseInput>
         </div>
         <div className="flex flex-1 justify-end">
-          <Button className="bg-darkYellow mt-4 w-64" type="submit">
+          <Button
+            className="bg-darkYellow mt-4 w-64"
+            isLoading={mutateLoading}
+            type="submit"
+          >
             Создать
           </Button>
         </div>

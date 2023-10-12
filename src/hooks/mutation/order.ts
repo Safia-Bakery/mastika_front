@@ -1,0 +1,28 @@
+import { useMutation } from "@tanstack/react-query";
+import apiClient from "src/main";
+
+interface Body {
+  order_user?: string;
+  phone_number?: string;
+  extra_number?: string;
+  location?: string;
+  payment_type?: number;
+  firstly_payment?: number;
+  is_delivery?: number;
+  comment?: string;
+  deliver_date?: Date | string;
+  address?: string;
+  apartment?: string;
+  home?: string;
+  near_to?: string;
+  department_id?: "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+  category_id?: number;
+}
+
+const orderMutation = () => {
+  return useMutation(["order"], async (body: Body) => {
+    const { data } = await apiClient.post({ url: "/v1/orders", body });
+    return data;
+  });
+};
+export default orderMutation;

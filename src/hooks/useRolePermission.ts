@@ -12,7 +12,7 @@ export const useRolePermission = ({
     queryKey: ["role_permissions", id],
     queryFn: () =>
       apiClient
-        .get(`/user/group/permissions/${id}`)
+        .get({ url: `/user/group/permissions/${id}` })
         .then(({ data: response }) => (response as any) || null),
     enabled,
     refetchOnMount: true,
