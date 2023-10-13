@@ -61,7 +61,7 @@ const UploadComponent: FC<FileUploaderProps> = ({
         onChange={handleFileUpload}
       />
 
-      {!!fileList?.length && (
+      {/* {!!fileList?.length && (
         <table className="table table-hover mt-3">
           <thead>
             <tr>
@@ -88,7 +88,7 @@ const UploadComponent: FC<FileUploaderProps> = ({
             ))}
           </tbody>
         </table>
-      )}
+      )} */}
     </div>
   );
 };

@@ -18,9 +18,8 @@ export const useOrders = ({
     queryFn: () =>
       apiClient
         .get({ url: "/v1/orders", params: { page, size, id } })
-        .then(({ data: response }) => (response as OrdersType) || null),
+        .then(({ data: response }) => (response as OrdersType[]) || null),
     enabled,
-    // refetchOnMount: true,
   });
 };
 export default useOrders;

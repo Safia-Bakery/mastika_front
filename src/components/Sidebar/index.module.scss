@@ -18,10 +18,11 @@
   min-width: 260px;
   z-index: 200;
   transition: 0.3s all ease-in-out;
-  position: relative;
+  position: fixed;
+  left: 0;
   top: 0;
   bottom: 0;
-  max-height: 100lvh;
+  min-height: 100lvh;
   overflow-y: scroll;
   padding-right: 10px;
   height: 100%;

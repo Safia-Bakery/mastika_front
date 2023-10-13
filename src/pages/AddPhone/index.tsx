@@ -42,7 +42,7 @@ const AddPhone = () => {
     <>
       <Header title="Создать заказ" />
 
-      <Card className="p-24">
+      <Card className="p-24 h-[80vh]">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex gap-3 justify-center"

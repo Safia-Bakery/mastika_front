@@ -60,13 +60,13 @@ const Orders = () => {
 
           <tbody className={styles.tableBody}>
             {/* {(sortData?.length ? sortData : branches.items)?.map( */}
-            {[...Array(4)].map((branch, idx) => (
+            {orders?.map((order, idx) => (
               <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
                 <td className="text-start">
-                  <Link to={idx.toString()}>№ {idx + 1}</Link>
+                  <Link to={`${order.id}`}>№ {order.id}</Link>
                   <div className="flex gap-2 mt-2">
                     <div className="flex items-center">
-                      <img src="/assets/icons/tg.svg" alt="" />
+                      <img src="/assets/icons/tg.svg" alt="order-image" />
                       <Typography className="ml-1" size={TextSize.XS}>
                         Telegram Bot
                       </Typography>
@@ -74,22 +74,32 @@ const Orders = () => {
                     <div className="flex items-center">
                       <img src="/assets/icons/users.svg" alt="users" />
                       <Typography className="ml-1" size={TextSize.XS}>
-                        Махмуд Салимов
+                        {order?.order_user}
                       </Typography>
                     </div>
                   </div>
                 </td>
                 <td>Бенто</td>
-                <td>{dayjs(new Date()).format("DD.MM.YYYY HH:mm")}</td>
+                <td>{dayjs(order?.created_at).format("DD.MM.YYYY HH:mm")}</td>
                 <td>
-                  <img
-                    className="m-auto"
-                    src="/assets/icons/car.svg"
-                    alt="type-img"
-                  />
+                  {!!order.is_delivery ? (
+                    <img
+                      className="m-auto"
+                      src="/assets/icons/car.svg"
+                      alt="type-img"
+                    />
+                  ) : (
+                    <img
+                      className="m-auto"
+                      src="/assets/icons/marker.svg"
+                      alt="type-img"
+                    />
+                  )}
                 </td>
-                <td>Фабрика</td>
-                <td>{!"branch.status" ? "Не активный" : "Активный"}</td>
+                <td>{order.order_br.name}</td>
+                <td>
+                  {!order?.order_vs_user?.status ? "Не активный" : "Активный"}
+                </td>
               </tr>
             ))}
             {false && (

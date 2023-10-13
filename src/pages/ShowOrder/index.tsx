@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import AddProduct from "src/components/AddProducts";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
@@ -10,12 +11,19 @@ import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
+import UploadComponent, { FileItem } from "src/components/FileUpload";
 import Header from "src/components/Header";
 import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
 import useCategories from "src/hooks/useCategories";
-import useSubCategories from "src/hooks/useSubCategories";
-import { PaymentTypes, SystemTypes } from "src/utils/types";
+import useCategoriesFull from "src/hooks/useCategoryFull";
+import useOrders from "src/hooks/useOrders";
+import {
+  ContentType,
+  PaymentTypes,
+  SubCategType,
+  SystemTypes,
+} from "src/utils/types";
 
 const payments = [
   { id: PaymentTypes.payme, name: "Payme" },
@@ -28,28 +36,57 @@ const systems = [
   { id: SystemTypes.tg, name: "Телеграм бот" },
   { id: SystemTypes.web, name: "Сайт" },
 ];
-const directions = [
-  { id: 1, name: "Бенто" },
-  { id: 2, name: "Кремовый" },
-  { id: 3, name: "Мастика" },
-  { id: 3, name: "Меренговый" },
-  { id: 3, name: "Песочный" },
-  { id: 3, name: "Кенди-бар" },
-];
 
 const ShowOrder = () => {
   const { id } = useParams();
   const [prepay, $prepay] = useState(true);
   const [activeCateg, $activeCateg] = useState<number>();
+  const [files, $files] = useState<FormData>();
+  const [images, $images] = useState<FileItem[]>();
 
-  const contentTypes = (key: number) => {
-    console.log(key, "key");
-    switch (key) {
-      case 1: {
-        return 1;
+  const { data } = useOrders({ id: Number(id), enabled: !!id });
+  const order = data?.[0];
+
+  const handleFilesSelected = (data: FileItem[]) => {
+    const formData = new FormData();
+    data.forEach((item) => {
+      formData.append("files", item.file, item.file.name);
+    });
+    $files(formData);
+    $images(data);
+  };
+
+  console.log(files, "files");
+
+  const contentTypes = (subCateg: SubCategType) => {
+    switch (subCateg.contenttype_id) {
+      case ContentType.number: {
+        return (
+          <MainInput type="number" register={register(`${subCateg.id}`)} />
+        );
       }
-      case 2: {
-        return 2;
+      case ContentType.select: {
+        return (
+          <MainSelect
+            inputStyle={InputStyle.primary}
+            register={register(`${subCateg.id}`)}
+          >
+            {subCateg.subcat_vs_selval.map((val) => (
+              <option key={val.id} value={val.id}>
+                {val.content}
+              </option>
+            ))}
+          </MainSelect>
+        );
+      }
+
+      case ContentType.image: {
+        return <UploadComponent onFilesSelected={handleFilesSelected} />;
+      }
+      case ContentType.string: {
+        return (
+          <MainInput type="string" register={register(`${subCateg.id}`)} />
+        );
       }
 
       default:
@@ -60,106 +97,39 @@ const ShowOrder = () => {
     register,
     formState: { errors },
     handleSubmit,
+    getValues,
   } = useForm();
 
   const { data: categories } = useCategories({});
-  const { data: subCategories, isLoading: subLoading } = useSubCategories({
-    category_id: activeCateg,
+  const { data: subCategories, isLoading: subLoading } = useCategoriesFull({
+    id: activeCateg,
     enabled: !!activeCateg,
   });
 
   const renderCategories = useMemo(() => {
     if (subLoading && !!activeCateg) return <Loading />;
-    // if (subCategories)
-    return subCategories?.map((sub) => {
-      return <div>{contentTypes(sub.contenttype_id)}</div>;
-    });
-
-    // return (
-    //   <>
-    //     <div className="flex flex-[4] gap-4 mt-8">
-    //       <div className="flex flex-col flex-[3]">
-    //         <div className="flex flex-wrap gap-3">
-    //           <BaseInput
-    //             label="Сложность"
-    //             className="mb-2 flex flex-1 flex-col"
-    //           >
-    //             <MainSelect
-    //               values={systems}
-    //               inputStyle={InputStyle.primary}
-    //               register={register("system", {
-    //                 required: "Обязательное поле",
-    //               })}
-    //             />
-    //           </BaseInput>
-    //           <BaseInput
-    //             label="Этажность"
-    //             className="mb-2 flex flex-1 flex-col"
-    //           >
-    //             <MainSelect
-    //               values={systems}
-    //               inputStyle={InputStyle.primary}
-    //               register={register("system", {
-    //                 required: "Обязательное поле",
-    //               })}
-    //             />
-    //           </BaseInput>
-    //           <BaseInput
-    //             label="Тип начинки:"
-    //             className="mb-2 flex flex-1 flex-col"
-    //           >
-    //             <MainSelect
-    //               values={systems}
-    //               inputStyle={InputStyle.primary}
-    //               register={register("system", {
-    //                 required: "Обязательное поле",
-    //               })}
-    //             />
-    //           </BaseInput>
-    //         </div>
-    //         <BaseInput label="Палитра" className="mb-2 flex flex-1 flex-col">
-    //           <input
-    //             type="color"
-    //             className="w-[210px] flex bg-white text-white border-2 border-black"
-    //             defaultValue={"#FFFFFF"}
-    //             placeholder="Введите номер палитры"
-    //           />
-    //         </BaseInput>
-    //       </div>
-    //       <div className="flex flex-col flex-1">
-    //         <BaseInput
-    //           label="Тип начинки 1 этаж:"
-    //           className="mb-2 flex flex-1 flex-col"
-    //         >
-    //           <MainSelect
-    //             values={systems}
-    //             inputStyle={InputStyle.primary}
-    //             register={register("system", {
-    //               required: "Обязательное поле",
-    //             })}
-    //           />
-    //         </BaseInput>
-    //         <BaseInput
-    //           label="Тип начинки 2 этаж:"
-    //           className="mb-2 flex flex-1 flex-col"
-    //         >
-    //           <MainSelect
-    //             values={systems}
-    //             inputStyle={InputStyle.primary}
-    //             register={register("system", {
-    //               required: "Обязательное поле",
-    //             })}
-    //           />
-    //         </BaseInput>
-    //       </div>
-    //     </div>
-    //   </>
-    // );
+    return subCategories?.category_vs_subcategory?.map((sub) => (
+      <BaseInput
+        key={sub.id}
+        label={sub.name}
+        className="mb-2 flex flex-col w-60"
+      >
+        {contentTypes(sub)}
+      </BaseInput>
+    ));
   }, [activeCateg, subLoading, subCategories]);
 
   const onSubmit = () => {
+    console.log(
+      subCategories?.category_vs_subcategory.reduce((acc: any, item) => {
+        acc[item.id] = getValues(`${item.id}`);
+        return acc;
+      }, {}),
+      "ids"
+    );
     console.log("first");
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header />
@@ -173,21 +143,19 @@ const ShowOrder = () => {
             <BaseInput label="Тип заказа" className="my-2">
               <MainInput
                 placeholder={"Введите имя"}
-                register={register("oder_type", {
-                  required: "Обязательное поле",
-                })}
+                register={register("oder_type")}
               />
             </BaseInput>
             <BaseInput label="Клиент" className="mb-2">
               <MainInput
                 placeholder={"Введите номер"}
-                register={register("client", { required: "Обязательное поле" })}
+                register={register("client")}
               />
             </BaseInput>
             <BaseInput label="Номер телефона" className="mb-2">
               <PhoneInput
                 placeholder={"Введите номер"}
-                register={register("phone", { required: "Обязательное поле" })}
+                register={register("phone")}
               />
             </BaseInput>
             <BaseInput label="Доп. Номер" className="mb-2">
@@ -197,25 +165,13 @@ const ShowOrder = () => {
               />
             </BaseInput>
             <BaseInput label="Дата оформления" className="mb-2">
-              <MainInput
-                register={register("issue_date", {
-                  required: "Обязательное поле",
-                })}
-              />
+              <MainInput register={register("issue_date")} />
             </BaseInput>
             <BaseInput label="Дата поставки" className="mb-2">
-              <MainInput
-                register={register("delivery_date", {
-                  required: "Обязательное поле",
-                })}
-              />
+              <MainInput register={register("delivery_date")} />
             </BaseInput>
             <BaseInput label="Адрес доставки" className="mb-2">
-              <MainInput
-                register={register("address", {
-                  required: "Обязательное поле",
-                })}
-              />
+              <MainInput register={register("address")} />
             </BaseInput>
           </div>
           <div className="p-4 ml-6 flex flex-1 flex-col ">
@@ -234,9 +190,7 @@ const ShowOrder = () => {
               <MainSelect
                 values={payments}
                 inputStyle={InputStyle.primary}
-                register={register("payment_type", {
-                  required: "Обязательное поле",
-                })}
+                register={register("payment_type")}
               />
             </BaseInput>
 
@@ -244,32 +198,18 @@ const ShowOrder = () => {
               <MainSelect
                 values={systems}
                 inputStyle={InputStyle.primary}
-                register={register("system", {
-                  required: "Обязательное поле",
-                })}
+                register={register("system")}
               />
             </BaseInput>
             <BaseInput label="Оператор" className="mb-2">
-              <MainInput
-                register={register("operator", {
-                  required: "Обязательное поле",
-                })}
-              />
+              <MainInput register={register("operator")} />
             </BaseInput>
             <BaseInput label="Дата изменения" className="mb-2">
-              <MainDatePicker
-                register={register("operator", {
-                  required: "Обязательное поле",
-                })}
-              />
+              <MainDatePicker register={register("operator")} />
             </BaseInput>
 
             <BaseInput label="Комментарии" className="mb-2">
-              <MainTextArea
-                register={register("comment", {
-                  required: "Обязательное поле",
-                })}
-              />
+              <MainTextArea register={register("comment")} />
             </BaseInput>
           </div>
         </div>
@@ -282,32 +222,52 @@ const ShowOrder = () => {
         <div className="border-b w-full mt-4" />
         <div className="mt-4">
           <Typography size={TextSize.XXL}>Направление / Оформление</Typography>
-
-          <BaseInput
-            className={"flex w-full gap-10 bg-mainGray py-1 px-2 rounded"}
-          >
-            {/* <MainSelect values={categories} value={activeCateg} onChange={(e) => $activeCateg(Number(e.target.value))} /> */}
-            {categories?.map((item, idx) => {
-              return (
-                <label
-                  onClick={() => $activeCateg(item.id)}
-                  key={idx}
-                  className="flex gap-2"
-                >
-                  <input
-                    type="radio"
-                    // onChange={() => null}
-                    checked={item.id === activeCateg}
-                    // checked={value === !!item.id}
-                    // onChange={handleCheckboxChange}
-                  />
-                  {item.name}
-                </label>
-              );
-            })}
-          </BaseInput>
+          <div className="w-full mt-4">
+            <BaseInput
+              className={
+                "flex w-full gap-10 bg-mainGray p-3 rounded-md flex-1 overflow-x-auto flex-wrap "
+              }
+            >
+              {categories?.map((item, idx) => {
+                return (
+                  <label
+                    onClick={() => $activeCateg(item.id)}
+                    key={idx}
+                    className="flex gap-2"
+                  >
+                    <input
+                      type="radio"
+                      onChange={() => null}
+                      checked={item.id === activeCateg}
+                    />
+                    {item.name}
+                  </label>
+                );
+              })}
+            </BaseInput>
+          </div>
         </div>
-        {renderCategories}
+        <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
+          {renderCategories}
+        </div>
+        <div className="flex gap-4 mt-4">
+          {!!images?.length &&
+            images.map((img) => {
+              if (img.file.type.startsWith("image/"))
+                return (
+                  <img
+                    key={img.id}
+                    src={URL.createObjectURL(img.file)}
+                    height={100}
+                    width={100}
+                  />
+                );
+            })}
+        </div>
+
+        <div className="border-b w-full mt-4" />
+
+        <AddProduct />
       </Card>
     </form>
   );

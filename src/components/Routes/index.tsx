@@ -59,7 +59,7 @@ const Navigation = () => {
   if (isLoading && token) return <Loading absolute />;
 
   return (
-    <div className="flex">
+    <div className="flex max-w-[100vw] w-full pl-[270px]">
       {renderSidebar}
       <div className="flex flex-col flex-1">
         <Routes>

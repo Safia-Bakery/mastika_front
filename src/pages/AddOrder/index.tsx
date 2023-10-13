@@ -125,16 +125,16 @@ const AddOrder = () => {
           />
         </BaseInput>
 
-        <BaseInput label="Адрес" className="mb-2">
-          <MainInput
-            value={address_name || ""}
-            register={register("address", {
-              required: "Обязательное поле",
-            })}
-          />
-        </BaseInput>
         {deliveryType === OrderType.delivery ? (
           <>
+            <BaseInput label="Адрес" className="mb-2">
+              <MainInput
+                value={address_name || ""}
+                register={register("address", {
+                  required: "Обязательное поле",
+                })}
+              />
+            </BaseInput>
             <div className="flex gap-3">
               <BaseInput label="Дом" className="mb-2 flex-1">
                 <MainInput
@@ -160,10 +160,6 @@ const AddOrder = () => {
         ) : (
           <BranchSelect enabled label="Выберите филиал" />
         )}
-
-        {/* {deliveryType === OrderType.pickup && (
-          <BranchSelect enabled label="Выберите филиал" />
-        )} */}
       </>
     );
   }, [deliveryType, address_name]);
@@ -171,11 +167,12 @@ const AddOrder = () => {
   const renderMap = useMemo(() => {
     if (deliveryType === OrderType.delivery)
       return (
-        <div className="h-[400px] z-10  flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
+        <div className="h-[550px] z-10  flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
           <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
           <YandexMap />
         </div>
       );
+    else return null;
   }, [deliveryType]);
 
   useEffect(() => {

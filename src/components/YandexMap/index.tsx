@@ -24,8 +24,6 @@ const YandexMap = () => {
   ]);
   const [address, setAddress] = useState<string | null>(null);
 
-  console.log(address, "address");
-
   // Your Yandex Geocoding API key
   const apiKey = "51697f82-c9b3-463e-8305-c7ed2bfe3ad3";
 
@@ -90,7 +88,7 @@ const YandexMap = () => {
             zoom: 12,
           }}
           width={"100%"}
-          className="h-80"
+          className="h-[480px]"
           height={"100%"}
           onClick={handleMapClick}
           modules={["control.SearchControl"]}

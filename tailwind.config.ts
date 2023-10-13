@@ -10,6 +10,7 @@ module.exports = {
         darkYellow: "#FFDC4C",
         yellow: "#FFE15B",
         primary: "#3399ee",
+        darkBlue: "#5266F7",
       },
     },
   },
