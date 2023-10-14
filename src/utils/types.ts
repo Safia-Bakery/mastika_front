@@ -451,6 +451,6 @@ export interface ProductType {
 
 export interface CartItems extends ProductType {
   count: number;
-  comment: string;
-  total: number;
+  comment?: string;
+  total?: number;
 }

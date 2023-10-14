@@ -1,5 +1,4 @@
 import { ChangeEvent, FC, useEffect, useState } from "react";
-import { reportImgSelector } from "src/redux/reducers/selects";
 import { useAppSelector } from "src/redux/utils/types";
 import styles from "./index.module.scss";
 import cl from "classnames";
@@ -21,11 +20,6 @@ const UploadComponent: FC<FileUploaderProps> = ({
 }) => {
   const [fileList, setFileList] = useState<FileItem[]>([]);
   const [fileIdCounter, setFileIdCounter] = useState(0);
-  const upladedFiles = useAppSelector(reportImgSelector);
-
-  useEffect(() => {
-    if (!upladedFiles) setFileList([]);
-  }, [upladedFiles]);
 
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;

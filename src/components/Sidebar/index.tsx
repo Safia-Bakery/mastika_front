@@ -2,8 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import cl from "classnames";
 import { Fragment, useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
-import { sidebarHandler, toggleSidebar } from "src/redux/reducers/selects";
+import { useAppDispatch } from "src/redux/utils/types";
 import { logoutHandler } from "src/redux/reducers/auth";
 import { MainPermissions } from "src/utils/types";
 import useToken from "src/hooks/useToken";
@@ -206,10 +205,6 @@ const Sidebar = () => {
                           [styles.active]: pathname.includes(route.url!),
                         }
                       )}
-                      // onClick={() =>
-                      //   isMobile && dispatch(sidebarHandler(false))
-                      // }
-                      // to={`${route.url}${!!route?.param ? route?.param : ""}`}
                       to={`${route.url}`}
                       state={{ name: route.name }}
                     >

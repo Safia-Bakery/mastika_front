@@ -3,7 +3,6 @@ import styles from "./index.module.scss";
 import { FC } from "react";
 import { logoutHandler } from "src/redux/reducers/auth";
 import { useAppDispatch } from "src/redux/utils/types";
-import { sidebarHandler } from "src/redux/reducers/selects";
 import useToken from "src/hooks/useToken";
 
 interface Breadcrumb {
@@ -62,10 +61,7 @@ const Breadcrumbs: FC = () => {
     <div className={styles.block}>
       <div className={styles.container}>
         <ul className={styles.breadcrump}>
-          <button
-            onClick={() => dispatch(sidebarHandler(true))}
-            className="btn btn-danger p-2 btn-fill btn-round btn-icon"
-          >
+          <button className="btn btn-danger p-2 btn-fill btn-round btn-icon">
             <img
               width={22}
               className="d-flex"

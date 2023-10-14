@@ -1,10 +1,9 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import auth from "./auth";
 
-import selects from "./selects";
+import cart from "./cart";
 
 export default combineReducers({
   auth,
-
-  selects,
+  cart,
 });

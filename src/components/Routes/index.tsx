@@ -48,11 +48,11 @@ const Navigation = () => {
   // }, [user?.permissions]);
 
   const renderSidebar = useMemo(() => {
-    if (!!token) return <Sidebar />;
+    if (!token) return <Sidebar />;
   }, [permission, token]);
 
   useEffect(() => {
-    if (!token) navigate("/login");
+    // if (!token) navigate("/login");
     if (!!error) dispatch(logoutHandler());
   }, [token, error]);
 

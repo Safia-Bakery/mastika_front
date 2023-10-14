@@ -34,12 +34,9 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
   const parentCategry = parent?.[0];
 
   const { data, isLoading, refetch } = useSubCategories({
-    category_id: id,
+    category_id: Number(id),
     // child,
   });
-
-  const roles: any[] = [];
-  const orderLoading = false;
 
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -54,8 +51,8 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
   };
 
   const sortData = () => {
-    if (roles && sortKey) {
-      const sortedData = [...roles].sort((a, b) => {
+    if (data && sortKey) {
+      const sortedData = [...data].sort((a, b) => {
         if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
         if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
         else return 0;
@@ -68,7 +65,7 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
     if (update) refetch();
   }, [update]);
 
-  if (orderLoading) return <Loading />;
+  if (isLoading) return <Loading />;
 
   return (
     // <div className="flex flex-col justify-end mr-4">

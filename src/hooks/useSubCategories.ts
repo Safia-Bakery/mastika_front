@@ -17,12 +17,12 @@ export const useSubCategories = ({
   // /v1/child/sel/val
   return useQuery({
     queryKey: ["sub_categories", name, id, category_id],
-    queryFn: () => {
-      return apiClient
-        .get({ url: "/v1/sub/category", params: { name, id, category_id } })
-        .then(({ data: response }) => {
-          return response as SubCategoryTypes[];
-        });
+    queryFn: async () => {
+      const { data: response } = await apiClient.get({
+        url: "/v1/sub/category",
+        params: { name, id, category_id },
+      });
+      return response as SubCategoryTypes[];
     },
     enabled,
     refetchOnMount: true,

@@ -103,14 +103,10 @@ const ShowSubCategChild: FC = () => {
                     to={`/categories/${id}/${sub.id}/show`}
                     className="text-sky-600"
                   >
-                    {sub?.name}
+                    {sub?.content}
                   </Link>
                 </td>
-                <td>
-                  {sub?.subcategory_vs_category?.status
-                    ? "Активный"
-                    : "Не активный"}
-                </td>
+                <td>{sub?.value ? "Активный" : "Не активный"}</td>
                 <td width={40}>
                   <TableViewBtn
                     onClick={handleNavigate(
