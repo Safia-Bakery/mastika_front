@@ -12,6 +12,8 @@ import Loading from "./components/Loader/index.tsx";
 //  http://109.94.172.130:8000/docs
 //  http://10.0.0.36:8000/docs
 
+//hello
+
 // export const baseURL = "http://109.94.172.130:8000";
 export const baseURL = "http://10.0.0.36:8000";
 export default new BaseAPIClient(baseURL, store);
