@@ -14,31 +14,9 @@ export interface BasePaginatedRes {
   pages: number;
 }
 
-export enum OrderType {
+export enum OrderingType {
   pickup = 1,
   delivery = 2,
-}
-
-export interface BranchType {
-  id: string;
-  name: string;
-  longtitude: number | null;
-  latitude: number | null;
-  country: string;
-  status: number;
-  // origin: number;
-  fillial_department: {
-    id: string;
-    name: string;
-    origin: number;
-    parentfillial: {
-      name: string;
-    };
-  }[];
-  is_fabrica: number;
-}
-export interface BranchTypes extends BasePaginatedRes {
-  items: BranchType[];
 }
 
 export enum MainPermissions {
@@ -154,8 +132,7 @@ export interface OrdersType {
     username: string;
     status: number;
     created_at: string;
-    first_name: null | string;
-    last_name: null | string;
+    full_name: string | null;
     is_client: number;
     id: number;
     role_id: null | string;
@@ -213,20 +190,136 @@ export interface OrdersType {
       product_id: string;
       comment: string;
       amount: number;
-    },
+    }
+  ];
+}
+
+export interface OrdersTypes extends BasePaginatedRes {
+  items: OrdersType[];
+}
+
+export interface OrderType {
+  order: [
     {
       id: number;
-      order_vs_product: {
-        id: string;
+      order_user: string;
+      order_vs_user: {
+        username: string;
         status: number;
-        name: string;
-        productType: string;
-        group_id: string;
-        price: number;
+        created_at: string;
+        full_name: string;
+        is_client: number;
+        id: number;
+        role_id: number;
+        phone_number: string;
       };
-      product_id: string;
+      phone_number: string;
+      extra_number: string;
+      payment_type: number;
+      firstly_payment: number;
+      is_delivery: number;
       comment: string;
-      amount: number;
+      reject_reason: string;
+      created_at: string;
+      updated_at: string;
+      deliver_date: string;
+      status: number;
+      address: string;
+      apartment: string;
+      home: string;
+      near_to: string;
+      order_vs_category: {
+        name: string;
+        id: number;
+        status: number;
+      };
+      lat: string;
+      long: string;
+      order_br: {
+        id: string;
+        name: string;
+        branch_id: string;
+        origin: number;
+        status: number;
+        branch_dr: {
+          id: string;
+          name: string;
+          latitude: number;
+          langtitude: number;
+          country: string;
+          status: number;
+          is_fabrica: number;
+        };
+      };
+      product_order: [
+        {
+          id: number;
+          order_vs_product: {
+            id: string;
+            status: number;
+            name: string;
+            productType: string;
+            group_id: string;
+            price: number;
+          };
+          product_id: string;
+          comment: string;
+          amount: number;
+        }
+      ];
+    }
+  ];
+  value: [
+    {
+      id: number;
+      content: string;
+      order_id: number;
+      subcat_id: number;
+      value_vs_subcat: {
+        id: number;
+        name: string;
+        category_id: number;
+        contenttype_id: number;
+        subcategory_vs_category: {
+          name: string;
+          id: number;
+          status: number;
+        };
+        subcategory_vs_contenttype: {
+          id: number;
+          name: string;
+          status: number;
+        };
+      };
+      select_id: number;
+      value_vs_select: {
+        id: number;
+        content: string;
+        value: string;
+        selval_vs_subcat: {
+          id: number;
+          name: string;
+          category_id: number;
+          contenttype_id: number;
+          subcategory_vs_category: {
+            name: string;
+            id: number;
+            status: number;
+          };
+          subcategory_vs_contenttype: {
+            id: number;
+            name: string;
+            status: number;
+          };
+        };
+      };
+      selchild_id: number;
+      value_vs_selchild: {
+        id: number;
+        content: string;
+        value: string;
+        status: number;
+      };
     }
   ];
 }
@@ -282,4 +375,82 @@ export enum SystemTypes {
   mastika = 0,
   tg = 1,
   web = 2,
+}
+export interface BranchJsonType {
+  id: string;
+  name: string;
+}
+
+export interface BranchesType extends BasePaginatedRes {
+  items: BranchType[];
+}
+
+export interface UserType {
+  username: string;
+  status: number;
+  created_at: string;
+  full_name: string;
+  is_client: number;
+  id: number;
+  role_id: number;
+  phone_number: string;
+}
+
+export interface UsersType extends BasePaginatedRes {
+  items: UserType[];
+}
+
+export interface BranchType {
+  id: string;
+  name: string;
+  latitude: number;
+  longtitude: number;
+  country: string;
+  status: number;
+  is_fabrica: number;
+}
+export interface RoleTypes {
+  id: number;
+  name: string;
+  role_permission: [
+    {
+      id: number;
+      pagecrud_id: number;
+      permission_crud: {
+        id: number;
+        name: string;
+      };
+    }
+  ];
+}
+export interface PermissionTypes {
+  id: number;
+  name: string;
+  pages_crud: [
+    {
+      id: number;
+      name: string;
+    }
+  ];
+}
+export interface ProductGroupType {
+  id: string;
+  name: string;
+  code: string;
+  status: number;
+}
+
+export interface ProductType {
+  id: string;
+  name: string;
+  productType: string;
+  group_id: string;
+  price: number;
+  status: number;
+}
+
+export interface CartItems extends ProductType {
+  count: number;
+  comment: string;
+  total: number;
 }

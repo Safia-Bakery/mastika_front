@@ -57,8 +57,6 @@ const Categories = () => {
     if (update) refetch();
   }, [update]);
 
-  if (synLoading) return <Loading absolute />;
-
   return (
     <>
       {/* <CategoriesFilter /> */}
@@ -71,6 +69,7 @@ const Categories = () => {
               textClassName="text-white"
               textSize={TextSize.L}
               mainIcon="/assets/icons/sync.svg"
+              isLoading={synLoading}
               onClick={handleSync}
             >
               Update

@@ -7,7 +7,7 @@ const permissionMutation = () => {
     (body: { ids: number[]; id: number | string }) =>
       apiClient
         .post({
-          url: `/user/group/permission`,
+          url: `/roles`,
           body: body.ids,
           params: { id: body.id },
         })

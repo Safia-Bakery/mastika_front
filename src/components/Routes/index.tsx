@@ -70,7 +70,7 @@ const Navigation = () => {
 
           <Route element={<Orders />} path={"/received-orders"} />
 
-          <Route element={<Users />} path={"/clients"} />
+          <Route element={<Users client />} path={"/clients"} />
           <Route element={<EditAddUser />} path={"/clients/add"} />
           <Route element={<EditAddUser />} path={"/clients/:clientid"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
@@ -113,7 +113,7 @@ const Navigation = () => {
 
           <Route element={<Roles />} path={"/roles"} />
           <Route element={<EditAddRole />} path={"/roles/add"} />
-          <Route element={<EditAddRole />} path={"/roles/add"} />
+          <Route element={<EditAddRole />} path={"/roles/edit/:id"} />
           <Route element={<ShowRole />} path={"/roles/:id"} />
 
           <Route element={<Branches />} path={"/branches"} />

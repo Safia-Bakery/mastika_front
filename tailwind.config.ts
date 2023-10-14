@@ -11,6 +11,7 @@ module.exports = {
         yellow: "#FFE15B",
         primary: "#3399ee",
         darkBlue: "#5266F7",
+        hoverGray: "#C2C2C2",
       },
     },
   },

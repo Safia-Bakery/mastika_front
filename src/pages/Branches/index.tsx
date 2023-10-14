@@ -7,6 +7,11 @@ import TableViewBtn from "src/components/TableViewBtn";
 import Header from "src/components/Header";
 import BranchFilter from "./filter";
 import EmptyList from "src/components/EmptyList";
+import useBranches from "src/hooks/useBranches";
+import TableLoading from "src/components/TableLoading";
+import useQueryString from "src/hooks/useQueryString";
+import { itemsPerPage } from "src/utils/helpers";
+import Loading from "src/components/Loader";
 
 const column = [
   { name: "№", key: "" },
@@ -18,6 +23,8 @@ const column = [
 
 const Branches = () => {
   const navigate = useNavigate();
+  const currentPage = Number(useQueryString("page")) || 1;
+  const { data: branches, isFetching } = useBranches({ page: currentPage });
 
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
@@ -29,6 +36,11 @@ const Branches = () => {
       setSortKey(key);
       setSortOrder("asc");
     }
+  };
+
+  const handleIdx = (index: number) => {
+    if (currentPage === 1) return index + 1;
+    else return index + 1 + itemsPerPage * (currentPage - 1);
   };
 
   const handleNavigate = (url: string) => navigate(url);
@@ -58,28 +70,35 @@ const Branches = () => {
                 sortOrder={sortOrder}
               />
 
-              {/* {!!categories?.items?.length && ( */}
               <tbody>
-                {[...Array(4)]?.map((category, idx) => (
-                  <tr key={idx} className="bg-blue">
-                    <td className="first:pl-16" width="40">
-                      {idx + 1}
-                    </td>
-                    <td className="text-center">{"category?.name"}</td>
-                    <td className="text-center">dep</td>
-                    <td className="text-center">
-                      {!!category?.status ? "Активный" : "Неактивный"}
-                    </td>
-                    <td className="text-center" width={40}>
-                      <TableViewBtn onClick={() => handleNavigate(`${idx}`)} />
-                    </td>
-                  </tr>
-                ))}
+                {!!branches?.items?.length &&
+                  !isFetching &&
+                  branches.items.map((branch, idx) => (
+                    <tr key={idx} className="bg-blue">
+                      <td className="first:pl-16" width="40">
+                        {handleIdx(idx)}
+                      </td>
+                      <td className="text-center">{branch.name}</td>
+                      <td className="text-center">{branch.is_fabrica}</td>
+                      <td className="text-center">
+                        {!!branch?.status ? "Активный" : "Неактивный"}
+                      </td>
+                      <td className="text-center" width={40}>
+                        <TableViewBtn
+                          onClick={() => handleNavigate(`${branch.id}`)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
-              {/* )} */}
             </table>
-            {false && <Pagination totalPages={2} />}
-            {false && <EmptyList />}
+
+            {isFetching && <Loading className="py-4" />}
+
+            {!branches?.items?.length && !isFetching && <EmptyList />}
+            {!!branches && (
+              <Pagination className="ml-8 mt-4" totalPages={branches.pages} />
+            )}
           </div>
         </div>
       </Card>

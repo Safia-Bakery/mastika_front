@@ -17,7 +17,8 @@ import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
 import useCategories from "src/hooks/useCategories";
 import useCategoriesFull from "src/hooks/useCategoryFull";
-import useOrders from "src/hooks/useOrders";
+import useOrder from "src/hooks/useOrder";
+
 import {
   ContentType,
   PaymentTypes,
@@ -44,8 +45,8 @@ const ShowOrder = () => {
   const [files, $files] = useState<FormData>();
   const [images, $images] = useState<FileItem[]>();
 
-  const { data } = useOrders({ id: Number(id), enabled: !!id });
-  const order = data?.[0];
+  const { data } = useOrder({ id: Number(id), enabled: !!id });
+  const order = data?.order;
 
   const handleFilesSelected = (data: FileItem[]) => {
     const formData = new FormData();

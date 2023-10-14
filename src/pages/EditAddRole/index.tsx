@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainCheckBox from "src/components/BaseInputs/MainCheckBox";
 import MainInput from "src/components/BaseInputs/MainInput";
@@ -8,28 +8,51 @@ import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
+import roleMutation from "src/hooks/mutation/roleMutation";
+import useRoles from "src/hooks/useRoles";
+import { errorToast, successToast } from "src/utils/toast";
 
 const EditAddRole = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
+    getValues,
   } = useForm();
 
+  const { refetch: roleRefetch, data } = useRoles({
+    enabled: !!id,
+    id: Number(id),
+  });
+  const { mutate: postRole } = roleMutation();
+  const role = data?.[0];
+
+  const onSubmit = () => {
+    postRole(
+      { name: getValues("name"), role_id: Number(id) },
+      {
+        onSuccess: () => {
+          successToast(!id ? "role created" : "role updated");
+          navigate("/roles");
+        },
+        onError: (e: any) => errorToast(e.message),
+      }
+    );
+  };
+
   useEffect(() => {
-    if (id) {
+    if (id && role?.name) {
       reset({
-        name: "name edited",
-        comments: "comments edited",
-        urgent: true,
-        status: true,
+        name: role.name,
       });
     }
-  }, [id]);
+  }, [role?.name, id]);
+
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Typography size={TextSize.XXL} className="flex my-4 ml-1">
         Добавить
       </Typography>
@@ -44,7 +67,7 @@ const EditAddRole = () => {
         </div>
         <div className="flex flex-1 justify-end">
           <Button className="bg-darkYellow mt-4 w-64" type="submit">
-            Создать
+            {!!id ? "Изменить" : "Создать"}
           </Button>
         </div>
       </Card>

@@ -3,16 +3,16 @@ import Header from "src/components/Header";
 import { Link, useNavigate } from "react-router-dom";
 
 import Loading from "src/components/Loader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableHead from "src/components/TableHead";
 import TableViewBtn from "src/components/TableViewBtn";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
+import useRoles from "src/hooks/useRoles";
 
 const column = [
   { name: "№", key: "" },
   { name: "Название", key: "name" },
-  { name: "Статус", key: "status" },
   { name: "", key: "" },
 ];
 
@@ -20,8 +20,7 @@ const Roles = () => {
   const navigate = useNavigate();
   const handleNavigate = (route: string) => () => navigate(route);
 
-  const roles: any[] = [];
-  const orderLoading = false;
+  const { data: roles, isLoading, refetch } = useRoles({ enabled: false });
 
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -46,7 +45,11 @@ const Roles = () => {
     }
   };
 
-  if (orderLoading) return <Loading absolute />;
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  if (isLoading) return <Loading absolute />;
 
   return (
     // <div className="flex flex-col justify-end mr-4">
@@ -70,22 +73,24 @@ const Roles = () => {
             sortOrder={sortOrder}
           />
 
-          <tbody>
-            {[...Array(4)]?.map((role, idx) => (
-              <tr className="bg-blue" key={idx}>
-                <td className="first:pl-16" width="40">
-                  {idx + 1}
-                </td>
-                <td>
-                  <Link to={`/roles/${2}`}>{"role.name"}</Link>
-                </td>
-                <td>{true ? "Не активный" : "Активный"}</td>
-                <td width={40}>
-                  <TableViewBtn onClick={handleNavigate(`edit/${2}`)} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          {!!roles?.length && (
+            <tbody>
+              {(sortData()?.length ? sortData() : roles)?.map((role, idx) => (
+                <tr className="bg-blue" key={idx}>
+                  <td className="first:pl-16" width="40">
+                    {idx + 1}
+                  </td>
+                  <td>
+                    <Link to={`/roles/${role.id}`}>{role.name}</Link>
+                  </td>
+                  {/* <td>{true ? "Не активный" : "Активный"}</td> */}
+                  <td width={40}>
+                    <TableViewBtn onClick={handleNavigate(`edit/${role.id}`)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          )}
         </table>
         {/* {!roles?.length && !orderLoading && (
           <EmptyList />

@@ -43,31 +43,31 @@ const Sidebar = () => {
         url: "/categories",
         screen: MainPermissions.fillings,
       },
-      {
-        name: "Начинки",
-        screen: MainPermissions.filling,
-        url: "#",
-        subroutes: [
-          {
-            name: "Стандарт",
-            url: "/fillings/1",
-            screen: MainPermissions.fillings,
-            param: "?",
-          },
-          {
-            name: "Another",
-            url: "/fillings/2",
-            screen: MainPermissions.fillings,
-            param: "?",
-          },
-          {
-            name: "add",
-            url: "/fillings/add",
-            screen: MainPermissions.fillings,
-            param: "?",
-          },
-        ],
-      },
+      // {
+      //   name: "Начинки",
+      //   screen: MainPermissions.filling,
+      //   url: "#",
+      //   subroutes: [
+      //     {
+      //       name: "Стандарт",
+      //       url: "/fillings/1",
+      //       screen: MainPermissions.fillings,
+      //       param: "?",
+      //     },
+      //     {
+      //       name: "Another",
+      //       url: "/fillings/2",
+      //       screen: MainPermissions.fillings,
+      //       param: "?",
+      //     },
+      //     {
+      //       name: "add",
+      //       url: "/fillings/add",
+      //       screen: MainPermissions.fillings,
+      //       param: "?",
+      //     },
+      //   ],
+      // },
       { name: "Клиенты", url: "/clients", screen: MainPermissions.fillings },
       {
         name: "Отзывы",
@@ -126,101 +126,101 @@ const Sidebar = () => {
           </li>
           {routes.map((route) => {
             if (route?.screen && permission?.[route?.screen]) {
-              if (
-                permission?.[route?.screen] ||
-                (route?.subroutes &&
-                  route.subroutes.some(
-                    (subroute) => permission?.[subroute.screen]
-                  ))
-              ) {
-                if (route?.subroutes?.length) {
-                  const activeRoute = menuItem === route.screen;
-                  return (
-                    <li className={styles.navItem} key={route.url + route.name}>
-                      <a
-                        className={cl(styles.link, {
-                          // [styles.show]: activeRoute,
-                        })}
-                        onClick={() => toggleSubItems(route.screen)}
-                        href={`#${route.screen}`}
-                      >
-                        <p className={styles.content}>
-                          {route.name}
-                          <img
-                            src="/assets/icons/arrow.svg"
-                            alt="arrow"
-                            className={cl({
-                              [styles.activeImage]: activeRoute,
-                            })}
-                            width={15}
-                            height={15}
-                          />
-                        </p>
-                      </a>
-                      <div
-                        className={cl(styles.collapse, {
-                          [styles.show]: activeRoute,
-                        })}
-                        id="subItems"
-                      >
-                        <ul className={cl(styles.submenu)}>
-                          {route?.subroutes?.map((subroute) => {
-                            if (permission?.[subroute?.screen])
-                              return (
-                                <li
-                                  className={styles.navItem}
-                                  key={subroute.url + subroute.name}
-                                >
-                                  <Link
-                                    className={cl(styles.link, {
-                                      [styles.active]: pathname.includes(
-                                        subroute.url
-                                      ),
-                                    })}
-                                    to={`${subroute.url}${
-                                      !!subroute?.param ? subroute?.param : ""
-                                    }`}
-                                    state={{ name: subroute.name }}
-                                  >
-                                    <p className={styles.content}>
-                                      {subroute.name}
-                                    </p>
-                                  </Link>
-                                </li>
-                              );
-                          })}
-                        </ul>
-                      </div>
-                    </li>
-                  );
-                }
+              // if (
+              //   permission?.[route?.screen] ||
+              //   (route?.subroutes &&
+              //     route.subroutes.some(
+              //       (subroute) => permission?.[subroute.screen]
+              //     ))
+              // ) {
+              // if (route?.subroutes?.length) {
+              //   const activeRoute = menuItem === route.screen;
+              //   return (
+              //     <li className={styles.navItem} key={route.url + route.name}>
+              //       <a
+              //         className={cl(styles.link, {
+              //           // [styles.show]: activeRoute,
+              //         })}
+              //         onClick={() => toggleSubItems(route.screen)}
+              //         href={`#${route.screen}`}
+              //       >
+              //         <p className={styles.content}>
+              //           {route.name}
+              //           <img
+              //             src="/assets/icons/arrow.svg"
+              //             alt="arrow"
+              //             className={cl({
+              //               [styles.activeImage]: activeRoute,
+              //             })}
+              //             width={15}
+              //             height={15}
+              //           />
+              //         </p>
+              //       </a>
+              //       <div
+              //         className={cl(styles.collapse, {
+              //           [styles.show]: activeRoute,
+              //         })}
+              //         id="subItems"
+              //       >
+              //         <ul className={cl(styles.submenu)}>
+              //           {route?.subroutes?.map((subroute) => {
+              //             if (permission?.[subroute?.screen])
+              //               return (
+              //                 <li
+              //                   className={styles.navItem}
+              //                   key={subroute.url + subroute.name}
+              //                 >
+              //                   <Link
+              //                     className={cl(styles.link, {
+              //                       [styles.active]: pathname.includes(
+              //                         subroute.url
+              //                       ),
+              //                     })}
+              //                     to={`${subroute.url}${
+              //                       !!subroute?.param ? subroute?.param : ""
+              //                     }`}
+              //                     state={{ name: subroute.name }}
+              //                   >
+              //                     <p className={styles.content}>
+              //                       {subroute.name}
+              //                     </p>
+              //                   </Link>
+              //                 </li>
+              //               );
+              //           })}
+              //         </ul>
+              //       </div>
+              //     </li>
+              //   );
+              // }
 
-                return (
-                  <Fragment key={route.url + route.name}>
-                    <li className={cl("nav-item")}>
-                      <Link
-                        className={cl(
-                          "nav-link d-flex align-items-center",
-                          styles.link,
-                          {
-                            [styles.active]: pathname.includes(route.url!),
-                          }
-                        )}
-                        // onClick={() =>
-                        //   isMobile && dispatch(sidebarHandler(false))
-                        // }
-                        // to={`${route.url}${!!route?.param ? route?.param : ""}`}
-                        to={`${route.url}`}
-                        state={{ name: route.name }}
-                      >
-                        <p className={styles.content}>{route.name}</p>
-                        {/* <span className={styles.menuItem}>{route.name}</span> */}
-                      </Link>
-                    </li>
-                    {route.hasline && <div className={styles.line} />}
-                  </Fragment>
-                );
-              }
+              return (
+                <Fragment key={route.url + route.name}>
+                  <li className={cl("nav-item")}>
+                    <Link
+                      className={cl(
+                        "nav-link d-flex align-items-center",
+                        styles.link,
+                        {
+                          [styles.active]: pathname.includes(route.url!),
+                        }
+                      )}
+                      // onClick={() =>
+                      //   isMobile && dispatch(sidebarHandler(false))
+                      // }
+                      // to={`${route.url}${!!route?.param ? route?.param : ""}`}
+                      to={`${route.url}`}
+                      state={{ name: route.name }}
+                    >
+                      <p className={styles.content}>{route.name}</p>
+                      {/* <span className={styles.menuItem}>{route.name}</span> */}
+                    </Link>
+                  </li>
+                  {route.hasline && <div className={styles.line} />}
+                </Fragment>
+              );
+              // }
             }
             return null;
           })}

@@ -29,7 +29,7 @@ const Modal: FC<Props> = ({
       <div
         className={clx(styles.overlay, { [styles.closed]: !isOpen })}
         onClick={onClose}
-      ></div>
+      />
       {isOpen && (
         <div
           className={clx(

@@ -8,12 +8,16 @@ import MainRadioBtns from "src/components/BaseInputs/MainRadioBtns";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
+import useBranches from "src/hooks/useBranches";
 
 const EditAddBranch = () => {
   const { id } = useParams();
   const [is_fabrica, $is_fabrica] = useState<boolean>();
   const navigate = useNavigate();
   const handleNavigate = (url: string) => navigate(url);
+
+  const { data } = useBranches({ id: id!, enabled: !!id });
+  const branch = data?.items?.[0];
   const {
     register,
     formState: { errors },
@@ -22,12 +26,17 @@ const EditAddBranch = () => {
   } = useForm();
 
   useEffect(() => {
-    if (id) {
+    if (id && branch) {
+      $is_fabrica(!!branch.is_fabrica);
       reset({
-        name: "name edited",
+        name: branch.name,
+        lat: branch.latitude,
+        lng: branch.longtitude,
+        status: !!branch.status,
+        region: branch.country,
       });
     }
-  }, [id]);
+  }, [id, branch]);
 
   return (
     <form>
@@ -84,11 +93,11 @@ const EditAddBranch = () => {
             <MainCheckBox label="Активный" register={register("status")} />
           </BaseInput>
         </div>
-        <div className="flex flex-1 justify-end">
+        {/* <div className="flex flex-1 justify-end">
           <Button className="bg-darkYellow mt-4 mr-8" type="submit">
             Сохранить
           </Button>
-        </div>
+        </div> */}
       </Card>
     </form>
   );

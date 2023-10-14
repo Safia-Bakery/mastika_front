@@ -60,7 +60,7 @@ const Orders = () => {
 
           <tbody className={styles.tableBody}>
             {/* {(sortData?.length ? sortData : branches.items)?.map( */}
-            {orders?.map((order, idx) => (
+            {orders?.items?.map((order, idx) => (
               <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
                 <td className="text-start">
                   <Link to={`${order.id}`}>№ {order.id}</Link>
@@ -96,24 +96,19 @@ const Orders = () => {
                     />
                   )}
                 </td>
-                <td>{order.order_br.name}</td>
+                <td>{order?.order_br?.name}</td>
                 <td>
                   {!order?.order_vs_user?.status ? "Не активный" : "Активный"}
                 </td>
               </tr>
             ))}
-            {false && (
-              <tr>
-                <td>
-                  <Loading />
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
 
-        {false && <Pagination totalPages={1} />}
+        {false && <Loading className="py-4" />}
         {false && <EmptyList />}
+
+        {false && <Pagination totalPages={1} />}
       </Card>
     </Container>
   );

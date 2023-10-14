@@ -2,13 +2,16 @@ import { FC } from "react";
 import ReactPaginate from "react-paginate";
 import { useNavigateParams } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
+import styles from "./index.module.scss";
+import cl from "classnames";
 
 interface PaginationProps {
   totalPages?: number;
   refetch?: () => void;
+  className?: string;
 }
 
-const Pagination: FC<PaginationProps> = ({ totalPages }) => {
+const Pagination: FC<PaginationProps> = ({ totalPages, className }) => {
   const navigate = useNavigateParams();
   const currentPage = Number(useQueryString("page")) || 1;
   const handleChange = ({ selected }: { selected: number }) =>
@@ -19,19 +22,15 @@ const Pagination: FC<PaginationProps> = ({ totalPages }) => {
       <ReactPaginate
         breakLabel="..."
         nextLabel=">"
-        nextClassName="page-item"
-        nextLinkClassName="page-link"
-        previousLinkClassName="page-link"
-        previousClassName="page-item"
-        breakClassName="page-item"
-        breakLinkClassName="page-link"
+        nextLinkClassName={styles.pageLink}
+        previousLinkClassName={styles.pageLink}
+        breakLinkClassName={styles.pageLink}
         onPageChange={handleChange}
         pageRangeDisplayed={2}
-        className="pagination"
-        activeClassName="active"
-        pageLinkClassName="page-link"
+        className={cl(className, styles.pagination)}
+        activeClassName={styles.active}
+        pageLinkClassName={styles.pageLink}
         pageCount={totalPages!}
-        pageClassName={`page-item`}
         previousLabel="<"
         renderOnZeroPageCount={null}
         forcePage={currentPage - 1}

@@ -5,7 +5,6 @@ interface Body {
   order_user?: string;
   phone_number?: string;
   extra_number?: string;
-  location?: string;
   payment_type?: number;
   firstly_payment?: number;
   is_delivery?: number;
@@ -15,8 +14,10 @@ interface Body {
   apartment?: string;
   home?: string;
   near_to?: string;
-  department_id?: "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+  department_id?: string;
   category_id?: number;
+  lat?: string;
+  long?: string;
 }
 
 const orderMutation = () => {

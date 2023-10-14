@@ -5,34 +5,79 @@ import BaseInput from "src/components/BaseInputs";
 import MainCheckBox from "src/components/BaseInputs/MainCheckBox";
 import MainInput from "src/components/BaseInputs/MainInput";
 import MainRadioBtns from "src/components/BaseInputs/MainRadioBtns";
+import MainSelect from "src/components/BaseInputs/MainSelect";
 import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
+import userMutation from "src/hooks/mutation/user";
+import useRoles from "src/hooks/useRoles";
+import useUsers from "src/hooks/useUsers";
+import { successToast } from "src/utils/toast";
 
 const EditAddUser = () => {
   const { id } = useParams();
-  const [is_fabrica, $is_fabrica] = useState<boolean>();
   const navigate = useNavigate();
   const handleNavigate = (url: string) => navigate(url);
+  const { data: roles } = useRoles({});
+  const { data: userData, refetch } = useUsers({
+    id: Number(id),
+    enabled: !!id,
+  });
+  const [phone_number, $phone_number] = useState("");
+  const user = userData?.items?.[0];
+
+  const { mutate } = userMutation();
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
+    getValues,
   } = useForm();
 
+  const handlePhone = (e: string) => $phone_number(e);
+
+  const onSubmit = () => {
+    const { username, password, role_id, full_name, status } = getValues();
+
+    mutate(
+      {
+        username,
+        password,
+        phone_number,
+        role_id,
+        full_name,
+        status,
+        ...(!!id && { id: Number(id) }),
+      },
+      {
+        onSuccess: () => {
+          if (id) refetch();
+          navigate("/users?update=1");
+          successToast("success");
+        },
+      }
+    );
+  };
+
   useEffect(() => {
-    if (id) {
+    if (id && user) {
+      $phone_number(user?.phone_number);
       reset({
-        name: "name edited",
+        full_name: user?.full_name,
+
+        role_id: user?.role_id,
+        username: user?.username,
+        status: !!user?.status,
       });
     }
-  }, [id]);
+  }, [id, user]);
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
         <Header title="Добавить">
           <Button
@@ -53,21 +98,24 @@ const EditAddUser = () => {
               />
             </BaseInput>
             <BaseInput label="РОЛЬ" className="flex flex-1 flex-col">
-              <MainInput
-                // placeholder={"Введите имя"}
-                register={register("role", { required: "Обязательное поле" })}
+              <MainSelect
+                values={roles}
+                register={register("role_id", {
+                  required: "Обязательное поле",
+                })}
               />
             </BaseInput>
           </div>
           <div className="flex gap-8">
             <BaseInput label="ЛОГИН" className="flex flex-1 flex-col">
               <MainInput
-                register={register("login", { required: "Обязательное поле" })}
+                register={register("username", {
+                  required: "Обязательное поле",
+                })}
               />
             </BaseInput>
             <BaseInput label="ПАРОЛЬ" className="flex flex-1 flex-col">
               <MainInput
-                // placeholder={"Введите имя"}
                 register={register("password", {
                   required: "Обязательное поле",
                 })}
@@ -76,27 +124,7 @@ const EditAddUser = () => {
           </div>
           <div className="flex gap-8">
             <BaseInput label="ТЕЛЕФОН" className="flex flex-1 flex-col">
-              <PhoneInput
-                register={register("phone", { required: "Обязательное поле" })}
-              />
-            </BaseInput>
-            <BaseInput label="E-MAIL" className="flex flex-1 flex-col">
-              <MainInput
-                // placeholder={"Введите имя"}
-                register={register("email")}
-              />
-            </BaseInput>
-          </div>
-          <div className="flex gap-8">
-            <BaseInput label="СФЕРА" className="flex flex-1 flex-col">
-              <MainRadioBtns
-                onChange={(e) => $is_fabrica(e)}
-                value={is_fabrica}
-                values={[
-                  { id: 0, name: "Розница" },
-                  { id: 1, name: "Фабрика" },
-                ]}
-              />
+              <PhoneInput onChange={handlePhone} value={phone_number} />
             </BaseInput>
             <BaseInput label="СТАТУС" className="flex flex-1 flex-col">
               <MainCheckBox
@@ -106,12 +134,6 @@ const EditAddUser = () => {
               />
             </BaseInput>
           </div>
-          <BaseInput label="ОПИСАНИЕ" className="flex flex-1 flex-col">
-            <MainTextArea
-              register={register("comments")}
-              // className="flex items-center"
-            />
-          </BaseInput>
         </div>
         <div className="flex flex-1 justify-end">
           <Button className="bg-darkYellow mt-4 mr-8" type="submit">

@@ -11,61 +11,15 @@ import {
 } from "src/hooks/useCustomNavigate";
 // import useBranches from "src/hooks/useBranches";
 import useQueryString from "src/hooks/useQueryString";
-import { BranchTypes } from "src/utils/types";
+import { BranchJsonType, BranchesType } from "src/utils/types";
+import useBranches from "src/hooks/useBranches";
 
 interface Props {
   origin?: number;
   enabled?: boolean;
   label?: string;
 }
-const isFetching = false;
-const isLoading = false;
-const data: BranchTypes = {
-  items: [
-    {
-      id: "7c076b49-945d-4dbb-adf4-5870591a3aa3",
-      name: "Zenit",
-      longtitude: 0,
-      latitude: 0,
-      country: "Uzbekistan",
-      status: 1,
-      is_fabrica: 0,
-      fillial_department: [
-        {
-          id: "b1a38c27-0684-4296-8f33-9af1102379ea",
-          name: "Отдел Маркетинга Инвентарь Склад",
-          origin: 1,
-          parentfillial: {
-            name: "Отдел Маркетинга",
-          },
-        },
-      ],
-    },
-    {
-      id: "7c076b49-945d-4dbb-adf4-5870591a3aa3",
-      name: "Bahcivan",
-      longtitude: 0,
-      latitude: 0,
-      country: "Uzbekistan",
-      status: 1,
-      is_fabrica: 0,
-      fillial_department: [
-        {
-          id: "b1a38c27-0684-4296-8f33-9af1102379ea",
-          name: "Отдел Маркетинга Инвентарь Склад",
-          origin: 1,
-          parentfillial: {
-            name: "Отдел Маркетинга",
-          },
-        },
-      ],
-    },
-  ],
-  page: 1,
-  size: 50,
-  pages: 1,
-  total: 120,
-};
+
 const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
   const navigate = useNavigateParams();
   const removeParam = useRemoveParams();
@@ -78,13 +32,15 @@ const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
 
+  const { data, isFetching, isLoading } = useBranches({});
+
   // const { data, refetch, isFetching, isLoading } = useBranches({
   //   origin,
   //   page,
   //   enabled,
   //   ...(!!query && { body: { name: query } }),
   // });
-  const [items, $items] = useState<BranchTypes["items"]>([]);
+  const [items, $items] = useState<BranchesType["items"]>([]);
   const observer: any = useRef();
   const lastBookElementRef = useCallback(
     (node: any) => {
@@ -124,7 +80,7 @@ const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
     }
   }, [branch?.name]);
 
-  const handleProduct = (product: { id: string; name: string }) => {
+  const handleProduct = (product: BranchJsonType) => {
     navigate({ branch: JSON.stringify(product), choose_fillial: false });
     $focused(false);
   };

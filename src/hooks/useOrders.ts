@@ -1,24 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "src/main";
-import { OrdersType } from "src/utils/types";
+import { OrderType, OrdersTypes } from "src/utils/types";
 
 export const useOrders = ({
   enabled = true,
   size,
   page = 1,
-  id,
 }: {
   enabled?: boolean;
   size?: number;
   page?: number;
-  id?: number;
 }) => {
   return useQuery({
-    queryKey: ["get_orders", page, id],
+    queryKey: ["get_orders", page],
     queryFn: () =>
       apiClient
-        .get({ url: "/v1/orders", params: { page, size, id } })
-        .then(({ data: response }) => (response as OrdersType[]) || null),
+        .get({ url: "/v1/orders/all", params: { page, size } })
+        .then(({ data: response }) => (response as OrdersTypes) || null),
     enabled,
   });
 };

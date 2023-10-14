@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainInput from "src/components/BaseInputs/MainInput";
 import MainSelectBtn from "src/components/BaseInputs/MainSelectBtn";
@@ -12,26 +13,32 @@ import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
 import YandexMap from "src/components/YandexMap";
 import orderMutation from "src/hooks/mutation/order";
+import useOrders from "src/hooks/useOrders";
 import useQueryString from "src/hooks/useQueryString";
 import useUser from "src/hooks/useUser";
 import { errorToast, successToast } from "src/utils/toast";
-import { OrderType, PaymentTypes } from "src/utils/types";
+import { BranchJsonType, OrderingType, PaymentTypes } from "src/utils/types";
 
 const orderArray = [
   {
-    id: OrderType.delivery,
+    id: OrderingType.delivery,
     name: "Доставка",
   },
   {
-    id: OrderType.pickup,
+    id: OrderingType.pickup,
     name: "Самовывоз",
   },
 ];
 
 const AddOrder = () => {
-  const [deliveryType, $deliveryType] = useState(OrderType.delivery);
+  const navigate = useNavigate();
+  const [deliveryType, $deliveryType] = useState(OrderingType.delivery);
   const address_name = useQueryString("address_name");
   const phoneStr = useQueryString("phone");
+  const { refetch: ordersRefetch } = useOrders({});
+
+  const branchJson = useQueryString("branch");
+  const branch: BranchJsonType = branchJson && JSON.parse(branchJson);
 
   const { mutate, isLoading } = orderMutation();
 
@@ -61,32 +68,33 @@ const AddOrder = () => {
   };
 
   const onSubmit = () => {
-    const { address, house, home, refAddr, name } = getValues();
+    const { house, home, refAddr, name } = getValues();
     mutate(
       {
         order_user: name,
         phone_number: phone,
-
-        // payment_type: PaymentTypes.cash,
         firstly_payment: 1,
-        is_delivery: Number(deliveryType === OrderType.delivery),
-        // comment: "",
+        is_delivery: Number(deliveryType === OrderingType.delivery),
         deliver_date: new Date(),
-        department_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        // category_id: 1,
         ...(phone2 && { extra_number: phone2 }),
         ...(address_name &&
-          deliveryType === OrderType.delivery && { location: address_name }),
+          deliveryType === OrderingType.delivery && { location: address_name }),
         ...(address_name &&
-          deliveryType === OrderType.delivery && { address: address_name }),
+          deliveryType === OrderingType.delivery && { address: address_name }),
         ...(house &&
-          deliveryType === OrderType.delivery && { apartment: house }),
+          deliveryType === OrderingType.delivery && { apartment: house }),
         ...(refAddr &&
-          deliveryType === OrderType.delivery && { near_to: refAddr }),
+          deliveryType === OrderingType.delivery && { near_to: refAddr }),
+        ...(branch &&
+          deliveryType === OrderingType.pickup && { department_id: branch.id }),
         ...(home && { home }),
       },
       {
-        onSuccess: () => successToast("created"),
+        onSuccess: () => {
+          ordersRefetch();
+          navigate("/orders");
+          successToast("created");
+        },
         onError: (e: any) => errorToast(e.message),
       }
     );
@@ -125,7 +133,7 @@ const AddOrder = () => {
           />
         </BaseInput>
 
-        {deliveryType === OrderType.delivery ? (
+        {deliveryType === OrderingType.delivery ? (
           <>
             <BaseInput label="Адрес" className="mb-2">
               <MainInput
@@ -165,7 +173,7 @@ const AddOrder = () => {
   }, [deliveryType, address_name]);
 
   const renderMap = useMemo(() => {
-    if (deliveryType === OrderType.delivery)
+    if (deliveryType === OrderingType.delivery)
       return (
         <div className="h-[550px] z-10  flex-1 p-4 bg-mainGray rounded-2xl ml-6 ">
           <Typography size={TextSize.XL}>Укажите адрес доставки</Typography>
@@ -180,11 +188,13 @@ const AddOrder = () => {
   }, [address_name]);
 
   useEffect(() => {
-    if (isSuccess)
+    if (isSuccess && phoneStr) {
+      $phone(phoneStr);
       reset({
         name: user.username,
       });
-  }, [user, isSuccess]);
+    }
+  }, [user, isSuccess, phoneStr]);
 
   if (userLoading) return <Loading absolute />;
 
