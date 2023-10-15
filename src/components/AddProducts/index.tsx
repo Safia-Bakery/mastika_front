@@ -16,11 +16,17 @@ import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import {
   addToCart,
   decrement,
+  decrementSelected,
   increment,
+  incrementSelected,
   itemsSelector,
   selectItem,
   selectedItemsSelector,
 } from "src/redux/reducers/cart";
+import cl from "classnames";
+import MainTextArea from "../BaseInputs/MainTextArea";
+import { useForm } from "react-hook-form";
+import EmptyList from "../EmptyList";
 
 const group = [
   { id: "768798", name: "string", code: "string", status: 1 },
@@ -67,6 +73,8 @@ const AddProduct = () => {
 
   const selected = useAppSelector(selectedItemsSelector);
 
+  const { register } = useForm();
+
   console.log(selected, "selected");
 
   // const { data: group } = useProductGroup({
@@ -97,28 +105,34 @@ const AddProduct = () => {
             items?.map((item, idx) => (
               <div
                 key={item.id}
-                className="flex-col bg-mainGray p-4 border rounded w-[50%]"
+                className="flex-col bg-mainGray p-4 border rounded w-[50%] relative"
               >
+                <div
+                  className={cl(
+                    { ["opacity-[0.5]"]: selected[item.id] },
+                    "absolute top-0 bottom-0 z-0 left-0 right-0 rounded bg-darkGray opacity-0 transition"
+                  )}
+                />
                 <Typography>{item.name}</Typography>
 
-                <div className="flex w-full justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex w-full justify-between items-center">
+                  <div className="flex items-center gap-3 z-10">
                     <div
-                      className="cursor-pointer"
+                      className="cursor-pointer w-8 text-center"
                       onClick={() => dispatch(decrement(idx))}
                     >
                       -
                     </div>
-                    <div className="">{item.count}</div>
+                    <div className="w-8 text-center">{item.count}</div>
                     <div
-                      className="cursor-pointer"
+                      className="cursor-pointer w-8 text-center"
                       onClick={() => dispatch(increment(idx))}
                     >
                       +
                     </div>
                   </div>
                   <Button
-                    className="bg-darkBlue mt-4 !w-24 text-white text-sm"
+                    className="bg-darkBlue !w-24 text-white text-sm"
                     type="button"
                     onClick={() => dispatch(selectItem(item))}
                   >
@@ -161,10 +175,10 @@ const AddProduct = () => {
             ))}
         </div>
       );
-  }, [group_id, group, product, items]);
+  }, [group_id, group, product, items, selected]);
 
   return (
-    <div>
+    <form>
       <div className="flex justify-between items-center">
         <Typography size={TextSize.XXL}>Товары</Typography>
         <Button
@@ -175,6 +189,59 @@ const AddProduct = () => {
           Добавить блюдо
         </Button>
       </div>
+      {Object.keys(selected).length !== 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th className="text-gray-500 font-thin">№</th>
+              <th className="text-gray-500 font-thin">НАИМЕНОВАНИЕ</th>
+              <th className="text-gray-500 font-thin">КОММЕНТАРИЙ</th>
+              <th className="text-gray-500 font-thin">КОЛИЧЕСТВО</th>
+              <th className="text-gray-500 font-thin">ЦЕНА</th>
+              <th className="text-gray-500 font-thin">ИТОГО</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {Object.values(selected).map((item, idx) => (
+              <tr
+                key={item?.id}
+                className=" hover:bg-hoverGray transition-colors"
+              >
+                <td width={50}>{idx + 1}</td>
+                <td>{item?.name}</td>
+                <td>
+                  <MainInput
+                    placeholder={"(не задано)"}
+                    register={register(`${item.id}`)}
+                  />
+                </td>
+                <td>
+                  <div className="flex justify-center gap-3 z-10">
+                    <div
+                      className="cursor-pointer w-8 text-center"
+                      onClick={() => dispatch(decrementSelected(item.id))}
+                    >
+                      -
+                    </div>
+                    <div className="w-8 text-center">{item.count}</div>
+                    <div
+                      className="cursor-pointer w-8 text-center"
+                      onClick={() => dispatch(incrementSelected(item.id))}
+                    >
+                      +
+                    </div>
+                  </div>
+                </td>
+                <td>{item.price}</td>
+                <td>{item.count * item.price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <EmptyList />
+      )}
       <Modal
         isOpen={!!modal}
         onClose={handleModal}
@@ -191,7 +258,7 @@ const AddProduct = () => {
           {renderModal}
         </div>
       </Modal>
-    </div>
+    </form>
   );
 };
 

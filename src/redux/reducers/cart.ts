@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { RootState } from "../rootConfig";
 import { FileItem } from "src/components/FileUpload";
 import { CartItems, ProductType } from "src/utils/types";
@@ -36,12 +36,32 @@ export const cartReducer = createSlice({
       if (!state.selected?.[payload.id]) state.selected[payload.id] = payload;
       else state.selected[payload.id].count += payload.count;
     },
+
+    incrementSelected: (state, { payload }: PayloadAction<string>) => {
+      state.selected[payload].count++;
+    },
+    decrementSelected: (state, { payload }: PayloadAction<string>) => {
+      if (state.selected[payload].count > 1) {
+        state.selected[payload].count--;
+      } else {
+        const updated = { ...state.selected };
+        delete updated[payload]; // Remove the item with the given payload
+
+        state.selected = updated;
+      }
+    },
   },
 });
 
 export const itemsSelector = (state: RootState) => state.cart.items;
 export const selectedItemsSelector = (state: RootState) => state.cart.selected;
 
-export const { addToCart, increment, decrement, selectItem } =
-  cartReducer.actions;
+export const {
+  addToCart,
+  increment,
+  decrement,
+  selectItem,
+  incrementSelected,
+  decrementSelected,
+} = cartReducer.actions;
 export default cartReducer.reducer;
