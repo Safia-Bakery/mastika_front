@@ -22,6 +22,37 @@ export enum OrderingType {
 export enum MainPermissions {
   fillings = 1,
   filling = 2,
+
+  roles = 0,
+  add_roles = 0,
+  edit_roles = 0,
+
+  comments = 0,
+  add_comments = 0,
+
+  all_orders = 0,
+  add_all_orders = 0,
+  edit_all_orders = 0,
+
+  rec_orders = 0,
+  edit_rec_orders = 0,
+  add_rec_orders = 0,
+
+  users = 0,
+  add_users = 0,
+  edit_users = 0,
+
+  categories = 0,
+  add_categories = 0,
+  edit_categories = 0,
+
+  branches = 0,
+
+  clients = 0,
+  add_clients = 0,
+  edit_clients = 0,
+
+  products = 0,
 }
 export interface MeTypes {
   username: string;

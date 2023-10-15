@@ -1,13 +1,16 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import useToken from "src/hooks/useToken";
+import { MainPermissions } from "src/utils/types";
+import Loading from "../Loader";
 import {
   logoutHandler,
   permissionSelector,
   tokenSelector,
 } from "src/redux/reducers/auth";
-import Login from "pages/Login";
-import { useEffect, useMemo } from "react";
+import { lazy, useEffect, useMemo } from "react";
 import Sidebar from "../Sidebar";
+
 import Orders from "src/pages/Orders";
 import AddPhone from "src/pages/AddPhone";
 import AddOrder from "src/pages/AddOrder";
@@ -26,13 +29,173 @@ import FillingsComplexity from "src/pages/FillingsComplexity";
 import FillingInfo from "src/pages/FillingInfo";
 import EditAddFillingInfo from "src/pages/EditAddFillingInfo";
 import EditAddFillings from "src/pages/EditAddFillings";
-import useToken from "src/hooks/useToken";
-import Loading from "../Loader";
+
 import EditAddCategory from "src/pages/EditAddCategory";
 import ShowSubCategory from "src/pages/ShowSubCategory";
 import ShowRole from "src/pages/ShowRole";
 import ShowSubCategChild from "src/pages/ShowSubCategChild";
 import EditAddSubCategsChild from "src/pages/EditAddSubCategsChild";
+import Products from "src/pages/Products";
+import Login from "src/pages/Login";
+import Suspend from "../Suspend";
+
+// const Login = lazy(() => import("pages/Login"));
+// const Orders = lazy(() => import("src/pages/Orders"));
+// const AddPhone = lazy(() => import("src/pages/AddPhone"));
+// const AddOrder = lazy(() => import("src/pages/AddOrder"));
+// const ShowOrder = lazy(() => import("src/pages/ShowOrder"));
+// const Home = lazy(() => import("src/pages/Home"));
+// const Users = lazy(() => import("src/pages/Users"));
+// const Categories = lazy(() => import("src/pages/Categories"));
+// const EditAddSubCategories = lazy(
+//   () => import("src/pages/EditAddSubCategories")
+// );
+// const Comments = lazy(() => import("src/pages/Comments"));
+// const Roles = lazy(() => import("src/pages/Roles"));
+// const EditAddRole = lazy(() => import("src/pages/EditAddRole"));
+// const Branches = lazy(() => import("src/pages/Branches"));
+// const EditAddBranch = lazy(() => import("src/pages/EditAddBranch"));
+// const EditAddUser = lazy(() => import("src/pages/EditAddUser"));
+// const FillingsComplexity = lazy(() => import("src/pages/FillingsComplexity"));
+// const FillingInfo = lazy(() => import("src/pages/FillingInfo"));
+// const EditAddFillingInfo = lazy(() => import("src/pages/EditAddFillingInfo"));
+// const EditAddFillings = lazy(() => import("src/pages/EditAddFillings"));
+// const EditAddCategory = lazy(() => import("src/pages/EditAddCategory"));
+// const ShowSubCategory = lazy(() => import("src/pages/ShowSubCategory"));
+// const ShowRole = lazy(() => import("src/pages/ShowRole"));
+// const ShowSubCategChild = lazy(() => import("src/pages/ShowSubCategChild"));
+// const EditAddSubCategsChild = lazy(
+//   () => import("src/pages/EditAddSubCategsChild")
+// );
+// const Products = lazy(() => import("src/pages/Products"));
+
+export const routes = [
+  {
+    element: <Orders />,
+    path: "/orders",
+    screen: MainPermissions.all_orders,
+  },
+  {
+    element: <Orders />,
+    path: "/received-orders",
+    screen: MainPermissions.rec_orders,
+  },
+  {
+    element: <Users />,
+    path: "/clients",
+    screen: MainPermissions.clients,
+  },
+  {
+    element: <EditAddUser />,
+    path: "/clients/add",
+    screen: MainPermissions.add_clients,
+  },
+  {
+    element: <EditAddUser />,
+    path: "/clients/:clientid",
+    screen: MainPermissions.edit_clients,
+  },
+  {
+    element: <AddPhone />,
+    path: "/orders/add-phone",
+    screen: MainPermissions.add_all_orders,
+  },
+  {
+    element: <AddOrder />,
+    path: "/orders/add",
+    screen: MainPermissions.add_all_orders,
+  },
+  {
+    element: <ShowOrder />,
+    path: "/orders/:id",
+    screen: MainPermissions.edit_all_orders,
+  },
+  {
+    element: <Comments />,
+    path: "/comments",
+    screen: MainPermissions.comments,
+  },
+  {
+    element: <Categories />,
+    path: "/categories",
+    screen: MainPermissions.categories,
+  },
+  {
+    element: <EditAddCategory />,
+    path: "add",
+    screen: MainPermissions.add_categories,
+  },
+  // {
+  //   element: <EditAddCategory />,
+  //   path: ":id/edit",
+  //   screen: MainPermissions.filling  ,
+  // },
+  // {
+  //   element: <ShowSubCategory />,
+  //   path: ":id/show",
+  //   screen: MainPermissions.filling  ,
+  // },
+  // {
+  //   element: <EditAddSubCategories />,
+  //   path: ":id/editsub/:subid",
+  //   screen: MainPermissions.filling  ,
+  // },
+  {
+    element: <Roles />,
+    path: "/roles",
+    screen: MainPermissions.roles,
+  },
+  {
+    element: <EditAddRole />,
+    path: "/roles/add",
+    screen: MainPermissions.add_roles,
+  },
+  {
+    element: <EditAddRole />,
+    path: "/roles/edit/:id",
+    screen: MainPermissions.edit_roles,
+  },
+  {
+    element: <ShowRole />,
+    path: "/roles/:id",
+    screen: MainPermissions.edit_roles,
+  },
+  {
+    element: <Branches />,
+    path: "/branches",
+    screen: MainPermissions.branches,
+  },
+  {
+    element: <EditAddBranch />,
+    path: "/branches/add",
+    screen: MainPermissions.branches,
+  },
+  {
+    element: <EditAddBranch />,
+    path: "/branches/:id",
+    screen: MainPermissions.branches,
+  },
+  {
+    element: <Users />,
+    path: "/users",
+    screen: MainPermissions.users,
+  },
+  {
+    element: <EditAddUser />,
+    path: "/users/add",
+    screen: MainPermissions.add_users,
+  },
+  {
+    element: <EditAddUser />,
+    path: "/users/:id",
+    screen: MainPermissions.edit_users,
+  },
+  {
+    element: <Products />,
+    path: "/products",
+    screen: MainPermissions.products,
+  },
+];
 
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
@@ -46,6 +209,23 @@ const Navigation = () => {
   //   if (!!user?.permissions.length)
   //     dispatch(permissionHandler(user?.permissions));
   // }, [user?.permissions]);
+
+  // const renderScreen = useMemo(() => {
+  //   if (!!permission && !!token)
+  //     return routes.map((route) => {
+  //       if (!!permission?.[route.screen]) {
+  //         return (
+  //           <Route
+  //             key={route.path}
+  //             element={<Suspend>{route.element}</Suspend>}
+  //             path={route.path}
+  //           />
+  //         );
+  //       }
+  //     });
+
+  //   return null;
+  // }, [permission, routes, token]);
 
   const renderSidebar = useMemo(() => {
     if (!token) return <Sidebar />;
@@ -78,6 +258,23 @@ const Navigation = () => {
           <Route element={<ShowOrder />} path={"/orders/:id"} />
           <Route element={<Comments />} path={"/comments"} />
 
+          <Route element={<Roles />} path={"/roles"} />
+          <Route element={<EditAddRole />} path={"/roles/add"} />
+          <Route element={<EditAddRole />} path={"/roles/edit/:id"} />
+          <Route element={<ShowRole />} path={"/roles/:id"} />
+
+          <Route element={<Branches />} path={"/branches"} />
+          <Route element={<EditAddBranch />} path={"/branches/add"} />
+          <Route element={<EditAddBranch />} path={"/branches/:id"} />
+
+          <Route element={<Users />} path={"/users"} />
+          <Route element={<EditAddUser />} path={"/users/add"} />
+          <Route element={<EditAddUser />} path={"/users/:id"} />
+
+          <Route element={<Products />} path={"/products"} />
+
+          {/* {renderScreen} */}
+
           <Route path={"/categories"}>
             <Route element={<Categories />} index />
             <Route element={<EditAddCategory />} path={"add"} />
@@ -107,27 +304,7 @@ const Navigation = () => {
             {/* <Route element={<ShowSubCategChild />} path={":id/:subid/show"} /> */}
           </Route>
 
-          {/*           
-          <Route element={<EditAddSubCategories />} path={"/categories/add"} />
-          <Route element={<EditAddSubCategories />} path={"/categories/:id"} /> */}
-
-          <Route element={<Roles />} path={"/roles"} />
-          <Route element={<EditAddRole />} path={"/roles/add"} />
-          <Route element={<EditAddRole />} path={"/roles/edit/:id"} />
-          <Route element={<ShowRole />} path={"/roles/:id"} />
-
-          <Route element={<Branches />} path={"/branches"} />
-          <Route element={<EditAddBranch />} path={"/branches/add"} />
-          <Route element={<EditAddBranch />} path={"/branches/:id"} />
-
-          <Route element={<Users />} path={"/users"} />
-          <Route element={<EditAddUser />} path={"/users/add"} />
-          <Route element={<EditAddUser />} path={"/users/:id"} />
-
-          <Route
-            // element={<FillingsComplexity />}
-            path={"/fillings"}
-          >
+          <Route path={"/fillings"}>
             {/* 
             
               --complexity - {standart, PP, premium}
