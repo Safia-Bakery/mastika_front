@@ -65,7 +65,7 @@ const ShowSubCategory: FC<Props> = ({ child }) => {
     if (update) refetch();
   }, [update]);
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Loading absolute />;
 
   return (
     // <div className="flex flex-col justify-end mr-4">

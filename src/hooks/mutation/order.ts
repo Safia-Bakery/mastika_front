@@ -18,12 +18,20 @@ interface Body {
   category_id?: number;
   lat?: string;
   long?: string;
+
+  status?: number;
+  id?: number;
 }
 
 const orderMutation = () => {
   return useMutation(["order"], async (body: Body) => {
-    const { data } = await apiClient.post({ url: "/v1/orders", body });
-    return data;
+    if (body.id) {
+      const { data } = await apiClient.put({ url: "/v1/orders", body });
+      return data;
+    } else {
+      const { data } = await apiClient.post({ url: "/v1/orders", body });
+      return data;
+    }
   });
 };
 export default orderMutation;

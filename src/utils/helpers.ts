@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { EPresetTimes } from "./types";
+import { EPresetTimes, PaymentTypes, SystemTypes } from "./types";
 
 export const itemsPerPage = 50;
 
@@ -34,3 +34,15 @@ export const queryClient = new QueryClient({
 });
 
 export const isMobile = window.innerWidth <= 1200;
+
+export const payments = [
+  { id: PaymentTypes.payme, name: "Payme" },
+  { id: PaymentTypes.cash, name: "Наличные" },
+  { id: PaymentTypes.click, name: "click" },
+];
+
+export const systems = [
+  { id: SystemTypes.mastika, name: "Отдел Мастики" },
+  { id: SystemTypes.tg, name: "Телеграм бот" },
+  { id: SystemTypes.web, name: "Сайт" },
+];

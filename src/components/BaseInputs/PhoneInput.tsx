@@ -33,7 +33,7 @@ const PhoneInput: FC<Props> = ({
     <Phone
       inputProps={{
         // name: 'phone',
-        required: true,
+        required: false,
         autoFocus: autoFocus,
         className: cl(
           className,

@@ -1,23 +1,27 @@
 import { ChangeEvent, FC, useEffect, useState } from "react";
-import { useAppSelector } from "src/redux/utils/types";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import styles from "./index.module.scss";
 import cl from "classnames";
+import { addImage } from "src/redux/reducers/imageUpload";
 
 export interface FileItem {
   file: File;
   id: number | string;
 }
 interface FileUploaderProps {
-  onFilesSelected: (formData: FileItem[]) => void;
+  // onFilesSelected: (formData: FileItem[]) => void;
   inputRef?: any;
   tableHead?: string;
+  name: string | number;
 }
 
 const UploadComponent: FC<FileUploaderProps> = ({
-  onFilesSelected,
+  // onFilesSelected,
+  name,
   inputRef,
   tableHead,
 }) => {
+  const dispatch = useAppDispatch();
   const [fileList, setFileList] = useState<FileItem[]>([]);
   const [fileIdCounter, setFileIdCounter] = useState(0);
 
@@ -32,7 +36,8 @@ const UploadComponent: FC<FileUploaderProps> = ({
         };
         updatedFileList.push(newFileItem);
       }
-      onFilesSelected(updatedFileList);
+      // onFilesSelected(updatedFileList);
+      dispatch(addImage({ files: updatedFileList, name }));
       setFileList(updatedFileList);
       setFileIdCounter(fileIdCounter + files.length);
     }
@@ -41,7 +46,7 @@ const UploadComponent: FC<FileUploaderProps> = ({
   const handleFileDelete = (id: number | string) => {
     const updatedFileList = fileList.filter((item) => item.id !== id);
     setFileList(updatedFileList);
-    onFilesSelected(updatedFileList);
+    // onFilesSelected(updatedFileList);
   };
 
   return (

@@ -1,64 +1,104 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import cl from "classnames";
-import { Fragment, useMemo } from "react";
+import { Fragment } from "react";
 import { useAppDispatch } from "src/redux/utils/types";
 import { logoutHandler } from "src/redux/reducers/auth";
 import { MainPermissions } from "src/utils/types";
 import useToken from "src/hooks/useToken";
+
+const routes = [
+  { name: "Главная страница", url: "/home", param: "?" },
+  {
+    name: "Поиск",
+    url: "/search",
+    hasline: true,
+    screen: MainPermissions.fillings,
+  },
+  { name: "Все заявки", url: "/orders", screen: MainPermissions.fillings },
+  {
+    name: "Принятые заказы",
+    url: "/received-orders",
+    screen: MainPermissions.fillings,
+  },
+  {
+    name: "Товары",
+    url: "/received-orders4",
+    screen: MainPermissions.fillings,
+  },
+  {
+    name: "Категории",
+    url: "/categories",
+    screen: MainPermissions.fillings,
+  },
+  { name: "Клиенты", url: "/clients", screen: MainPermissions.fillings },
+  {
+    name: "Отзывы",
+    url: "/comments",
+    hasline: true,
+    screen: MainPermissions.fillings,
+  },
+  { name: "Пользователи", url: "/users", screen: MainPermissions.fillings },
+  { name: "Филиалы", url: "/branches", screen: MainPermissions.fillings },
+  {
+    name: "Роли",
+    url: "/roles",
+    screen: MainPermissions.fillings,
+  },
+];
 
 const Sidebar = () => {
   const navigate = useNavigate();
 
   const { pathname } = useLocation();
 
-  const routes = useMemo(() => {
-    return [
-      { name: "Главная страница", url: "/home", param: "?" },
-      {
-        name: "Поиск",
-        url: "/search",
-        hasline: true,
-        screen: MainPermissions.all_orders,
-      },
-      {
-        name: "Все заявки",
-        url: "/orders",
-        screen: MainPermissions.all_orders,
-      },
-      {
-        name: "Принятые заказы",
-        url: "/received-orders",
-        screen: MainPermissions.rec_orders,
-      },
+  // const routes = useMemo(() => {
+  //   return [
+  //     { name: "Главная страница", url: "/home", param: "?" },
+  //     {
+  //       name: "Поиск",
+  //       url: "/search",
+  //       hasline: true,
+  //       screen: MainPermissions.all_orders,
+  //     },
+  //     {
+  //       name: "Все заявки",
+  //       url: "/orders",
+  //       screen: MainPermissions.all_orders,
+  //     },
+  //     {
+  //       name: "Принятые заказы",
+  //       url: "/received-orders",
+  //       screen: MainPermissions.rec_orders,
+  //     },
 
-      {
-        name: "Товары",
-        url: "/products",
-        screen: MainPermissions.products,
-      },
-      {
-        name: "Категории",
-        url: "/categories",
-        screen: MainPermissions.categories,
-      },
+  //     {
+  //       name: "Товары",
+  //       url: "/products",
+  //       screen: MainPermissions.products,
+  //     },
+  //     {
+  //       name: "Категории",
+  //       url: "/categories",
+  //       screen: MainPermissions.categories,
+  //     },
 
-      { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
-      {
-        name: "Отзывы",
-        url: "/comments",
-        hasline: true,
-        screen: MainPermissions.comments,
-      },
-      { name: "Пользователи", url: "/users", screen: MainPermissions.users },
-      { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
-      {
-        name: "Роли",
-        url: "/roles",
-        screen: MainPermissions.roles,
-      },
-    ];
-  }, []);
+  //     { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
+  //     {
+  //       name: "Отзывы",
+  //       url: "/comments",
+  //       hasline: true,
+  //       screen: MainPermissions.comments,
+  //     },
+  //     { name: "Пользователи", url: "/users", screen: MainPermissions.users },
+  //     { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
+  //     {
+  //       name: "Роли",
+  //       url: "/roles",
+  //       screen: MainPermissions.roles,
+  //     },
+  //   ];
+  // }, []);
 
   const dispatch = useAppDispatch();
   const permission = { 1: true, 2: true };

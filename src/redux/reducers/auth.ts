@@ -1,6 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../rootConfig";
-// import { MainPermissions } from "src/utils/types";
 
 interface State {
   token: string | null;

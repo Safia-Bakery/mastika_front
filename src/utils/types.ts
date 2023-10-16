@@ -253,7 +253,7 @@ export interface OrderType {
       reject_reason: string;
       created_at: string;
       updated_at: string;
-      deliver_date: string;
+      deliver_date: Date;
       status: number;
       address: string;
       apartment: string;
@@ -389,6 +389,11 @@ export interface CategoriesFullType {
   id: number;
   status: number;
   category_vs_subcategory: SubCategType[];
+}
+
+export enum FirstlyPayment {
+  yes = 1,
+  no = 0,
 }
 
 export enum OrderStatus {

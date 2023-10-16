@@ -13,6 +13,7 @@ import Loading from "src/components/Loader";
 import childSubCategoryMutation from "src/hooks/mutation/childSubCategory";
 import selectValsMutation from "src/hooks/mutation/selectValues";
 import subCategoryMutation from "src/hooks/mutation/subCategory";
+import useCategoriesFull from "src/hooks/useCategoryFull";
 import useContentType from "src/hooks/useContentType";
 import useSelectVal from "src/hooks/useSelectVal";
 import useSubCategories from "src/hooks/useSubCategories";
@@ -62,6 +63,10 @@ const EditAddSubCategories: FC = () => {
   const { data: contentType, isLoading: contentLoading } = useContentType({});
   const { mutate: subMutate } = subCategoryMutation();
   const { mutate: mutateSelectVals } = selectValsMutation();
+  const { refetch: fullCategRefetch } = useCategoriesFull({
+    enabled: false,
+    id: Number(id),
+  });
   const {
     data,
     refetch,
@@ -110,6 +115,7 @@ const EditAddSubCategories: FC = () => {
       {
         onSuccess: () => {
           selectRefetch();
+          fullCategRefetch();
           successToast("added");
         },
       }

@@ -30,7 +30,6 @@ const YandexMap = () => {
   useEffect(() => {
     // Fetch the address using the Yandex Geocoding API
     //41.302941, 69.173430
-    // console.log(markerCoords.reverse().join(","), "coords");
     fetch(
       `https://geocode-maps.yandex.ru/1.x/?apikey=${apiKey}&geocode=${markerCoords
         .reverse()

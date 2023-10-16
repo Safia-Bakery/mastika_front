@@ -12,7 +12,6 @@ const OrdersFilter = () => {
   const [created_at, $created_at] = useState<Date | null>();
   const [range, $range] = useState<any>([null, null]);
   const handleDateRange = (dates: any) => {
-    console.log(dates);
     $range(dates);
   };
   const [startDate, endDate] = range;
