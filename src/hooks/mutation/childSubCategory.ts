@@ -4,7 +4,7 @@ import apiClient from "src/main";
 interface Body {
   id?: number;
   content?: string;
-  value: string;
+  value?: string;
   status?: number;
   selval_id?: number;
 }
