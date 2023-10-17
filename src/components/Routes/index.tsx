@@ -82,6 +82,10 @@ const Navigation = () => {
   //   if (!!me?.permissions?.length) dispatch(permissionHandler(me?.permissions));
   // }, [me?.permissions]);
 
+  //   useEffect(() => {
+  //     dispatch(permissionHandler([]));
+  //  }, [me]);
+
   // const renderScreen = useMemo(() => {
   //   if (!!permission && !!token)
   //     return routes.map((route) => {
