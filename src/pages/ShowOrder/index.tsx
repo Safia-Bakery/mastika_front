@@ -293,122 +293,123 @@ const ShowOrder = () => {
   }, [order]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <>
       <Header />
 
       <Card title={`Заказ №${id}`} className="px-8 pt-4">
-        <div className="flex flex-col">
-          <Typography size={TextSize.S}>Статус: Новый</Typography>
-        </div>
-        <div className="flex flex-1">
-          <div className="w-80 pr-10 border-r">
-            <BaseInput label="Тип заказа" className="my-2">
-              <MainInput
-                placeholder={"Введите имя"}
-                register={register("oder_type")}
-              />
-            </BaseInput>
-            <BaseInput label="Клиент" className="mb-2">
-              <MainInput
-                placeholder={"Введите номер"}
-                register={register("client")}
-              />
-            </BaseInput>
-            {renderStates}
-            <BaseInput label="Адрес доставки" className="mb-2">
-              <MainInput register={register("address")} />
-            </BaseInput>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col">
+            <Typography size={TextSize.S}>Статус: Новый</Typography>
           </div>
-          <div className="p-4 ml-6 flex flex-1 flex-col ">
-            <BaseInput label="Предоплата">
-              <MainRadioBtns
-                value={prepay}
-                onChange={(e) => $prepay(e)}
-                values={[
-                  { id: FirstlyPayment.yes, name: "Да" },
-                  { id: FirstlyPayment.no, name: "Полностью" },
-                ]}
-              />
-            </BaseInput>
+          <div className="flex flex-1">
+            <div className="w-80 pr-10 border-r">
+              <BaseInput label="Тип заказа" className="my-2">
+                <MainInput
+                  placeholder={"Введите имя"}
+                  register={register("oder_type")}
+                />
+              </BaseInput>
+              <BaseInput label="Клиент" className="mb-2">
+                <MainInput
+                  placeholder={"Введите номер"}
+                  register={register("client")}
+                />
+              </BaseInput>
+              {renderStates}
+              <BaseInput label="Адрес доставки" className="mb-2">
+                <MainInput register={register("address")} />
+              </BaseInput>
+            </div>
+            <div className="p-4 ml-6 flex flex-1 flex-col ">
+              <BaseInput label="Предоплата">
+                <MainRadioBtns
+                  value={prepay}
+                  onChange={(e) => $prepay(e)}
+                  values={[
+                    { id: FirstlyPayment.yes, name: "Да" },
+                    { id: FirstlyPayment.no, name: "Полностью" },
+                  ]}
+                />
+              </BaseInput>
 
-            <BaseInput label="Способ оплаты" className="mb-2">
-              <MainSelect
-                values={payments}
-                inputStyle={InputStyle.primary}
-                register={register("payment_type")}
-              />
-            </BaseInput>
+              <BaseInput label="Способ оплаты" className="mb-2">
+                <MainSelect
+                  values={payments}
+                  inputStyle={InputStyle.primary}
+                  register={register("payment_type")}
+                />
+              </BaseInput>
 
-            <BaseInput label="Система" className="mb-2">
-              <MainSelect
-                values={systems}
-                inputStyle={InputStyle.primary}
-                register={register("system")}
-              />
-            </BaseInput>
-            <BaseInput label="Оператор" className="mb-2">
-              <MainInput register={register("operator")} />
-            </BaseInput>
-            <BaseInput label="Дата изменения" className="mb-2">
-              <MainDatePicker
-                selected={dayjs(issue_date || undefined).toDate()}
-                onChange={$issue_date}
-              />
-            </BaseInput>
+              <BaseInput label="Система" className="mb-2">
+                <MainSelect
+                  values={systems}
+                  inputStyle={InputStyle.primary}
+                  register={register("system")}
+                />
+              </BaseInput>
+              <BaseInput label="Оператор" className="mb-2">
+                <MainInput register={register("operator")} />
+              </BaseInput>
+              <BaseInput label="Дата изменения" className="mb-2">
+                <MainDatePicker
+                  selected={dayjs(issue_date || undefined).toDate()}
+                  onChange={$issue_date}
+                />
+              </BaseInput>
 
-            <BaseInput label="Комментарии" className="mb-2">
-              <MainTextArea register={register("comment")} />
-            </BaseInput>
+              <BaseInput label="Комментарии" className="mb-2">
+                <MainTextArea register={register("comment")} />
+              </BaseInput>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-1 justify-end">
-          <Button className="bg-darkYellow mt-4 w-64" type="submit">
-            Сохранить
-          </Button>
-        </div>
+          <div className="flex flex-1 justify-end">
+            <Button className="bg-darkYellow mt-4 w-64" type="submit">
+              Сохранить
+            </Button>
+          </div>
 
-        <div className="border-b w-full mt-4" />
-        {renderCategs}
-        <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
-          {renderSubCategs}
-        </div>
-        <div className="flex gap-4 mt-4">
-          {!!Object.values(images)?.length &&
-            Object.keys(images).map((img) => {
-              return images?.[img].map((item, index) => {
-                if (item.file.type.startsWith("image/"))
-                  return (
-                    <div className="relative">
-                      <div className="bg-white rounded-full p-2 absolute top-2 right-1">
-                        <CloseIcon
-                          onClick={() =>
-                            dispatch(
-                              deleteImg({
-                                key: img,
-                                index,
-                              })
-                            )
-                          }
-                          className="w-3 h-3 "
+          <div className="border-b w-full mt-4" />
+          {renderCategs}
+          <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
+            {renderSubCategs}
+          </div>
+          <div className="flex gap-4 mt-4">
+            {!!Object.values(images)?.length &&
+              Object.keys(images).map((img) => {
+                return images?.[img].map((item, index) => {
+                  if (item.file.type.startsWith("image/"))
+                    return (
+                      <div className="relative">
+                        <div className="bg-white rounded-full p-2 absolute top-2 right-1">
+                          <CloseIcon
+                            onClick={() =>
+                              dispatch(
+                                deleteImg({
+                                  key: img,
+                                  index,
+                                })
+                              )
+                            }
+                            className="w-3 h-3 "
+                          />
+                        </div>
+                        <img
+                          key={item.id}
+                          src={URL.createObjectURL(item.file)}
+                          height={100}
+                          width={100}
                         />
                       </div>
-                      <img
-                        key={item.id}
-                        src={URL.createObjectURL(item.file)}
-                        height={100}
-                        width={100}
-                      />
-                    </div>
-                  );
-              });
-            })}
-        </div>
+                    );
+                });
+              })}
+          </div>
 
-        <div className="border-b w-full mt-4" />
-
+          <div className="border-b w-full mt-4" />
+        </form>
         <AddProduct />
       </Card>
-    </form>
+    </>
   );
 };
 

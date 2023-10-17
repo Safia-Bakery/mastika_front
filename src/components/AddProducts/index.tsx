@@ -26,6 +26,9 @@ import EmptyList from "../EmptyList";
 import CloseIcon from "../CloseIcon";
 import useProductGroup from "src/hooks/useProductGroup";
 import useProducts from "src/hooks/useProducts";
+import orderProducts from "src/hooks/mutation/orderProducts";
+import { useParams } from "react-router-dom";
+import { successToast } from "src/utils/toast";
 
 // const group = [
 //   { id: "768798", name: "string", code: "string", status: 1 },
@@ -61,6 +64,7 @@ import useProducts from "src/hooks/useProducts";
 // ];
 
 const AddProduct = () => {
+  const { id } = useParams();
   const navigate = useNavigateParams();
   const group_id = useQueryString("group_id");
   const [name, $name] = useDebounce("");
@@ -69,13 +73,15 @@ const AddProduct = () => {
   const dispatch = useAppDispatch();
   const items = useAppSelector(itemsSelector);
 
+  const { mutate } = orderProducts();
+
   const selected = useAppSelector(selectedItemsSelector);
 
   const emptySelected = useMemo(() => {
     return Object.keys(selected).length === 0;
   }, [selected]);
 
-  const { register } = useForm();
+  const { register, getValues } = useForm();
 
   const { data: group } = useProductGroup({
     enabled: !group_id,
@@ -178,13 +184,27 @@ const AddProduct = () => {
     }
   }, [selected]);
 
+  const handleSave = () => {
+    const products = Object.values(selected).map((item) => {
+      return {
+        order_id: Number(id),
+        product_id: item.id,
+        comment: getValues(`${item.id}`),
+        amount: item.count,
+      };
+    });
+    mutate(products, {
+      onSuccess: () => successToast("products submitted"),
+    });
+  };
+
   // if (!items.length) return;
 
   return (
-    <>
+    <form>
       <div className="flex justify-between items-center">
         <Typography size={TextSize.XXL}>Товары</Typography>
-        <div className="">
+        <div>
           <Button
             className="bg-darkBlue mt-4 w-64 text-white mr-2"
             type="button"
@@ -197,7 +217,7 @@ const AddProduct = () => {
             <Button
               className="bg-yellow mt-4 w-64 "
               type="button"
-              onClick={() => null}
+              onClick={handleSave}
             >
               Сохранить
             </Button>
@@ -290,7 +310,7 @@ const AddProduct = () => {
           {renderModal}
         </div>
       </Modal>
-    </>
+    </form>
   );
 };
 
