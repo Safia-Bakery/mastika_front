@@ -171,7 +171,6 @@ const AddProduct = () => {
 
   const reduceVal = useMemo(() => {
     if (!emptySelected) {
-      console.log("first");
       return Object.values(selected).reduce((acc, item) => {
         acc += item.price * item.count;
         return acc;
@@ -179,7 +178,7 @@ const AddProduct = () => {
     }
   }, [selected]);
 
-  if (!items.length) return;
+  // if (!items.length) return;
 
   return (
     <>

@@ -112,7 +112,7 @@ const EditAddSubCategsChild: FC = () => {
         // id: Number(child),
         content: inputFields[index].content,
         status: Number(status),
-        value: "ss",
+        // value: "ss",
         selval_id: Number(child),
       },
       {
@@ -196,7 +196,7 @@ const EditAddSubCategsChild: FC = () => {
   useEffect(() => {
     if (child && data) {
       reset({
-        name: data[0].value,
+        name: parent?.value,
         content_type: ContentType.select,
         status: false,
       });
