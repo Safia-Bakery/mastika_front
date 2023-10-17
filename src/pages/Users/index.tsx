@@ -12,9 +12,14 @@ import { TextSize } from "src/components/Typography";
 import Button from "src/components/Button";
 import useUsers from "src/hooks/useUsers";
 import useQueryString from "src/hooks/useQueryString";
+import { MainPermissions } from "src/utils/types";
+import { useAppSelector } from "src/redux/utils/types";
+import { permissionSelector } from "src/redux/reducers/auth";
 
 interface Props {
   client?: boolean;
+  edit: MainPermissions;
+  add: MainPermissions;
 }
 
 const column = [
@@ -27,10 +32,11 @@ const column = [
   { name: "", key: "" },
 ];
 
-const Users: FC<Props> = ({ client }) => {
+const Users: FC<Props> = ({ client, edit, add }) => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
   const update = useQueryString("update");
+  const perms = useAppSelector(permissionSelector);
 
   const { data: users, refetch } = useUsers({
     ...(!!client && { is_client: Number(client) }),
@@ -56,7 +62,7 @@ const Users: FC<Props> = ({ client }) => {
       <UsersFilter />
       <Card>
         <Header title={client ? "" : "Пользователи"}>
-          {!client && (
+          {!client && perms?.[add] && (
             <Button
               className="bg-yellow ml-2 w-24"
               textClassName="text-black"
@@ -93,7 +99,9 @@ const Users: FC<Props> = ({ client }) => {
                   {!!user?.status ? "Активный" : "Неактивный"}
                 </td>
                 <td className="text-center" width={40}>
-                  <TableViewBtn onClick={handleNavigate(`${user?.id}`)} />
+                  {perms?.[edit] && (
+                    <TableViewBtn onClick={handleNavigate(`${user?.id}`)} />
+                  )}
                 </td>
               </tr>
             ))}

@@ -189,7 +189,7 @@ const EditAddSubCategories: FC = () => {
       },
       {
         onSuccess: () => {
-          navigate(`/categories/${id}/show${!!subid ? "?update=1" : ""}`);
+          navigate(`/categories/${id}/show?update=1`);
         },
         onError: (e: any) => errorToast(e.message),
       }

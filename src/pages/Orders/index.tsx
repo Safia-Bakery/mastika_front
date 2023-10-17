@@ -1,6 +1,6 @@
 import Container from "src/components/Container";
 import OrdersFilter from "./filter";
-import { useState } from "react";
+import { FC, useState } from "react";
 import TableHead from "src/components/TableHead";
 import styles from "./index.module.scss";
 import dayjs from "dayjs";
@@ -11,6 +11,14 @@ import Loading from "src/components/Loader";
 import Pagination from "src/components/Pagination";
 import EmptyList from "src/components/EmptyList";
 import useOrders from "src/hooks/useOrders";
+import { useAppSelector } from "src/redux/utils/types";
+import { permissionSelector } from "src/redux/reducers/auth";
+import { MainPermissions } from "src/utils/types";
+
+interface Props {
+  edit: MainPermissions;
+  add: MainPermissions;
+}
 
 const column = [
   { name: "Все заявки", key: "" },
@@ -21,11 +29,14 @@ const column = [
   { name: "Статус", key: "" },
 ];
 
-const Orders = () => {
+const Orders: FC<Props> = ({ edit, add }) => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
+  const perms = useAppSelector(permissionSelector);
 
-  const { data: orders } = useOrders({});
+  console.log(perms, "perms");
+
+  const { data: orders, isLoading } = useOrders({});
 
   const handleSort = (key: any) => {
     if (key === sortKey) {
@@ -35,6 +46,7 @@ const Orders = () => {
       setSortOrder("asc");
     }
   };
+
   // const sortData = useMemo(() => {
   //   if (branches?.items && sortKey) {
   //     return [...branches?.items].sort((a, b) => {
@@ -48,7 +60,7 @@ const Orders = () => {
 
   return (
     <Container>
-      <OrdersFilter />
+      <OrdersFilter add={add} />
       <Card>
         <table>
           <TableHead
@@ -60,55 +72,62 @@ const Orders = () => {
 
           <tbody className={styles.tableBody}>
             {/* {(sortData?.length ? sortData : branches.items)?.map( */}
-            {orders?.items?.map((order, idx) => (
-              <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
-                <td className="text-start">
-                  <Link to={`${order.id}`}>№ {order.id}</Link>
-                  <div className="flex gap-2 mt-2">
-                    <div className="flex items-center">
-                      <img src="/assets/icons/tg.svg" alt="order-image" />
-                      <Typography className="ml-1" size={TextSize.XS}>
-                        Telegram Bot
-                      </Typography>
+            {!!orders?.items.length &&
+              orders?.items?.map((order, idx) => (
+                <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
+                  <td className="text-start">
+                    {perms?.[edit] ? (
+                      <Link to={`${order.id}`}>№ {order.id}</Link>
+                    ) : (
+                      <span>№ {order.id}</span>
+                    )}
+                    <div className="flex gap-2 mt-2">
+                      <div className="flex items-center">
+                        <img src="/assets/icons/tg.svg" alt="order-image" />
+                        <Typography className="ml-1" size={TextSize.XS}>
+                          Telegram Bot
+                        </Typography>
+                      </div>
+                      <div className="flex items-center">
+                        <img src="/assets/icons/users.svg" alt="users" />
+                        <Typography className="ml-1" size={TextSize.XS}>
+                          {order?.order_user}
+                        </Typography>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <img src="/assets/icons/users.svg" alt="users" />
-                      <Typography className="ml-1" size={TextSize.XS}>
-                        {order?.order_user}
-                      </Typography>
-                    </div>
-                  </div>
-                </td>
-                <td>Бенто</td>
-                <td>{dayjs(order?.created_at).format("DD.MM.YYYY HH:mm")}</td>
-                <td>
-                  {!!order.is_delivery ? (
-                    <img
-                      className="m-auto"
-                      src="/assets/icons/car.svg"
-                      alt="type-img"
-                    />
-                  ) : (
-                    <img
-                      className="m-auto"
-                      src="/assets/icons/marker.svg"
-                      alt="type-img"
-                    />
-                  )}
-                </td>
-                <td>{order?.order_br?.name}</td>
-                <td>
-                  {!order?.order_vs_user?.status ? "Не активный" : "Активный"}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td>Бенто</td>
+                  <td>{dayjs(order?.created_at).format("DD.MM.YYYY HH:mm")}</td>
+                  <td>
+                    {!!order.is_delivery ? (
+                      <img
+                        className="m-auto"
+                        src="/assets/icons/car.svg"
+                        alt="type-img"
+                      />
+                    ) : (
+                      <img
+                        className="m-auto"
+                        src="/assets/icons/marker.svg"
+                        alt="type-img"
+                      />
+                    )}
+                  </td>
+                  <td>{order?.order_br?.name}</td>
+                  <td>
+                    {!order?.order_vs_user?.status ? "Не активный" : "Активный"}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
 
-        {false && <Loading className="py-4" />}
-        {false && <EmptyList />}
+        {isLoading && <Loading className="py-4" />}
+        {!isLoading && !orders?.items.length && <EmptyList />}
 
-        {false && <Pagination totalPages={1} />}
+        {!!orders?.items.length && (
+          <Pagination className="ml-8 mt-4" totalPages={1} />
+        )}
       </Card>
     </Container>
   );

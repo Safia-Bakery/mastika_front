@@ -59,6 +59,7 @@ export interface MeTypes {
   status: number;
   created_at: string;
   id: number;
+  permissions: number[];
 }
 
 export interface CategoryTypes {

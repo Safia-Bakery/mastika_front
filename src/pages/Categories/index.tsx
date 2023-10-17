@@ -11,6 +11,9 @@ import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
 import categorySyncMutation from "src/hooks/mutation/categorySync";
 import Loading from "src/components/Loader";
+import { useAppSelector } from "src/redux/utils/types";
+import { permissionSelector } from "src/redux/reducers/auth";
+import { MainPermissions } from "src/utils/types";
 
 const column = [
   { name: "№", key: "" },
@@ -24,6 +27,7 @@ const Categories = () => {
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const update = useQueryString("update");
+  const perms = useAppSelector(permissionSelector);
 
   const { mutate: syncIIco, isLoading: synLoading } = categorySyncMutation();
 
@@ -74,14 +78,16 @@ const Categories = () => {
             >
               Update
             </Button>
-            <Button
-              className="bg-yellow ml-2 w-24"
-              textClassName="text-black"
-              textSize={TextSize.L}
-              onClick={() => handleNavigate("add")}
-            >
-              Создать
-            </Button>
+            {perms?.[MainPermissions.add_categories] && (
+              <Button
+                className="bg-yellow ml-2 w-24"
+                textClassName="text-black"
+                textSize={TextSize.L}
+                onClick={() => handleNavigate("add")}
+              >
+                Создать
+              </Button>
+            )}
           </div>
         </Header>
         <div className="content">
@@ -109,9 +115,13 @@ const Categories = () => {
                         {!!category?.status ? "Активный" : "Неактивный"}
                       </td>
                       <td className="text-center" width={40}>
-                        <TableViewBtn
-                          onClick={() => handleNavigate(`${category.id}/edit`)}
-                        />
+                        {perms?.[MainPermissions.edit_categories] && (
+                          <TableViewBtn
+                            onClick={() =>
+                              handleNavigate(`${category.id}/edit`)
+                            }
+                          />
+                        )}
                       </td>
                     </tr>
                   ))}

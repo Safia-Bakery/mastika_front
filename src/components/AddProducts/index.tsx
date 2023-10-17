@@ -185,23 +185,25 @@ const AddProduct = () => {
     <>
       <div className="flex justify-between items-center">
         <Typography size={TextSize.XXL}>Товары</Typography>
-        {emptySelected ? (
+        <div className="">
           <Button
-            className="bg-darkBlue mt-4 w-64 text-white"
+            className="bg-darkBlue mt-4 w-64 text-white mr-2"
             type="button"
             onClick={() => handleNavigate({ productModal: 1 })}
           >
             Добавить блюдо
           </Button>
-        ) : (
-          <Button
-            className="bg-yellow mt-4 w-64 "
-            type="button"
-            onClick={() => null}
-          >
-            Сохранить
-          </Button>
-        )}
+
+          {!emptySelected && (
+            <Button
+              className="bg-yellow mt-4 w-64 "
+              type="button"
+              onClick={() => null}
+            >
+              Сохранить
+            </Button>
+          )}
+        </div>
       </div>
       {!emptySelected ? (
         <>

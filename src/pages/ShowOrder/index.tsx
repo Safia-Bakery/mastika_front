@@ -12,6 +12,7 @@ import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
+import CloseIcon from "src/components/CloseIcon";
 import EmptyList from "src/components/EmptyList";
 import UploadComponent, { FileItem } from "src/components/FileUpload";
 import Header from "src/components/Header";
@@ -22,8 +23,12 @@ import orderDynamic from "src/hooks/mutation/orderDynamic";
 import useCategories from "src/hooks/useCategories";
 import useCategoriesFull from "src/hooks/useCategoryFull";
 import useOrder from "src/hooks/useOrder";
-import { imgSelector } from "src/redux/reducers/imageUpload";
-import { useAppSelector } from "src/redux/utils/types";
+import {
+  deleteImg,
+  imgFileSelector,
+  imgSelector,
+} from "src/redux/reducers/imageUpload";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { payments, systems } from "src/utils/helpers";
 import { errorToast, successToast } from "src/utils/toast";
 
@@ -39,6 +44,7 @@ import {
 
 const ShowOrder = () => {
   const { id } = useParams();
+  const dispatch = useAppDispatch();
   const [prepay, $prepay] = useState(true);
   const [activeCateg, $activeCateg] = useState<number>();
   const [files, $files] = useState<FormData>();
@@ -46,6 +52,7 @@ const ShowOrder = () => {
   const [phone, $phone] = useState("");
   const [extraPhone, $extraPhone] = useState("");
   const images = useAppSelector(imgSelector);
+  const imgFiles = useAppSelector(imgFileSelector);
 
   const { mutate } = orderMutation();
   const { mutate: dynamicVals } = orderDynamic();
@@ -201,6 +208,9 @@ const ShowOrder = () => {
     );
   }, [phone, extraPhone, created_at, delivery_date]);
 
+  console.log(images, "images");
+  console.log(imgFiles, "imgFiles");
+
   const onSubmit = () => {
     const {
       address,
@@ -214,7 +224,7 @@ const ShowOrder = () => {
     console.log(getValues(), "allValues");
     const dynamic = subCategories?.category_vs_subcategory.reduce(
       (acc: any, item) => {
-        acc[`${item.id}_child`] = getValues(`${item.id}`);
+        acc[`${item.id}`] = getValues(`${item.id}`);
         return acc;
       },
       {}
@@ -246,7 +256,7 @@ const ShowOrder = () => {
     );
 
     dynamicVals(
-      { ...dynamic, ...{ order_id: id } },
+      { ...dynamic, ...{ order_id: Number(id) }, imgFiles },
       {
         onSuccess: () => successToast("dynamics submitted"),
         onError: (e: any) => errorToast(e.message),
@@ -364,16 +374,31 @@ const ShowOrder = () => {
         </div>
         <div className="flex gap-4 mt-4">
           {!!Object.values(images)?.length &&
-            Object.values(images).map((img) => {
-              return img.map((item) => {
+            Object.keys(images).map((img) => {
+              return images?.[img].map((item, index) => {
                 if (item.file.type.startsWith("image/"))
                   return (
-                    <img
-                      key={item.id}
-                      src={URL.createObjectURL(item.file)}
-                      height={100}
-                      width={100}
-                    />
+                    <div className="relative">
+                      <div className="bg-white rounded-full p-2 absolute top-2 right-1">
+                        <CloseIcon
+                          onClick={() =>
+                            dispatch(
+                              deleteImg({
+                                key: img,
+                                index,
+                              })
+                            )
+                          }
+                          className="w-3 h-3 "
+                        />
+                      </div>
+                      <img
+                        key={item.id}
+                        src={URL.createObjectURL(item.file)}
+                        height={100}
+                        width={100}
+                      />
+                    </div>
                   );
               });
             })}

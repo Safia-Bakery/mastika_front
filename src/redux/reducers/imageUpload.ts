@@ -52,6 +52,7 @@ export const imageUploadReducer = createSlice({
 });
 
 export const imgSelector = (state: RootState) => state.images.images;
+export const imgFileSelector = (state: RootState) => state.images.files;
 
-export const { addImage } = imageUploadReducer.actions;
+export const { addImage, deleteImg } = imageUploadReducer.actions;
 export default imageUploadReducer.reducer;

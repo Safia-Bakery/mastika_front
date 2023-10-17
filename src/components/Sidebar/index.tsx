@@ -23,7 +23,7 @@ const routes = [
   },
   {
     name: "Товары",
-    url: "/received-orders4",
+    url: "/products",
     screen: MainPermissions.fillings,
   },
   {

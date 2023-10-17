@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
@@ -6,9 +6,17 @@ import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
+import { permissionSelector } from "src/redux/reducers/auth";
+import { useAppSelector } from "src/redux/utils/types";
+import { MainPermissions } from "src/utils/types";
 
-const OrdersFilter = () => {
+interface Props {
+  add: MainPermissions;
+}
+
+const OrdersFilter: FC<Props> = ({ add }) => {
   const navigate = useNavigate();
+  const perms = useAppSelector(permissionSelector);
   const [created_at, $created_at] = useState<Date | null>();
   const [range, $range] = useState<any>([null, null]);
   const handleDateRange = (dates: any) => {
@@ -69,14 +77,16 @@ const OrdersFilter = () => {
           { id: 2, name: "Сфера: Test" },
         ]}
       />
-      <Button
-        className="bg-yellow ml-2 flex-1"
-        textClassName="text-black"
-        textSize={TextSize.L}
-        onClick={() => navigate("/orders/add-phone")}
-      >
-        Создать
-      </Button>
+      {perms?.[add] && (
+        <Button
+          className="bg-yellow ml-2 flex-1"
+          textClassName="text-black"
+          textSize={TextSize.L}
+          onClick={() => navigate("/orders/add-phone")}
+        >
+          Создать
+        </Button>
+      )}
     </div>
   );
 };

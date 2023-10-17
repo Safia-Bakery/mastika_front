@@ -5,6 +5,7 @@ import { MainPermissions } from "src/utils/types";
 import Loading from "../Loader";
 import {
   logoutHandler,
+  permissionHandler,
   permissionSelector,
   tokenSelector,
 } from "src/redux/reducers/auth";
@@ -69,134 +70,6 @@ import Suspend from "../Suspend";
 // );
 // const Products = lazy(() => import("src/pages/Products"));
 
-export const routes = [
-  {
-    element: <Orders />,
-    path: "/orders",
-    screen: MainPermissions.all_orders,
-  },
-  {
-    element: <Orders />,
-    path: "/received-orders",
-    screen: MainPermissions.rec_orders,
-  },
-  {
-    element: <Users />,
-    path: "/clients",
-    screen: MainPermissions.clients,
-  },
-  {
-    element: <EditAddUser />,
-    path: "/clients/add",
-    screen: MainPermissions.add_clients,
-  },
-  {
-    element: <EditAddUser />,
-    path: "/clients/:clientid",
-    screen: MainPermissions.edit_clients,
-  },
-  {
-    element: <AddPhone />,
-    path: "/orders/add-phone",
-    screen: MainPermissions.add_all_orders,
-  },
-  {
-    element: <AddOrder />,
-    path: "/orders/add",
-    screen: MainPermissions.add_all_orders,
-  },
-  {
-    element: <ShowOrder />,
-    path: "/orders/:id",
-    screen: MainPermissions.edit_all_orders,
-  },
-  {
-    element: <Comments />,
-    path: "/comments",
-    screen: MainPermissions.comments,
-  },
-  {
-    element: <Categories />,
-    path: "/categories",
-    screen: MainPermissions.categories,
-  },
-  {
-    element: <EditAddCategory />,
-    path: "add",
-    screen: MainPermissions.add_categories,
-  },
-  // {
-  //   element: <EditAddCategory />,
-  //   path: ":id/edit",
-  //   screen: MainPermissions.filling  ,
-  // },
-  // {
-  //   element: <ShowSubCategory />,
-  //   path: ":id/show",
-  //   screen: MainPermissions.filling  ,
-  // },
-  // {
-  //   element: <EditAddSubCategories />,
-  //   path: ":id/editsub/:subid",
-  //   screen: MainPermissions.filling  ,
-  // },
-  {
-    element: <Roles />,
-    path: "/roles",
-    screen: MainPermissions.roles,
-  },
-  {
-    element: <EditAddRole />,
-    path: "/roles/add",
-    screen: MainPermissions.add_roles,
-  },
-  {
-    element: <EditAddRole />,
-    path: "/roles/edit/:id",
-    screen: MainPermissions.edit_roles,
-  },
-  {
-    element: <ShowRole />,
-    path: "/roles/:id",
-    screen: MainPermissions.edit_roles,
-  },
-  {
-    element: <Branches />,
-    path: "/branches",
-    screen: MainPermissions.branches,
-  },
-  {
-    element: <EditAddBranch />,
-    path: "/branches/add",
-    screen: MainPermissions.branches,
-  },
-  {
-    element: <EditAddBranch />,
-    path: "/branches/:id",
-    screen: MainPermissions.branches,
-  },
-  {
-    element: <Users />,
-    path: "/users",
-    screen: MainPermissions.users,
-  },
-  {
-    element: <EditAddUser />,
-    path: "/users/add",
-    screen: MainPermissions.add_users,
-  },
-  {
-    element: <EditAddUser />,
-    path: "/users/:id",
-    screen: MainPermissions.edit_users,
-  },
-  {
-    element: <Products />,
-    path: "/products",
-    screen: MainPermissions.products,
-  },
-];
-
 const Navigation = () => {
   const token = useAppSelector(tokenSelector);
   const permission = useAppSelector(permissionSelector);
@@ -206,9 +79,8 @@ const Navigation = () => {
   const { data: me, error, isLoading } = useToken({});
 
   // useEffect(() => {
-  //   if (!!user?.permissions.length)
-  //     dispatch(permissionHandler(user?.permissions));
-  // }, [user?.permissions]);
+  //   if (!!me?.permissions?.length) dispatch(permissionHandler(me?.permissions));
+  // }, [me?.permissions]);
 
   // const renderScreen = useMemo(() => {
   //   if (!!permission && !!token)
@@ -226,6 +98,156 @@ const Navigation = () => {
 
   //   return null;
   // }, [permission, routes, token]);
+
+  // const routes = useMemo(() => {
+  //   [
+  //     {
+  //       element: (
+  //         <Orders
+  //           edit={MainPermissions.edit_all_orders}
+  //           add={MainPermissions.add_all_orders}
+  //         />
+  //       ),
+  //       path: "/orders",
+  //       screen: MainPermissions.all_orders,
+  //     },
+  //     {
+  //       element: (
+  //         <Orders
+  //           edit={MainPermissions.edit_rec_orders}
+  //           add={MainPermissions.add_rec_orders}
+  //         />
+  //       ),
+  //       path: "/received-orders",
+  //       screen: MainPermissions.rec_orders,
+  //     },
+  //     {
+  //       element: (
+  //         <Users
+  //           edit={MainPermissions.edit_clients}
+  //           add={MainPermissions.add_clients}
+  //         />
+  //       ),
+  //       path: "/clients",
+  //       screen: MainPermissions.clients,
+  //     },
+  //     {
+  //       element: <EditAddUser />,
+  //       path: "/clients/add",
+  //       screen: MainPermissions.add_clients,
+  //     },
+  //     {
+  //       element: <EditAddUser />,
+  //       path: "/clients/:clientid",
+  //       screen: MainPermissions.edit_clients,
+  //     },
+  //     {
+  //       element: <AddPhone />,
+  //       path: "/orders/add-phone",
+  //       screen: MainPermissions.add_all_orders,
+  //     },
+  //     {
+  //       element: <AddOrder />,
+  //       path: "/orders/add",
+  //       screen: MainPermissions.add_all_orders,
+  //     },
+  //     {
+  //       element: <ShowOrder />,
+  //       path: "/orders/:id",
+  //       screen: MainPermissions.edit_all_orders,
+  //     },
+  //     {
+  //       element: <Comments />,
+  //       path: "/comments",
+  //       screen: MainPermissions.comments,
+  //     },
+  //     {
+  //       element: <Categories />,
+  //       path: "/categories",
+  //       screen: MainPermissions.categories,
+  //     },
+  //     {
+  //       element: <EditAddCategory />,
+  //       path: "add",
+  //       screen: MainPermissions.add_categories,
+  //     },
+  //     // {
+  //     //   element: <EditAddCategory />,
+  //     //   path: ":id/edit",
+  //     //   screen: MainPermissions.filling  ,
+  //     // },
+  //     // {
+  //     //   element: <ShowSubCategory />,
+  //     //   path: ":id/show",
+  //     //   screen: MainPermissions.filling  ,
+  //     // },
+  //     // {
+  //     //   element: <EditAddSubCategories />,
+  //     //   path: ":id/editsub/:subid",
+  //     //   screen: MainPermissions.filling  ,
+  //     // },
+  //     {
+  //       element: <Roles />,
+  //       path: "/roles",
+  //       screen: MainPermissions.roles,
+  //     },
+  //     {
+  //       element: <EditAddRole />,
+  //       path: "/roles/add",
+  //       screen: MainPermissions.add_roles,
+  //     },
+  //     {
+  //       element: <EditAddRole />,
+  //       path: "/roles/edit/:id",
+  //       screen: MainPermissions.edit_roles,
+  //     },
+  //     {
+  //       element: <ShowRole />,
+  //       path: "/roles/:id",
+  //       screen: MainPermissions.edit_roles,
+  //     },
+  //     {
+  //       element: <Branches />,
+  //       path: "/branches",
+  //       screen: MainPermissions.branches,
+  //     },
+  //     {
+  //       element: <EditAddBranch />,
+  //       path: "/branches/add",
+  //       screen: MainPermissions.branches,
+  //     },
+  //     {
+  //       element: <EditAddBranch />,
+  //       path: "/branches/:id",
+  //       screen: MainPermissions.branches,
+  //     },
+  //     {
+  //       element: (
+  //         <Users
+  //           edit={MainPermissions.edit_users}
+  //           add={MainPermissions.add_users}
+  //         />
+  //       ),
+  //       path: "/users",
+  //       screen: MainPermissions.users,
+  //     },
+  //     {
+  //       element: <EditAddUser />,
+  //       path: "/users/add",
+  //       screen: MainPermissions.add_users,
+  //     },
+  //     {
+  //       element: <EditAddUser />,
+  //       path: "/users/:id",
+  //       screen: MainPermissions.edit_users,
+  //     },
+  //     {
+  //       element: <Products />,
+  //       path: "/products",
+  //       screen: MainPermissions.products,
+  //     },
+  //   ];
+  // }, []);
 
   const renderSidebar = useMemo(() => {
     if (!!token) return <Sidebar />;
@@ -246,11 +268,36 @@ const Navigation = () => {
           <Route element={<Login />} path={"/login"} />
           <Route element={<Home />} index path={"/home"} />
           <Route element={<Home />} path={"*"} />
-          <Route element={<Orders />} path={"/orders"} />
+          <Route
+            element={
+              <Orders
+                edit={MainPermissions.edit_all_orders}
+                add={MainPermissions.add_all_orders}
+              />
+            }
+            path={"/orders"}
+          />
 
-          <Route element={<Orders />} path={"/received-orders"} />
+          <Route
+            element={
+              <Orders
+                edit={MainPermissions.edit_rec_orders}
+                add={MainPermissions.add_rec_orders}
+              />
+            }
+            path={"/received-orders"}
+          />
 
-          <Route element={<Users client />} path={"/clients"} />
+          <Route
+            element={
+              <Users
+                client
+                edit={MainPermissions.edit_clients}
+                add={MainPermissions.add_clients}
+              />
+            }
+            path={"/clients"}
+          />
           <Route element={<EditAddUser />} path={"/clients/add"} />
           <Route element={<EditAddUser />} path={"/clients/:clientid"} />
           <Route element={<AddPhone />} path={"/orders/add-phone"} />
@@ -267,7 +314,15 @@ const Navigation = () => {
           <Route element={<EditAddBranch />} path={"/branches/add"} />
           <Route element={<EditAddBranch />} path={"/branches/:id"} />
 
-          <Route element={<Users />} path={"/users"} />
+          <Route
+            element={
+              <Users
+                edit={MainPermissions.edit_users}
+                add={MainPermissions.add_users}
+              />
+            }
+            path={"/users"}
+          />
           <Route element={<EditAddUser />} path={"/users/add"} />
           <Route element={<EditAddUser />} path={"/users/:id"} />
 

@@ -9,6 +9,9 @@ import TableViewBtn from "src/components/TableViewBtn";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
 import useRoles from "src/hooks/useRoles";
+import { useAppSelector } from "src/redux/utils/types";
+import { permissionSelector } from "src/redux/reducers/auth";
+import { MainPermissions } from "src/utils/types";
 
 const column = [
   { name: "№", key: "" },
@@ -19,6 +22,7 @@ const column = [
 const Roles = () => {
   const navigate = useNavigate();
   const handleNavigate = (route: string) => () => navigate(route);
+  const perms = useAppSelector(permissionSelector);
 
   const { data: roles, isLoading, refetch } = useRoles({ enabled: false });
 
@@ -55,14 +59,16 @@ const Roles = () => {
     // <div className="flex flex-col justify-end mr-4">
     <Card>
       <Header title="Роли">
-        <Button
-          className="bg-yellow"
-          textClassName="text-black"
-          textSize={TextSize.L}
-          onClick={() => navigate("add")}
-        >
-          Создать
-        </Button>
+        {perms?.[MainPermissions.add_roles] && (
+          <Button
+            className="bg-yellow"
+            textClassName="text-black"
+            textSize={TextSize.L}
+            onClick={() => navigate("add")}
+          >
+            Создать
+          </Button>
+        )}
       </Header>
       <div className="table-responsive grid-view content">
         <table className="table table-hover">
@@ -85,7 +91,11 @@ const Roles = () => {
                   </td>
                   {/* <td>{true ? "Не активный" : "Активный"}</td> */}
                   <td width={40}>
-                    <TableViewBtn onClick={handleNavigate(`edit/${role.id}`)} />
+                    {perms?.[MainPermissions.edit_roles] && (
+                      <TableViewBtn
+                        onClick={handleNavigate(`edit/${role.id}`)}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}

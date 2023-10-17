@@ -58,7 +58,7 @@ const Products = () => {
       {/* <CategoriesFilter /> */}
 
       <Card className="mt-8">
-        <Header title="Категории">
+        <Header title="Товары">
           <div className="flex gap-3">
             <Button
               className="bg-yellow ml-2 w-24"
