@@ -117,8 +117,8 @@ const EditAddSubCategsChild: FC = () => {
       },
       {
         onSuccess: () => {
-          // refetch();
-          selectRefetch();
+          refetch();
+          // selectRefetch();
           successToast("added");
         },
       }
@@ -177,7 +177,7 @@ const EditAddSubCategsChild: FC = () => {
     // status, id, content, value, selval_id
     mutateSelectVals(
       {
-        content: name,
+        // content: name,
         selval_id: Number(subid),
         status: Number(status),
         value: name,
@@ -194,14 +194,14 @@ const EditAddSubCategsChild: FC = () => {
   };
 
   useEffect(() => {
-    if (child && parent) {
+    if (child && data) {
       reset({
-        name: parent.content,
-        content_type: 4,
+        name: data[0].value,
+        content_type: ContentType.select,
         status: false,
       });
     }
-  }, [child, parent]);
+  }, [child, data]);
 
   useEffect(() => {
     setTimeout(() => {
