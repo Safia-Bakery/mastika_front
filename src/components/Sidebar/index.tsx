@@ -15,35 +15,35 @@ const routes = [
     hasline: true,
     screen: MainPermissions.fillings,
   },
-  { name: "Все заявки", url: "/orders", screen: MainPermissions.fillings },
+  { name: "Все заявки", url: "/orders", screen: MainPermissions.all_orders },
   {
     name: "Принятые заказы",
     url: "/received-orders",
-    screen: MainPermissions.fillings,
+    screen: MainPermissions.rec_orders,
   },
   {
     name: "Товары",
     url: "/products",
-    screen: MainPermissions.fillings,
+    screen: MainPermissions.products,
   },
   {
     name: "Категории",
     url: "/categories",
-    screen: MainPermissions.fillings,
+    screen: MainPermissions.categories,
   },
-  { name: "Клиенты", url: "/clients", screen: MainPermissions.fillings },
+  { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
   {
     name: "Отзывы",
     url: "/comments",
     hasline: true,
-    screen: MainPermissions.fillings,
+    screen: MainPermissions.comments,
   },
-  { name: "Пользователи", url: "/users", screen: MainPermissions.fillings },
-  { name: "Филиалы", url: "/branches", screen: MainPermissions.fillings },
+  { name: "Пользователи", url: "/users", screen: MainPermissions.users },
+  { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
   {
     name: "Роли",
     url: "/roles",
-    screen: MainPermissions.fillings,
+    screen: MainPermissions.roles,
   },
 ];
 
@@ -51,57 +51,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const { pathname } = useLocation();
-
-  // const routes = useMemo(() => {
-  //   return [
-  //     { name: "Главная страница", url: "/home", param: "?" },
-  //     {
-  //       name: "Поиск",
-  //       url: "/search",
-  //       hasline: true,
-  //       screen: MainPermissions.all_orders,
-  //     },
-  //     {
-  //       name: "Все заявки",
-  //       url: "/orders",
-  //       screen: MainPermissions.all_orders,
-  //     },
-  //     {
-  //       name: "Принятые заказы",
-  //       url: "/received-orders",
-  //       screen: MainPermissions.rec_orders,
-  //     },
-
-  //     {
-  //       name: "Товары",
-  //       url: "/products",
-  //       screen: MainPermissions.products,
-  //     },
-  //     {
-  //       name: "Категории",
-  //       url: "/categories",
-  //       screen: MainPermissions.categories,
-  //     },
-
-  //     { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
-  //     {
-  //       name: "Отзывы",
-  //       url: "/comments",
-  //       hasline: true,
-  //       screen: MainPermissions.comments,
-  //     },
-  //     { name: "Пользователи", url: "/users", screen: MainPermissions.users },
-  //     { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
-  //     {
-  //       name: "Роли",
-  //       url: "/roles",
-  //       screen: MainPermissions.roles,
-  //     },
-  //   ];
-  // }, []);
-
   const dispatch = useAppDispatch();
-  const permission = { 1: true, 2: true };
+  const permission = { 1: true, 2: true, 0: true };
   const { data: me } = useToken({ enabled: false });
 
   // const [menuItem, $menuItem] = useState<MainPermissions>();
@@ -166,9 +117,9 @@ const Sidebar = () => {
           })}
         </ul>
       </div>
-      <span onClick={handleLogout} className={styles.logout}>
+      <div onClick={handleLogout} className={styles.logout}>
         Выйти ({me?.username})
-      </span>
+      </div>
     </div>
   );
 };

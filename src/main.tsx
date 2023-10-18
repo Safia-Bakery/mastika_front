@@ -10,12 +10,12 @@ import "react-phone-input-2/lib/style.css";
 import Loading from "./components/Loader/index.tsx";
 
 //  https://api.cakes.safiabakery.uz/docs
-//  http://10.0.0.36:8000/docs
+//  http://10.0.1.155:8000/docs
 
 //hello
 
-export const baseURL = "https://api.cakes.safiabakery.uz/";
-// export const baseURL = "http://10.0.0.36:8000";
+// export const baseURL = "https://api.cakes.safiabakery.uz/";
+export const baseURL = "http://10.0.1.155:8000";
 export default new BaseAPIClient(baseURL, store);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

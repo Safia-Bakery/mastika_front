@@ -12,9 +12,7 @@ import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
-import CloseIcon from "src/components/CloseIcon";
 import EmptyList from "src/components/EmptyList";
-import UploadComponent, { FileItem } from "src/components/FileUpload";
 import Header from "src/components/Header";
 import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
@@ -23,36 +21,32 @@ import orderDynamic from "src/hooks/mutation/orderDynamic";
 import useCategories from "src/hooks/useCategories";
 import useCategoriesFull from "src/hooks/useCategoryFull";
 import useOrder from "src/hooks/useOrder";
-import {
-  deleteImg,
-  imgFileSelector,
-  imgSelector,
-} from "src/redux/reducers/imageUpload";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
-import { payments, systems } from "src/utils/helpers";
+import { baseURL } from "src/main";
+import { orderStatus, payments, systems } from "src/utils/helpers";
 import { errorToast, successToast } from "src/utils/toast";
 
 import {
   ContentType,
   FirstlyPayment,
-  PaymentTypes,
+  OrderStatus,
+  OrderValueType,
   SubCategType,
-  SystemTypes,
 } from "src/utils/types";
-
-//_child before the key of subcateg
 
 const ShowOrder = () => {
   const { id } = useParams();
-  const dispatch = useAppDispatch();
   const [prepay, $prepay] = useState(true);
   const [activeCateg, $activeCateg] = useState<number>();
-  const [files, $files] = useState<FormData>();
-  // const [images, $images] = useState<FileItem[]>();
   const [phone, $phone] = useState("");
   const [extraPhone, $extraPhone] = useState("");
-  const images = useAppSelector(imgSelector);
-  const imgFiles = useAppSelector(imgFileSelector);
+
+  const [uploadedImg, $uploadedImg] = useState<{ name: string; url: string }>();
+
+  const { data: categories, isFetching: categoryLoading } = useCategories({});
+  const { data: subCategories, isLoading: subLoading } = useCategoriesFull({
+    id: activeCateg,
+    enabled: !!activeCateg,
+  });
 
   const { mutate } = orderMutation();
   const { mutate: dynamicVals } = orderDynamic();
@@ -61,19 +55,10 @@ const ShowOrder = () => {
   const [delivery_date, $delivery_date] = useState<Date>();
   const [created_at, $created_at] = useState<string>();
 
-  const { register, handleSubmit, getValues, reset } = useForm();
+  const { register, handleSubmit, getValues, reset, setValue } = useForm();
 
   const { data, refetch } = useOrder({ id: Number(id), enabled: !!id });
   const order = data?.order?.[0];
-
-  // const handleFilesSelected = (data: FileItem[]) => {
-  //   const formData = new FormData();
-  //   data.forEach((item) => {
-  //     formData.append("files", item.file, item.file.name);
-  //   });
-  //   $files(formData);
-  //   $images(data);
-  // };
 
   const contentTypes = (subCateg: SubCategType) => {
     switch (subCateg.contenttype_id) {
@@ -99,7 +84,10 @@ const ShowOrder = () => {
       }
 
       case ContentType.image: {
-        return <UploadComponent name={subCateg.id} />;
+        // return <UploadComponent name={subCateg.id} />;
+        return (
+          <input type="file" multiple={false} {...register(`${subCateg.id}`)} />
+        );
       }
       case ContentType.string: {
         return (
@@ -111,12 +99,6 @@ const ShowOrder = () => {
         break;
     }
   };
-
-  const { data: categories, isFetching: categoryLoading } = useCategories({});
-  const { data: subCategories, isLoading: subLoading } = useCategoriesFull({
-    id: activeCateg,
-    enabled: !!activeCateg,
-  });
 
   const renderSubCategs = useMemo(() => {
     if (subLoading && !!activeCateg) return <Loading />;
@@ -135,6 +117,35 @@ const ShowOrder = () => {
       </BaseInput>
     ));
   }, [activeCateg, subLoading, subCategories]);
+
+  const resetVals = (item: OrderValueType) => {
+    switch (item.value_vs_subcat.contenttype_id) {
+      case ContentType.image: {
+        $uploadedImg({ name: item.value_vs_subcat.name, url: item.content });
+        break;
+      }
+
+      case ContentType.string:
+        return item.content;
+      case ContentType.number:
+        return item.content;
+      case ContentType.select:
+        return item.select_id;
+
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!!data?.value && !!subCategories?.category_vs_subcategory?.length) {
+        data.value.map((item) => {
+          setValue(`${item.subcat_id}`, `${resetVals(item)}`);
+        });
+      }
+    }, 200);
+  }, [subCategories?.category_vs_subcategory, data?.value]);
 
   const renderCategs = useMemo(() => {
     return (
@@ -208,9 +219,6 @@ const ShowOrder = () => {
     );
   }, [phone, extraPhone, created_at, delivery_date]);
 
-  console.log(images, "images");
-  console.log(imgFiles, "imgFiles");
-
   const onSubmit = () => {
     const {
       address,
@@ -221,10 +229,13 @@ const ShowOrder = () => {
       payment_type,
       system,
     } = getValues();
-    console.log(getValues(), "allValues");
     const dynamic = subCategories?.category_vs_subcategory.reduce(
       (acc: any, item) => {
-        acc[`${item.id}`] = getValues(`${item.id}`);
+        if (!!getValues(`${item.id}`))
+          acc[`${item.id}`] =
+            typeof getValues(`${item.id}`) == "object"
+              ? getValues(`${item.id}`)[0]
+              : getValues(`${item.id}`);
         return acc;
       },
       {}
@@ -256,19 +267,24 @@ const ShowOrder = () => {
     );
 
     dynamicVals(
-      { ...dynamic, ...{ order_id: Number(id) }, imgFiles },
+      { ...dynamic, ...{ order_id: Number(id) } },
       {
         onSuccess: () => successToast("dynamics submitted"),
         onError: (e: any) => errorToast(e.message),
       }
     );
-    // console.log(
-    //   subCategories?.category_vs_subcategory.reduce((acc: any, item) => {
-    //     acc[`${item.id}_child`] = getValues(`${item.id}`);
-    //     return acc;
-    //   }, {}),
-    //   "ids"
-    // );
+  };
+
+  const handleStatus = (status: OrderStatus) => {
+    mutate(
+      { status, id: Number(id) },
+      {
+        onSuccess: () => {
+          successToast("status changed");
+          refetch();
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -288,6 +304,7 @@ const ShowOrder = () => {
         system: "",
         operator: order.order_vs_user.username,
         comment: order.comment,
+        ...(!order.is_delivery && { branch: order.order_br.name }),
       });
     }
   }, [order]);
@@ -299,7 +316,9 @@ const ShowOrder = () => {
       <Card title={`Заказ №${id}`} className="px-8 pt-4">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col">
-            <Typography size={TextSize.S}>Статус: Новый</Typography>
+            <Typography size={TextSize.S}>
+              Статус: {orderStatus(order?.status)}
+            </Typography>
           </div>
           <div className="flex flex-1">
             <div className="w-80 pr-10 border-r">
@@ -316,9 +335,15 @@ const ShowOrder = () => {
                 />
               </BaseInput>
               {renderStates}
-              <BaseInput label="Адрес доставки" className="mb-2">
-                <MainInput register={register("address")} />
-              </BaseInput>
+              {order?.is_delivery ? (
+                <BaseInput label="Адрес доставки" className="mb-2">
+                  <MainInput register={register("address")} />
+                </BaseInput>
+              ) : (
+                <BaseInput label="Филиал" className="mb-2">
+                  <MainInput register={register("branch")} />
+                </BaseInput>
+              )}
             </div>
             <div className="p-4 ml-6 flex flex-1 flex-col ">
               <BaseInput label="Предоплата">
@@ -374,40 +399,38 @@ const ShowOrder = () => {
             {renderSubCategs}
           </div>
           <div className="flex gap-4 mt-4">
-            {!!Object.values(images)?.length &&
-              Object.keys(images).map((img) => {
-                return images?.[img].map((item, index) => {
-                  if (item.file.type.startsWith("image/"))
-                    return (
-                      <div className="relative">
-                        <div className="bg-white rounded-full p-2 absolute top-2 right-1">
-                          <CloseIcon
-                            onClick={() =>
-                              dispatch(
-                                deleteImg({
-                                  key: img,
-                                  index,
-                                })
-                              )
-                            }
-                            className="w-3 h-3 "
-                          />
-                        </div>
-                        <img
-                          key={item.id}
-                          src={URL.createObjectURL(item.file)}
-                          height={100}
-                          width={100}
-                        />
-                      </div>
-                    );
-                });
-              })}
+            {!!uploadedImg?.url && (
+              <div className="">
+                <Typography className="mb-3 flex">
+                  {uploadedImg.name}:
+                </Typography>
+                <img src={baseURL + uploadedImg.url} height={100} width={100} />
+              </div>
+            )}
           </div>
 
           <div className="border-b w-full mt-4" />
         </form>
         <AddProduct />
+
+        {order?.status === OrderStatus.new && (
+          <div className="flex gap-[15px] justify-end mt-8 ">
+            <Button
+              onClick={() => handleStatus(OrderStatus.rejected)}
+              className="bg-danger mt-4 w-40 text-white"
+              type="submit"
+            >
+              Отклонить
+            </Button>
+            <Button
+              onClick={() => handleStatus(OrderStatus.accepted)}
+              className="bg-darkBlue mt-4 w-40 text-white"
+              type="submit"
+            >
+              Принять
+            </Button>
+          </div>
+        )}
       </Card>
     </>
   );

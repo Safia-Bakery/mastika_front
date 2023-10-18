@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { EPresetTimes, PaymentTypes, SystemTypes } from "./types";
+import { EPresetTimes, OrderStatus, PaymentTypes, SystemTypes } from "./types";
 
 export const itemsPerPage = 50;
 
@@ -7,6 +7,20 @@ export const StatusName = [
   { name: "Активный", id: 1 },
   { name: "Не активный", id: 0 },
 ];
+
+export const orderStatus = (status: OrderStatus | undefined) => {
+  switch (status) {
+    case OrderStatus.new:
+      return "Новый";
+    case OrderStatus.accepted:
+      return "Принят";
+    case OrderStatus.rejected:
+      return "Отклонён";
+
+    default:
+      return "";
+  }
+};
 // export const numberWithCommas = (val: number) => {
 //   return val
 //     ?.toFixed(2)

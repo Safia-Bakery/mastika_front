@@ -35,6 +35,8 @@ const AddOrder = () => {
   const [deliveryType, $deliveryType] = useState(OrderingType.delivery);
   const address_name = useQueryString("address_name");
   const phoneStr = useQueryString("phone");
+  const lat = useQueryString("lat");
+  const long = useQueryString("long");
   const { refetch: ordersRefetch } = useOrders({});
 
   const branchJson = useQueryString("branch");
@@ -69,25 +71,24 @@ const AddOrder = () => {
 
   const onSubmit = () => {
     const { house, home, refAddr, name } = getValues();
+    const is_delivery = Number(deliveryType === OrderingType.delivery);
     mutate(
       {
         order_user: name,
         phone_number: phone,
         firstly_payment: 1,
-        is_delivery: Number(deliveryType === OrderingType.delivery),
+        is_delivery,
         deliver_date: new Date(),
         ...(phone2 && { extra_number: phone2 }),
-        ...(address_name &&
-          deliveryType === OrderingType.delivery && { location: address_name }),
-        ...(address_name &&
-          deliveryType === OrderingType.delivery && { address: address_name }),
-        ...(house &&
-          deliveryType === OrderingType.delivery && { apartment: house }),
-        ...(refAddr &&
-          deliveryType === OrderingType.delivery && { near_to: refAddr }),
+        ...(address_name && !!is_delivery && { location: address_name }),
+        ...(address_name && !!is_delivery && { address: address_name }),
+        ...(house && !!is_delivery && { apartment: house }),
+        ...(refAddr && !!is_delivery && { near_to: refAddr }),
         ...(branch &&
           deliveryType === OrderingType.pickup && { department_id: branch.id }),
-        ...(home && { home }),
+        ...(home && !!is_delivery && { home }),
+        ...(lat && !!is_delivery && { lat }),
+        ...(long && !!is_delivery && { long }),
       },
       {
         onSuccess: () => {

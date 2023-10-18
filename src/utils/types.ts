@@ -23,36 +23,36 @@ export enum MainPermissions {
   fillings = 1,
   filling = 2,
 
-  roles = 0,
-  add_roles = 0,
-  edit_roles = 0,
+  roles = 1,
+  add_roles = 1,
+  edit_roles = 1,
 
-  comments = 0,
-  add_comments = 0,
+  comments = 1,
+  add_comments = 1,
 
-  all_orders = 0,
-  add_all_orders = 0,
-  edit_all_orders = 0,
+  all_orders = 1,
+  add_all_orders = 1,
+  edit_all_orders = 1,
 
-  rec_orders = 0,
-  edit_rec_orders = 0,
-  add_rec_orders = 0,
+  rec_orders = 1,
+  edit_rec_orders = 1,
+  add_rec_orders = 1,
 
-  users = 0,
-  add_users = 0,
-  edit_users = 0,
+  users = 1,
+  add_users = 1,
+  edit_users = 1,
 
-  categories = 0,
-  add_categories = 0,
-  edit_categories = 0,
+  categories = 1,
+  add_categories = 1,
+  edit_categories = 1,
 
-  branches = 0,
+  branches = 1,
 
-  clients = 0,
-  add_clients = 0,
-  edit_clients = 0,
+  clients = 1,
+  add_clients = 1,
+  edit_clients = 1,
 
-  products = 0,
+  products = 1,
 }
 export interface MeTypes {
   username: string;
@@ -230,6 +230,58 @@ export interface OrdersTypes extends BasePaginatedRes {
   items: OrdersType[];
 }
 
+export interface OrderValueType {
+  id: number;
+  content: string;
+  order_id: number;
+  subcat_id: number;
+  value_vs_subcat: {
+    id: number;
+    name: string;
+    category_id: number;
+    contenttype_id: number;
+    subcategory_vs_category: {
+      name: string;
+      id: number;
+      status: number;
+    };
+    subcategory_vs_contenttype: {
+      id: number;
+      name: string;
+      status: number;
+    };
+  };
+  select_id: number;
+  value_vs_select: {
+    id: number;
+    content: string;
+    value: string;
+    selval_vs_subcat: {
+      id: number;
+      name: string;
+      category_id: number;
+      contenttype_id: number;
+      subcategory_vs_category: {
+        name: string;
+        id: number;
+        status: number;
+      };
+      subcategory_vs_contenttype: {
+        id: number;
+        name: string;
+        status: number;
+      };
+    };
+  };
+  selchild_id: number;
+  value_vs_selchild: {
+    id: number;
+    content: string;
+    value: string;
+    status: number;
+  };
+}
+
 export interface OrderType {
   order: [
     {
@@ -301,59 +353,7 @@ export interface OrderType {
       ];
     }
   ];
-  value: [
-    {
-      id: number;
-      content: string;
-      order_id: number;
-      subcat_id: number;
-      value_vs_subcat: {
-        id: number;
-        name: string;
-        category_id: number;
-        contenttype_id: number;
-        subcategory_vs_category: {
-          name: string;
-          id: number;
-          status: number;
-        };
-        subcategory_vs_contenttype: {
-          id: number;
-          name: string;
-          status: number;
-        };
-      };
-      select_id: number;
-      value_vs_select: {
-        id: number;
-        content: string;
-        value: string;
-        selval_vs_subcat: {
-          id: number;
-          name: string;
-          category_id: number;
-          contenttype_id: number;
-          subcategory_vs_category: {
-            name: string;
-            id: number;
-            status: number;
-          };
-          subcategory_vs_contenttype: {
-            id: number;
-            name: string;
-            status: number;
-          };
-        };
-      };
-      selchild_id: number;
-      value_vs_selchild: {
-        id: number;
-        content: string;
-        value: string;
-        status: number;
-      };
-    }
-  ];
+  value: OrderValueType[];
 }
 export interface SelValType {
   id: number;

@@ -12,6 +12,7 @@ module.exports = {
         primary: "#3399ee",
         darkBlue: "#5266F7",
         hoverGray: "#C2C2C2",
+        danger: "#FA444F",
       },
     },
   },

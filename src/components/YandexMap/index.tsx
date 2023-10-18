@@ -39,7 +39,11 @@ const YandexMap = () => {
       .then((data) => {
         const geocodeResult: GeocodeResult =
           data.response.GeoObjectCollection.featureMember[0].GeoObject;
-        navigate({ address_name: geocodeResult.name });
+        navigate({
+          address_name: geocodeResult.name,
+          lat: markerCoords[0],
+          long: markerCoords[1],
+        });
         // setAddress(geocodeResult.name);
       })
       .catch((error) => {

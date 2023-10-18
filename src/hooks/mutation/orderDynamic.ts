@@ -4,6 +4,7 @@ import { errorToast } from "src/utils/toast";
 
 const orderDynamic = () => {
   const contentType = "multipart/form-data";
+
   return useMutation(["order_dynamic"], (body: any) =>
     apiClient
       .post({ url: "/v1/orders/dynamic", body, contentType })
