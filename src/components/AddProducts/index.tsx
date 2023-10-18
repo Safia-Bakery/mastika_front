@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useMemo } from "react";
-import Typography, { TextSize } from "../Typography";
+import Typography, { TextSize, Weight } from "../Typography";
 import Button from "../Button";
 import Modal from "../Modal";
 import MainInput from "../BaseInputs/MainInput";
@@ -12,6 +12,7 @@ import useDebounce from "src/hooks/useDebounce";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import {
   addToCart,
+  clearCart,
   decrement,
   decrementSelected,
   increment,
@@ -29,6 +30,8 @@ import useProducts from "src/hooks/useProducts";
 import orderProducts from "src/hooks/mutation/orderProducts";
 import { useParams } from "react-router-dom";
 import { successToast } from "src/utils/toast";
+import useOrder from "src/hooks/useOrder";
+import ProductRow from "./ProductRow";
 
 // const group = [
 //   { id: "768798", name: "string", code: "string", status: 1 },
@@ -72,6 +75,9 @@ const AddProduct = () => {
   const modal = useQueryString("productModal");
   const dispatch = useAppDispatch();
   const items = useAppSelector(itemsSelector);
+
+  const { data, refetch } = useOrder({ id: Number(id), enabled: !!id });
+  const order = data?.order?.[0];
 
   const { mutate } = orderProducts();
 
@@ -184,6 +190,53 @@ const AddProduct = () => {
     }
   }, [selected]);
 
+  const renderTable = useMemo(() => {
+    return (
+      <tbody>
+        {Object.values(selected).map((item, idx) => (
+          <tr key={item?.id} className=" hover:bg-hoverGray transition-colors">
+            <td width={50}>{idx + 1}</td>
+            <td>{item?.name}</td>
+            <td>
+              <MainInput
+                placeholder={"(не задано)"}
+                register={register(`${item.id}`)}
+              />
+            </td>
+            <td>
+              <div className="flex justify-center gap-3 z-10">
+                <div
+                  className="cursor-pointer w-8 text-center"
+                  onClick={() => dispatch(decrementSelected(item.id))}
+                >
+                  -
+                </div>
+                <div className="w-8 text-center">{item.count}</div>
+                <div
+                  className="cursor-pointer w-8 text-center"
+                  onClick={() => dispatch(incrementSelected(item.id))}
+                >
+                  +
+                </div>
+              </div>
+            </td>
+            <td>{item.price}</td>
+            <td>{item.count * item.price}</td>
+          </tr>
+        ))}
+
+        <tr>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td>Итого:</td>
+          <td>{reduceVal}</td>
+        </tr>
+      </tbody>
+    );
+  }, [selected]);
+
   const handleSave = () => {
     const products = Object.values(selected).map((item) => {
       return {
@@ -194,7 +247,12 @@ const AddProduct = () => {
       };
     });
     mutate(products, {
-      onSuccess: () => successToast("products submitted"),
+      onSuccess: () => {
+        dispatch(clearCart());
+        refetch();
+
+        successToast("products submitted");
+      },
     });
   };
 
@@ -224,73 +282,53 @@ const AddProduct = () => {
           )}
         </div>
       </div>
+
       {!emptySelected ? (
-        <>
-          <table>
-            <thead>
-              <tr>
-                <th className="text-gray-500 font-thin">№</th>
-                <th className="text-gray-500 font-thin">НАИМЕНОВАНИЕ</th>
-                <th className="text-gray-500 font-thin">КОММЕНТАРИЙ</th>
-                <th className="text-gray-500 font-thin">КОЛИЧЕСТВО</th>
-                <th className="text-gray-500 font-thin">ЦЕНА</th>
-                <th className="text-gray-500 font-thin">ИТОГО</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {Object.values(selected).map((item, idx) => (
-                <tr
-                  key={item?.id}
-                  className=" hover:bg-hoverGray transition-colors"
-                >
-                  <td width={50}>{idx + 1}</td>
-                  <td>{item?.name}</td>
-                  <td>
-                    <MainInput
-                      placeholder={"(не задано)"}
-                      register={register(`${item.id}`)}
-                    />
-                  </td>
-                  <td>
-                    <div className="flex justify-center gap-3 z-10">
-                      <div
-                        className="cursor-pointer w-8 text-center"
-                        onClick={() => dispatch(decrementSelected(item.id))}
-                      >
-                        -
-                      </div>
-                      <div className="w-8 text-center">{item.count}</div>
-                      <div
-                        className="cursor-pointer w-8 text-center"
-                        onClick={() => dispatch(incrementSelected(item.id))}
-                      >
-                        +
-                      </div>
-                    </div>
-                  </td>
-                  <td>{item.price}</td>
-                  <td>{item.count * item.price}</td>
-                </tr>
-              ))}
-
-              <tr>
-                <td />
-                <td />
-                <td />
-                <td />
-                <td>Итого:</td>
-                <td>{reduceVal}</td>
-              </tr>
-            </tbody>
-          </table>
-          {/* <div className="flex justify-end w-full">
-
-</div> */}
-        </>
+        <table>
+          <ProductRow />
+          {renderTable}
+        </table>
       ) : (
         <EmptyList />
       )}
+      <div className="w-full bg-yellow">
+        <Typography size={TextSize.XXL} weight={Weight.bold} alignCenter>
+          Добавленные продукты
+        </Typography>
+      </div>
+
+      <table>
+        <ProductRow />
+
+        <tbody>
+          {!!order?.product_order.length &&
+            order?.product_order.map((item, idx) => (
+              <tr
+                key={item?.id}
+                className=" hover:bg-hoverGray transition-colors"
+              >
+                <td width={50}>{idx + 1}</td>
+                <td>{item?.order_vs_product.name}</td>
+                <td>
+                  <MainInput
+                    placeholder={"(не задано)"}
+                    // onChange={() => null}
+                    disabled
+                    value={item?.comment}
+                  />
+                </td>
+                <td>
+                  <div className="flex justify-center gap-3 z-10">
+                    <div className="w-8 text-center">{item.amount}</div>
+                  </div>
+                </td>
+                <td>{item?.order_vs_product?.price}</td>
+                <td>{item.amount * item?.order_vs_product?.price}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+
       <Modal
         isOpen={!!modal}
         onClose={closeModal}

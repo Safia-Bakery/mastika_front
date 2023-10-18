@@ -49,6 +49,9 @@ export const cartReducer = createSlice({
         state.selected = updated;
       }
     },
+    clearCart: (state) => {
+      state.selected = {};
+    },
   },
 });
 
@@ -62,5 +65,6 @@ export const {
   selectItem,
   incrementSelected,
   decrementSelected,
+  clearCart,
 } = cartReducer.actions;
 export default cartReducer.reducer;
