@@ -292,7 +292,7 @@ const AddProduct = () => {
         <EmptyList />
       )}
       <div className="w-full bg-yellow">
-        <Typography size={TextSize.XXL} weight={Weight.bold} alignCenter>
+        <Typography size={TextSize.XXL} weight={Weight.medium} alignCenter>
           Добавленные продукты
         </Typography>
       </div>

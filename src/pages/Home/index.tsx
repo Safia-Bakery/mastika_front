@@ -16,7 +16,7 @@ const Home = () => {
     <Card className="p-4 mt-28">
       <div className="bg-mainGray rounded-2xl p-4 flex justify-between items-center">
         <Typography size={TextSize.XXL}>
-          Добро пожаловать, {user?.full_name}!
+          Добро пожаловать, {user?.user.full_name}!
         </Typography>
         <div className="relative">
           <img

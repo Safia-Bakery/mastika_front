@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "src/components/Card";
 import TableHead from "src/components/TableHead";
@@ -38,16 +38,16 @@ const Products = () => {
     }
   };
 
-  const sortData = () => {
-    // if (categories?.items && sortKey) {
-    //   const sortedData = [...categories?.items].sort((a, b) => {
-    //     if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-    //     if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-    //     else return 0;
-    //   });
-    //   return sortedData;
-    // }
-  };
+  const sortData = useMemo(() => {
+    if (!!products?.length && sortKey) {
+      const sortedData = [...products].sort((a, b) => {
+        if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
+        if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
+        else return 0;
+      });
+      return sortedData;
+    }
+  }, [sortKey, sortOrder, products]);
 
   useEffect(() => {
     if (update) refetch();
@@ -83,21 +83,23 @@ const Products = () => {
 
               {!!products?.length && (
                 <tbody>
-                  {products?.map((product, idx) => (
-                    <tr key={idx} className="bg-blue">
-                      <td className="first:pl-16" width="40">
-                        {idx + 1}
-                      </td>
-                      <td className="text-center">{product?.name}</td>
-                      <td className="text-center">{product?.price}</td>
-                      <td className="text-center">
-                        {!!product?.status ? "Активный" : "Неактивный"}
-                      </td>
-                      <td className="text-center" width={40}>
-                        <TableViewBtn onClick={() => null} />
-                      </td>
-                    </tr>
-                  ))}
+                  {(sortData?.length ? sortData : products)?.map(
+                    (product, idx) => (
+                      <tr key={idx} className="bg-blue">
+                        <td className="first:pl-16" width="40">
+                          {idx + 1}
+                        </td>
+                        <td className="text-center">{product?.name}</td>
+                        <td className="text-center">{product?.price}</td>
+                        <td className="text-center">
+                          {!!product?.status ? "Активный" : "Неактивный"}
+                        </td>
+                        <td className="text-center" width={40}>
+                          <TableViewBtn onClick={() => null} />
+                        </td>
+                      </tr>
+                    )
+                  )}
                 </tbody>
               )}
             </table>

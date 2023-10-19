@@ -52,19 +52,11 @@ const Sidebar = () => {
 
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
-  const permission = { 1: true, 2: true, 0: true };
+  const { data } = useToken({});
+  const permission = data?.permissions;
   const { data: me } = useToken({ enabled: false });
 
-  // const [menuItem, $menuItem] = useState<MainPermissions>();
-
-  // const toggleSubItems = (item: MainPermissions) => {
-  //   if (item === menuItem) $menuItem(undefined);
-  //   else $menuItem(item);
-  // };
-
   const handleLogout = () => dispatch(logoutHandler());
-
-  if (!permission) return;
 
   return (
     <div className={cl(styles.sidebar)}>
@@ -118,7 +110,7 @@ const Sidebar = () => {
         </ul>
       </div>
       <div onClick={handleLogout} className={styles.logout}>
-        Выйти ({me?.username})
+        Выйти ({me?.user.username})
       </div>
     </div>
   );

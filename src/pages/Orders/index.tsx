@@ -11,9 +11,9 @@ import Loading from "src/components/Loader";
 import Pagination from "src/components/Pagination";
 import EmptyList from "src/components/EmptyList";
 import useOrders from "src/hooks/useOrders";
-import { useAppSelector } from "src/redux/utils/types";
-import { permissionSelector } from "src/redux/reducers/auth";
 import { MainPermissions } from "src/utils/types";
+import { orderStatus } from "src/utils/helpers";
+import useToken from "src/hooks/useToken";
 
 interface Props {
   edit: MainPermissions;
@@ -32,9 +32,8 @@ const column = [
 const Orders: FC<Props> = ({ edit, add }) => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
-  const perms = useAppSelector(permissionSelector);
-
-  console.log(perms, "perms");
+  const { data } = useToken({});
+  const perms = data?.permissions;
 
   const { data: orders, isLoading } = useOrders({});
 
@@ -114,9 +113,7 @@ const Orders: FC<Props> = ({ edit, add }) => {
                     )}
                   </td>
                   <td>{order?.order_br?.name}</td>
-                  <td>
-                    {!order?.order_vs_user?.status ? "Не активный" : "Активный"}
-                  </td>
+                  <td>{orderStatus(order.status)}</td>
                 </tr>
               ))}
           </tbody>

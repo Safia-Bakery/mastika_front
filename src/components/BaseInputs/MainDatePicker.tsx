@@ -16,6 +16,7 @@ interface Props {
   endDate?: Date;
   selectsRange?: boolean;
   inputStyle?: InputStyle;
+  placeholder?: string;
 }
 
 const MainDatePicker: FC<Props> = ({
@@ -27,6 +28,7 @@ const MainDatePicker: FC<Props> = ({
   endDate,
   selectsRange,
   inputStyle = InputStyle.primary,
+  placeholder,
 }) => {
   return (
     <DatePicker
@@ -40,6 +42,7 @@ const MainDatePicker: FC<Props> = ({
       )}
       wrapperClassName="mb-2 w-full"
       startDate={startDate}
+      placeholderText={placeholder}
       endDate={endDate}
       isClearable
       shouldCloseOnSelect={false}

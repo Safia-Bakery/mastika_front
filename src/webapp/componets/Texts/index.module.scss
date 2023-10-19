@@ -1,0 +1,66 @@
+.base {
+  font-family: var(--circle);
+}
+
+.medium {
+  font-weight: 500;
+}
+.semiBold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.extraBold {
+  font-weight: 800;
+}
+
+.xxl {
+  font-size: 24px;
+
+  @media (max-width: 760px) {
+    font-size: 20px;
+  }
+}
+
+.xl {
+  font-size: 20px;
+
+  @media (max-width: 760px) {
+    font-size: 18px;
+  }
+}
+
+.l {
+  font-size: 18px;
+
+  @media (max-width: 760px) {
+    font-size: 16px;
+  }
+}
+
+.m {
+  font-size: 16px;
+
+  @media (max-width: 760px) {
+    font-size: 14px;
+  }
+}
+
+.s {
+  font-size: 14px;
+
+  @media (max-width: 760px) {
+    font-size: 10px;
+  }
+}
+
+.xs {
+  font-size: 12px;
+
+  @media (max-width: 760px) {
+    font-size: 8px;
+  }
+}

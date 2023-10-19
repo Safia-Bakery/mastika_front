@@ -11,9 +11,8 @@ import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
 import categorySyncMutation from "src/hooks/mutation/categorySync";
 import Loading from "src/components/Loader";
-import { useAppSelector } from "src/redux/utils/types";
-import { permissionSelector } from "src/redux/reducers/auth";
 import { MainPermissions } from "src/utils/types";
+import useToken from "src/hooks/useToken";
 
 const column = [
   { name: "№", key: "" },
@@ -27,7 +26,8 @@ const Categories = () => {
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const update = useQueryString("update");
-  const perms = useAppSelector(permissionSelector);
+  const { data } = useToken({});
+  const perms = data?.permissions;
 
   const { mutate: syncIIco, isLoading: synLoading } = categorySyncMutation();
 

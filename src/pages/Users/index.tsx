@@ -13,8 +13,7 @@ import Button from "src/components/Button";
 import useUsers from "src/hooks/useUsers";
 import useQueryString from "src/hooks/useQueryString";
 import { MainPermissions } from "src/utils/types";
-import { useAppSelector } from "src/redux/utils/types";
-import { permissionSelector } from "src/redux/reducers/auth";
+import useToken from "src/hooks/useToken";
 
 interface Props {
   client?: boolean;
@@ -36,7 +35,8 @@ const Users: FC<Props> = ({ client, edit, add }) => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
   const update = useQueryString("update");
-  const perms = useAppSelector(permissionSelector);
+  const { data } = useToken({});
+  const perms = data?.permissions;
 
   const { data: users, refetch } = useUsers({
     ...(!!client && { is_client: Number(client) }),

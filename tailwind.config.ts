@@ -13,6 +13,7 @@ module.exports = {
         darkBlue: "#5266F7",
         hoverGray: "#C2C2C2",
         danger: "#FA444F",
+        webPrimary: "#DCC38B",
       },
     },
   },

@@ -5,8 +5,7 @@ import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
-import { permissionSelector } from "src/redux/reducers/auth";
-import { useAppSelector } from "src/redux/utils/types";
+import useToken from "src/hooks/useToken";
 import { MainPermissions } from "src/utils/types";
 
 interface Props {
@@ -15,7 +14,8 @@ interface Props {
 
 const OrdersFilter: FC<Props> = ({ add }) => {
   const navigate = useNavigate();
-  const perms = useAppSelector(permissionSelector);
+  const { data } = useToken({});
+  const perms = data?.permissions;
   const [created_at, $created_at] = useState<Date | null>();
   const [range, $range] = useState<any>([null, null]);
   const handleDateRange = (dates: any) => {

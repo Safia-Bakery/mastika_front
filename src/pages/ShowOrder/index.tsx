@@ -151,7 +151,7 @@ const ShowOrder = () => {
     switch (item.value_vs_subcat.contenttype_id) {
       case ContentType.image: {
         $uploadedImg({ name: item.value_vs_subcat.name, url: item.content });
-        break;
+        return "";
       }
 
       case ContentType.string:
@@ -224,12 +224,14 @@ const ShowOrder = () => {
         </BaseInput>
         <BaseInput label="Дата оформления" className="mb-2">
           <MainDatePicker
+            placeholder={"Не задано"}
             selected={created_at ? dayjs(created_at).toDate() : undefined}
             onChange={$created_at}
           />
         </BaseInput>
         <BaseInput label="Дата поставки" className="mb-2">
           <MainDatePicker
+            placeholder={"Не задано"}
             selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
             onChange={$delivery_date}
           />
@@ -312,7 +314,11 @@ const ShowOrder = () => {
         <div className="flex gap-4 mt-4">
           <div className="">
             <Typography className="mb-3 flex">{uploadedImg.name}:</Typography>
-            <img src={baseURL + uploadedImg.url} height={100} width={100} />
+            <img
+              src={`${baseURL}/files/${uploadedImg.url}`}
+              height={100}
+              width={100}
+            />
           </div>
         </div>
       );
@@ -387,14 +393,25 @@ const ShowOrder = () => {
     );
   }, [deny_modal, order?.status]);
 
+  const renderStatus = useMemo(() => {
+    return (
+      <div className="flex flex-col">
+        <Typography size={TextSize.S}>
+          Статус: {orderStatus(order?.status)}
+        </Typography>
+      </div>
+    );
+  }, [order?.status]);
+
   useEffect(() => {
     setTimeout(() => {
       if (!!data?.value && !!subCategories?.category_vs_subcategory?.length) {
         data.value.map((item) => {
+          // if (item.value_vs_subcat.contenttype_id !== ContentType.image)
           setValue(`${item.subcat_id}`, `${resetVals(item)}`);
         });
       }
-    }, 200);
+    }, 100);
   }, [subCategories?.category_vs_subcategory, data?.value]);
 
   return (
@@ -403,11 +420,7 @@ const ShowOrder = () => {
 
       <Card title={`Заказ №${id}`} className="px-8 pt-4">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col">
-            <Typography size={TextSize.S}>
-              Статус: {orderStatus(order?.status)}
-            </Typography>
-          </div>
+          {renderStatus}
           <div className="flex flex-1">
             <div className="w-80 pr-10 border-r">
               <BaseInput label="Тип заказа" className="my-2">
@@ -465,6 +478,7 @@ const ShowOrder = () => {
               </BaseInput>
               <BaseInput label="Дата изменения" className="mb-2">
                 <MainDatePicker
+                  placeholder={"Не задано"}
                   selected={updated_at ? dayjs(updated_at).toDate() : undefined}
                   onChange={$updated_at}
                 />

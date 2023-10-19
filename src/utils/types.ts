@@ -19,53 +19,90 @@ export enum OrderingType {
   delivery = 2,
 }
 
+// export enum MainPermissions {
+//   fillings = 1,
+//   filling = 2,
+
+//   roles = 1,
+//   add_roles = 1,
+//   edit_roles = 1,
+
+//   comments = 1,
+//   add_comments = 1,
+
+//   all_orders = 1,
+//   add_all_orders = 1,
+//   edit_all_orders = 1,
+
+//   rec_orders = 1,
+//   edit_rec_orders = 1,
+//   add_rec_orders = 1,
+
+//   users = 1,
+//   add_users = 1,
+//   edit_users = 1,
+
+//   categories = 1,
+//   add_categories = 1,
+//   edit_categories = 1,
+
+//   branches = 1,
+
+//   clients = 1,
+//   add_clients = 1,
+//   edit_clients = 1,
+
+//   products = 1,
+// }
+
 export enum MainPermissions {
   fillings = 1,
   filling = 2,
 
-  roles = 1,
-  add_roles = 1,
-  edit_roles = 1,
+  roles = 2,
+  add_roles = 3,
+  edit_roles = 4,
 
-  comments = 1,
-  add_comments = 1,
+  comments = 5,
+  add_comments = 6,
 
-  all_orders = 1,
-  add_all_orders = 1,
-  edit_all_orders = 1,
+  all_orders = 7,
+  add_all_orders = 8,
+  edit_all_orders = 9,
 
-  rec_orders = 1,
-  edit_rec_orders = 1,
-  add_rec_orders = 1,
+  rec_orders = 10,
+  edit_rec_orders = 11,
+  add_rec_orders = 12,
 
-  users = 1,
-  add_users = 1,
-  edit_users = 1,
+  users = 13,
+  add_users = 14,
+  edit_users = 15,
 
-  categories = 1,
-  add_categories = 1,
-  edit_categories = 1,
+  categories = 16,
+  add_categories = 17,
+  edit_categories = 18,
 
-  branches = 1,
+  branches = 19,
 
-  clients = 1,
-  add_clients = 1,
-  edit_clients = 1,
+  clients = 20,
+  add_clients = 21,
+  edit_clients = 22,
 
-  products = 1,
+  products = 23,
 }
 export interface MeTypes {
-  username: string;
-  status: number;
-  created_at: string;
-  id: number;
-  permissions: number[];
-
-  full_name: string;
-  is_client: number;
-  role_id: null;
-  phone_number: string;
-  user_role: null;
+  user: {
+    username: string;
+    status: number;
+    created_at: string;
+    full_name: string;
+    is_client: number;
+    id: number;
+    role_id: number;
+    phone_number: string;
+    user_role: any;
+  };
+  permissions: { [key: number]: boolean };
 }
 
 export interface CategoryTypes {
