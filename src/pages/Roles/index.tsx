@@ -56,7 +56,6 @@ const Roles = () => {
   if (isLoading) return <Loading absolute />;
 
   return (
-    // <div className="flex flex-col justify-end mr-4">
     <Card>
       <Header title="Роли">
         {perms?.[MainPermissions.add_roles] && (
@@ -102,9 +101,6 @@ const Roles = () => {
             </tbody>
           )}
         </table>
-        {/* {!roles?.length && !orderLoading && (
-          <EmptyList />
-        )} */}
       </div>
     </Card>
   );

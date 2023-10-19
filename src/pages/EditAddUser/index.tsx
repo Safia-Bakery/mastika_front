@@ -4,9 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainCheckBox from "src/components/BaseInputs/MainCheckBox";
 import MainInput from "src/components/BaseInputs/MainInput";
-import MainRadioBtns from "src/components/BaseInputs/MainRadioBtns";
 import MainSelect from "src/components/BaseInputs/MainSelect";
-import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
@@ -19,7 +17,6 @@ import { successToast } from "src/utils/toast";
 const EditAddUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const handleNavigate = (url: string) => navigate(url);
   const { data: roles } = useRoles({});
   const { data: userData, refetch } = useUsers({
     id: Number(id),

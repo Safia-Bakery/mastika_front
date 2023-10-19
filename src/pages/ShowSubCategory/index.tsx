@@ -1,6 +1,6 @@
 import Card from "src/components/Card";
 import Header from "src/components/Header";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Loading from "src/components/Loader";
 import { FC, useEffect, useState } from "react";
@@ -13,10 +13,6 @@ import useSubCategories from "src/hooks/useSubCategories";
 import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
 
-interface Props {
-  child?: boolean;
-}
-
 const column = [
   { name: "№", key: "" },
   { name: "Название", key: "name" },
@@ -24,7 +20,7 @@ const column = [
   { name: "", key: "" },
 ];
 
-const ShowSubCategory: FC<Props> = ({ child }) => {
+const ShowSubCategory: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const update = useQueryString("update");

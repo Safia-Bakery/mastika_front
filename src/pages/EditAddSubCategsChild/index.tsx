@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { FC, forwardRef, useEffect, useMemo } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,11 +10,9 @@ import Card from "src/components/Card";
 import Header from "src/components/Header";
 import Loading from "src/components/Loader";
 import childSubCategoryMutation from "src/hooks/mutation/childSubCategory";
-import selectValsMutation from "src/hooks/mutation/selectValues";
 import subCategoryMutation from "src/hooks/mutation/subCategory";
 import useContentType from "src/hooks/useContentType";
 import useSelectVal from "src/hooks/useSelectVal";
-import useSubCategories from "src/hooks/useSubCategories";
 import useSubCategsChild from "src/hooks/useSubCategsChild";
 import { errorToast, successToast } from "src/utils/toast";
 import { ContentType } from "src/utils/types";
@@ -56,9 +53,7 @@ const EditAddSubCategsChild: FC = () => {
   const { id, subid, child } = useParams();
   const navigate = useNavigate();
   const { data: contentType, isLoading: contentLoading } = useContentType({});
-  const { mutate: subMutate } = subCategoryMutation();
   const { mutate: mutateSelectVals } = childSubCategoryMutation();
-  // const { mutate: mutateSelectVals } = selectValsMutation();
 
   const {
     data,
@@ -66,25 +61,13 @@ const EditAddSubCategsChild: FC = () => {
     isLoading: subLoading,
   } = useSubCategsChild({
     enabled: !!child,
-    // selval_id: Number(7),
     selval_id: Number(child),
   });
 
   const selectChild = data?.[0];
 
-  // const { data: parent, isLoading } = useSubCategsChild({
-  //   id: Number(child),
-  //   selval_id: Number(subid),
-  // });
-  // const categry = data?.[0];
-
-  const {
-    data: parentSelect,
-    isLoading: selectLoading,
-    refetch: selectRefetch,
-  } = useSelectVal({
+  const { data: parentSelect, isLoading: selectLoading } = useSelectVal({
     id: Number(child),
-    // enabled: !!child && selectChild?.contenttype_id === ContentType.select,
   });
   const parent = parentSelect?.[0];
 
@@ -118,7 +101,6 @@ const EditAddSubCategsChild: FC = () => {
       {
         onSuccess: () => {
           refetch();
-          // selectRefetch();
           successToast("added");
         },
       }
@@ -158,7 +140,6 @@ const EditAddSubCategsChild: FC = () => {
               </Button>
               {!field.edited && (
                 <Button
-                  // disabled={fields.length < 2}
                   className="bg-darkYellow w-9 mb-2"
                   onClick={() => hanldleSelectVals(index)}
                 >
@@ -172,9 +153,8 @@ const EditAddSubCategsChild: FC = () => {
   }, [watch("content_type"), fields, selectChild, watch("inputFields")]);
 
   const onSubmit = () => {
-    const { status, name, content_type } = getValues();
+    const { status, name } = getValues();
 
-    // status, id, content, value, selval_id
     mutateSelectVals(
       {
         // content: name,

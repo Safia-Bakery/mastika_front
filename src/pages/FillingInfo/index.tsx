@@ -1,6 +1,6 @@
 import Card from "src/components/Card";
 import Header from "src/components/Header";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Loading from "src/components/Loader";
 import { useState } from "react";

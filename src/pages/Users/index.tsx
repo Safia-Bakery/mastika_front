@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Card from "src/components/Card";
 import Container from "src/components/Container";
 import Loading from "src/components/Loader";

@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainCheckBox from "src/components/BaseInputs/MainCheckBox";
 import MainInput from "src/components/BaseInputs/MainInput";
-import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
@@ -14,12 +13,7 @@ import Typography, { TextSize } from "src/components/Typography";
 const EditAddFillingInfo = () => {
   const { filling } = useParams();
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-  } = useForm();
+  const { register, reset } = useForm();
 
   useEffect(() => {
     if (filling) {

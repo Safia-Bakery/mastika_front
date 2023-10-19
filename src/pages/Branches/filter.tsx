@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseInputs from "src/components/BaseInputs";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";

@@ -2,9 +2,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
-import MainCheckBox from "src/components/BaseInputs/MainCheckBox";
 import MainInput from "src/components/BaseInputs/MainInput";
-import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
@@ -15,13 +13,7 @@ import { errorToast, successToast } from "src/utils/toast";
 const EditAddRole = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    getValues,
-  } = useForm();
+  const { register, handleSubmit, reset, getValues } = useForm();
 
   const { refetch: roleRefetch, data } = useRoles({
     enabled: !!id,

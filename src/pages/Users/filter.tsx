@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
 
 const UsersFilter = () => {
-  const navigate = useNavigate();
   const [created_at, $created_at] = useState<Date | null>();
   const [range, $range] = useState<any>([null, null]);
   const handleDateRange = (dates: any) => $range(dates);

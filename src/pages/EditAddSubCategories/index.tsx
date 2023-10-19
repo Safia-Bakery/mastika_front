@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { FC, forwardRef, useEffect, useMemo } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +9,6 @@ import Button from "src/components/Button";
 import Card from "src/components/Card";
 import Header from "src/components/Header";
 import Loading from "src/components/Loader";
-import childSubCategoryMutation from "src/hooks/mutation/childSubCategory";
 import selectValsMutation from "src/hooks/mutation/selectValues";
 import subCategoryMutation from "src/hooks/mutation/subCategory";
 import useCategoriesFull from "src/hooks/useCategoryFull";
@@ -19,10 +17,6 @@ import useSelectVal from "src/hooks/useSelectVal";
 import useSubCategories from "src/hooks/useSubCategories";
 import { errorToast, successToast } from "src/utils/toast";
 import { ContentType } from "src/utils/types";
-
-interface Props {
-  child?: boolean;
-}
 
 const InputWrapper = forwardRef<
   HTMLInputElement,
@@ -261,17 +255,6 @@ const EditAddSubCategories: FC = () => {
           <BaseInput label="СТАТУС">
             <MainCheckBox label="Активный" register={register("status")} />
           </BaseInput>
-          {/* <MainCheckBox
-            label="Срочно"
-            className="mt-4"
-            register={register("status")}
-          /> */}
-          {/* <BaseInput label="ОПИСАНИЕ">
-            <MainTextArea
-              placeholder={"Комментарии"}
-              register={register("comments", { required: "Обязательное поле" })}
-            />
-          </BaseInput> */}
         </div>
         <div className="flex flex-1 justify-end">
           <Button className="bg-darkYellow mt-4 mr-8" type="submit">

@@ -8,7 +8,6 @@ import Header from "src/components/Header";
 import BranchFilter from "./filter";
 import EmptyList from "src/components/EmptyList";
 import useBranches from "src/hooks/useBranches";
-import TableLoading from "src/components/TableLoading";
 import useQueryString from "src/hooks/useQueryString";
 import { itemsPerPage } from "src/utils/helpers";
 import Loading from "src/components/Loader";

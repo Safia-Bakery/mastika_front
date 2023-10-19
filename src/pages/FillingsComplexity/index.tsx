@@ -49,7 +49,6 @@ const FillingsComplexity = () => {
   if (orderLoading) return <Loading />;
 
   return (
-    // <div className="flex flex-col justify-end mr-4">
     <Card>
       <Header title="Стандарт">
         <div className="flex gap-2">

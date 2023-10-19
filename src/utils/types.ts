@@ -60,6 +60,12 @@ export interface MeTypes {
   created_at: string;
   id: number;
   permissions: number[];
+
+  full_name: string;
+  is_client: number;
+  role_id: null;
+  phone_number: string;
+  user_role: null;
 }
 
 export interface CategoryTypes {

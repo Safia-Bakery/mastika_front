@@ -10,12 +10,7 @@ import Typography, { TextSize } from "src/components/Typography";
 
 const EditAddFillings = () => {
   const { id } = useParams();
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-  } = useForm();
+  const { register, reset } = useForm();
 
   useEffect(() => {
     if (id) {
