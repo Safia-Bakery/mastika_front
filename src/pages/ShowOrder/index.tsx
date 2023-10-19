@@ -12,15 +12,22 @@ import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
+import CloseIcon from "src/components/CloseIcon";
 import EmptyList from "src/components/EmptyList";
 import Header from "src/components/Header";
 import Loading from "src/components/Loader";
+import Modal from "src/components/Modal";
 import Typography, { TextSize } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
 import orderDynamic from "src/hooks/mutation/orderDynamic";
 import useCategories from "src/hooks/useCategories";
 import useCategoriesFull from "src/hooks/useCategoryFull";
+import {
+  useNavigateParams,
+  useRemoveParams,
+} from "src/hooks/useCustomNavigate";
 import useOrder from "src/hooks/useOrder";
+import useQueryString from "src/hooks/useQueryString";
 import { baseURL } from "src/main";
 import { orderStatus, payments, systems } from "src/utils/helpers";
 import { errorToast, successToast } from "src/utils/toast";
@@ -39,6 +46,9 @@ const ShowOrder = () => {
   const [activeCateg, $activeCateg] = useState<number>();
   const [phone, $phone] = useState("");
   const [extraPhone, $extraPhone] = useState("");
+  const deny_modal = useQueryString("deny_modal");
+  const removeParams = useRemoveParams();
+  const navigateParams = useNavigateParams();
 
   const [uploadedImg, $uploadedImg] = useState<{ name: string; url: string }>();
 
@@ -51,7 +61,7 @@ const ShowOrder = () => {
   const { mutate } = orderMutation();
   const { mutate: dynamicVals } = orderDynamic();
 
-  const [issue_date, $issue_date] = useState<string>();
+  const [updated_at, $updated_at] = useState<string>();
   const [delivery_date, $delivery_date] = useState<Date>();
   const [created_at, $created_at] = useState<string>();
 
@@ -87,6 +97,25 @@ const ShowOrder = () => {
         // return <UploadComponent name={subCateg.id} />;
         return (
           <input type="file" multiple={false} {...register(`${subCateg.id}`)} />
+
+          // <div className="w-full max-w-xs mx-auto">
+          //   <label
+          //     htmlFor="fileInput"
+          //     className="block text-gray-600 text-sm font-bold"
+          //   >
+          //     Choose a file:
+          //   </label>
+          //   <label className="w-full flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm cursor-pointer">
+          //     <span className="text-sm">Select File</span>
+          //     <input
+          //       type="file"
+          //       id="fileInput"
+          //       name="fileInput"
+          //       className="hidden"
+          //     />
+          //   </label>
+
+          // </div>
         );
       }
       case ContentType.string: {
@@ -136,16 +165,6 @@ const ShowOrder = () => {
         break;
     }
   };
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (!!data?.value && !!subCategories?.category_vs_subcategory?.length) {
-        data.value.map((item) => {
-          setValue(`${item.subcat_id}`, `${resetVals(item)}`);
-        });
-      }
-    }, 200);
-  }, [subCategories?.category_vs_subcategory, data?.value]);
 
   const renderCategs = useMemo(() => {
     return (
@@ -205,13 +224,13 @@ const ShowOrder = () => {
         </BaseInput>
         <BaseInput label="Дата оформления" className="mb-2">
           <MainDatePicker
-            selected={dayjs(created_at || undefined).toDate()}
+            selected={created_at ? dayjs(created_at).toDate() : undefined}
             onChange={$created_at}
           />
         </BaseInput>
         <BaseInput label="Дата поставки" className="mb-2">
           <MainDatePicker
-            selected={dayjs(delivery_date || undefined).toDate()}
+            selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
             onChange={$delivery_date}
           />
         </BaseInput>
@@ -277,7 +296,7 @@ const ShowOrder = () => {
 
   const handleStatus = (status: OrderStatus) => {
     mutate(
-      { status, id: Number(id) },
+      { status, id: Number(id), deny_reason: getValues("cancel_reason") },
       {
         onSuccess: () => {
           successToast("status changed");
@@ -287,14 +306,26 @@ const ShowOrder = () => {
     );
   };
 
+  const renderImg = useMemo(() => {
+    if (uploadedImg?.url)
+      return (
+        <div className="flex gap-4 mt-4">
+          <div className="">
+            <Typography className="mb-3 flex">{uploadedImg.name}:</Typography>
+            <img src={baseURL + uploadedImg.url} height={100} width={100} />
+          </div>
+        </div>
+      );
+  }, [uploadedImg?.url]);
+
   useEffect(() => {
     if (order) {
       if (order.order_vs_category?.id) $activeCateg(order.order_vs_category.id);
       $phone(order.phone_number);
       $extraPhone(order.extra_number);
       $delivery_date(order.deliver_date);
-      $issue_date(order.created_at);
-      $created_at(order.updated_at);
+      $updated_at(order.updated_at);
+      $created_at(order.created_at);
 
       reset({
         oder_type: !order.is_delivery ? "Самовывоз" : "Доставка",
@@ -308,6 +339,63 @@ const ShowOrder = () => {
       });
     }
   }, [order]);
+
+  const renderModal = useMemo(() => {
+    return (
+      <Modal
+        isOpen={!!deny_modal && order?.status === OrderStatus.new}
+        onClose={() => removeParams(["deny_modal"])}
+      >
+        <form className="p-3 h-full">
+          <div className="flex w-full justify-between items-center">
+            <Typography size={TextSize.XXL}>Причина отклонении</Typography>
+            <CloseIcon onClick={() => removeParams(["deny_modal"])} />
+          </div>
+
+          <div className="flex flex-col justify-between h-full">
+            {/* <BaseInput label="Выберите причину">
+          <MainSelect
+            register={register("fixedReason", {
+              required: "Обязательное поле",
+            })}
+          >
+            <option value={undefined} />
+
+            {Object.keys(CancelReason).map((item) => (
+              <option key={item} value={item}>
+                {CancelReason[+item]}
+              </option>
+            ))}
+          </MainSelect>
+        </BaseInput>
+
+        {getValues("fixedReason") == 4 && ( */}
+            <BaseInput label="Комментарии" className="mt-4">
+              <MainTextArea register={register("cancel_reason")} />
+            </BaseInput>
+            {/* )} */}
+
+            <Button
+              className="bg-primary text-white absolute bottom-2 right-2 left-2 w-[initial]"
+              onClick={() => handleStatus(OrderStatus.rejected)}
+            >
+              Отправить
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    );
+  }, [deny_modal, order?.status]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!!data?.value && !!subCategories?.category_vs_subcategory?.length) {
+        data.value.map((item) => {
+          setValue(`${item.subcat_id}`, `${resetVals(item)}`);
+        });
+      }
+    }, 200);
+  }, [subCategories?.category_vs_subcategory, data?.value]);
 
   return (
     <>
@@ -377,8 +465,8 @@ const ShowOrder = () => {
               </BaseInput>
               <BaseInput label="Дата изменения" className="mb-2">
                 <MainDatePicker
-                  selected={dayjs(issue_date || undefined).toDate()}
-                  onChange={$issue_date}
+                  selected={updated_at ? dayjs(updated_at).toDate() : undefined}
+                  onChange={$updated_at}
                 />
               </BaseInput>
 
@@ -398,16 +486,7 @@ const ShowOrder = () => {
           <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
             {renderSubCategs}
           </div>
-          <div className="flex gap-4 mt-4">
-            {!!uploadedImg?.url && (
-              <div className="">
-                <Typography className="mb-3 flex">
-                  {uploadedImg.name}:
-                </Typography>
-                <img src={baseURL + uploadedImg.url} height={100} width={100} />
-              </div>
-            )}
-          </div>
+          {renderImg}
 
           <div className="border-b w-full mt-4" />
         </form>
@@ -416,7 +495,7 @@ const ShowOrder = () => {
         {order?.status === OrderStatus.new && (
           <div className="flex gap-[15px] justify-end mt-8 ">
             <Button
-              onClick={() => handleStatus(OrderStatus.rejected)}
+              onClick={() => navigateParams({ deny_modal: 1 })}
               className="bg-danger mt-4 w-40 text-white"
               type="submit"
             >
@@ -432,6 +511,8 @@ const ShowOrder = () => {
           </div>
         )}
       </Card>
+
+      {renderModal}
     </>
   );
 };

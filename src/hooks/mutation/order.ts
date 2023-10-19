@@ -21,6 +21,8 @@ interface Body {
 
   status?: number;
   id?: number;
+
+  deny_reason?: string;
 }
 
 const orderMutation = () => {
