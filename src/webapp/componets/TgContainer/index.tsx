@@ -6,7 +6,7 @@ interface Props extends PropsWithChildren {
 }
 
 const TgContainer: FC<Props> = ({ className, children }) => {
-  return <div className={cl(className, "p-5")}>{children}</div>;
+  return <div className={cl(className, "p-5 bg-white")}>{children}</div>;
 };
 
 export default TgContainer;

@@ -15,12 +15,10 @@ import { BranchJsonType, BranchesType } from "src/utils/types";
 import useBranches from "src/hooks/useBranches";
 
 interface Props {
-  origin?: number;
-  enabled?: boolean;
   label?: string;
 }
 
-const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
+const BranchSelect: FC<Props> = ({ label }) => {
   const navigate = useNavigateParams();
   const removeParam = useRemoveParams();
   const initialLoadRef = useRef(true);
@@ -34,12 +32,6 @@ const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
 
   const { data, isFetching, isLoading } = useBranches({});
 
-  // const { data, refetch, isFetching, isLoading } = useBranches({
-  //   origin,
-  //   page,
-  //   enabled,
-  //   ...(!!query && { body: { name: query } }),
-  // });
   const [items, $items] = useState<BranchesType["items"]>([]);
   const observer: any = useRef();
   const lastBookElementRef = useCallback(
@@ -49,7 +41,6 @@ const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && data?.pages && data?.pages >= page) {
           $page((prev) => prev + 1);
-          // refetch();
         }
       });
       if (node) observer.current.observe(node);
@@ -85,10 +76,7 @@ const BranchSelect: FC<Props> = ({ origin = 0, enabled, label }) => {
     $focused(false);
   };
 
-  const handleFocus = () => {
-    // if (!enabled) refetch();
-    $focused(true);
-  };
+  const handleFocus = () => $focused(true);
 
   useEffect(() => {
     if (initialLoadRef.current) {

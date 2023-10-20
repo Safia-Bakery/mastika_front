@@ -7,17 +7,19 @@ export const useBranches = ({
   size,
   page = 1,
   id,
+  name,
 }: {
   enabled?: boolean;
   size?: number;
   page?: number;
   id?: string;
+  name?: string;
 }) => {
   return useQuery({
-    queryKey: ["get_branches", page, id],
+    queryKey: ["get_branches", page, id, name],
     queryFn: () =>
       apiClient
-        .get({ url: "/v1/departments", params: { page, size, id } })
+        .get({ url: "/v1/departments", params: { page, size, id, name } })
         .then(({ data: response }) => (response as BranchesType) || null),
     enabled,
   });

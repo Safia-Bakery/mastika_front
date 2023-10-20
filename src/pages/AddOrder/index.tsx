@@ -167,7 +167,7 @@ const AddOrder = () => {
             </BaseInput>
           </>
         ) : (
-          <BranchSelect enabled label="Выберите филиал" />
+          <BranchSelect label="Выберите филиал" />
         )}
       </>
     );
