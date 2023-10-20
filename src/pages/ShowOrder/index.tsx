@@ -446,7 +446,7 @@ const ShowOrder = () => {
                 </BaseInput>
               )}
             </div>
-            <div className="p-4 ml-6 flex flex-1 flex-col ">
+            <div className="p-2 ml-6 flex flex-1 flex-col ">
               <BaseInput label="Предоплата">
                 <MainRadioBtns
                   value={prepay}

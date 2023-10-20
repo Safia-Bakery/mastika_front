@@ -10,7 +10,7 @@
   font-weight: 400;
 
   color-scheme: light;
-  background-color: #eff2f7;
+  // background-color: #eff2f7;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -33,7 +33,7 @@
   --red: #ff6868;
   --webPrimary: #dcc38b;
 
-  --circle: "Circe";
+  --circle: "Circle";
 }
 
 body {
@@ -47,7 +47,7 @@ body {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #fff;
   }
   a:hover {
     color: #747bff;
@@ -61,7 +61,7 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: "Rubik";
-  // font-family: "Circe";
+  // font-family: "Circle";
 }
 
 a {

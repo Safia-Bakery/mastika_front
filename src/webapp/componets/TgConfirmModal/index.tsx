@@ -1,16 +1,15 @@
-import { FC, ReactNode } from "react";
-import clx from "classnames";
+import { FC, PropsWithChildren } from "react";
 import styles from "./index.module.scss";
+import clx from "classnames";
 
-interface Props {
+interface Props extends PropsWithChildren {
   isOpen: boolean;
   centered?: boolean;
   onClose?: () => void;
   className?: string;
-  children: ReactNode;
 }
 
-const Modal: FC<Props> = ({
+const TgModal: FC<Props> = ({
   isOpen,
   onClose = () => null,
   centered = true,
@@ -32,11 +31,11 @@ const Modal: FC<Props> = ({
             [isOpen ? styles.fadeIn : styles.fadeOut]
           )}
         >
-          <div className={styles.content}>{children}</div>
+          {children}
         </div>
       )}
     </>
   );
 };
 
-export default Modal;
+export default TgModal;

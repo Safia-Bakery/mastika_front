@@ -14,6 +14,7 @@ module.exports = {
         hoverGray: "#C2C2C2",
         danger: "#FA444F",
         webPrimary: "#DCC38B",
+        tgBorder: "#F1F1F1",
       },
     },
   },
