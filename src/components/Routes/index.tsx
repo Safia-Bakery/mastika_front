@@ -35,6 +35,7 @@ import { lazy, useEffect, useMemo } from "react";
 import Suspend from "../Suspend";
 import WebRooutes from "../WebRoutes";
 
+const TgPackage = lazy(() => import("src/webapp/screens/TgPackage"));
 const TgFillings = lazy(() => import("src/webapp/screens/TgFillings"));
 const TgOrderType = lazy(() => import("src/webapp/screens/TgOrderType"));
 const TgOrderDirections = lazy(
@@ -552,6 +553,14 @@ const Navigation = () => {
           element={
             <Suspend>
               <TgFillings />
+            </Suspend>
+          }
+        />
+        <Route
+          path="package"
+          element={
+            <Suspend>
+              <TgPackage />
             </Suspend>
           }
         />

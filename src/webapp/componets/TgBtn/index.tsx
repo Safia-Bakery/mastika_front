@@ -10,9 +10,9 @@ interface Props {
 
 const TgBtn: FC<Props> = ({ className, children, onClick }) => {
   return (
-    <button onClick={onClick} className={cl(className, styles.btn)}>
+    <div onClick={onClick} className={cl(className, styles.btn)}>
       {children}
-    </button>
+    </div>
   );
 };
 

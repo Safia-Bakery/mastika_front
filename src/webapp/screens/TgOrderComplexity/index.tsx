@@ -5,6 +5,7 @@ import { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgContainer from "src/webapp/componets/TgContainer";
+import Selected from "src/webapp/componets/TgSelectedLabel";
 
 const complexityArr = [
   { id: 1, name: "Средний" },
@@ -36,21 +37,18 @@ const TgOrderComplexity = () => {
                   ["shadow-selected"]: active,
                 })}
               >
-                <Texts className="inline-block !w-min whitespace-nowrap">
+                <Texts
+                  weight={active ? Weight.bold : Weight.regular}
+                  className="inline-block !w-min whitespace-nowrap"
+                >
                   {item.name}
                 </Texts>
               </TgBtn>
             );
           })}
         </div>
-        <Texts
-          className={cl(
-            "text-selected opacity-0 transition-opacity delay-300 duration-500 mt-4",
-            { ["opacity-100"]: !!complexity }
-          )}
-          size={TextSize.L}
-          alignCenter
-        >{`Выбрано: ${complexity}`}</Texts>
+
+        <Selected active={!!complexity}>{`Выбрано: ${complexity}`}</Selected>
       </div>
       <div className="border-b border-b-tgBorder">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
@@ -70,19 +68,17 @@ const TgOrderComplexity = () => {
                   }
                 )}
               >
-                <Texts className="text-white">{idx}</Texts>
+                <Texts
+                  weight={active ? Weight.bold : Weight.regular}
+                  className="text-white"
+                >
+                  {idx}
+                </Texts>
               </div>
             );
           })}
         </div>
-        <Texts
-          className={cl(
-            "text-selected opacity-0 transition-opacity delay-300 duration-500 mt-4",
-            { ["opacity-100"]: !!floors }
-          )}
-          size={TextSize.L}
-          alignCenter
-        >{`Выбрано: ${floors}`}</Texts>
+        <Selected active={!!floors}>{`Выбрано: ${floors}`}</Selected>
       </div>
       <div className="border-b border-b-tgBorder">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
@@ -102,20 +98,18 @@ const TgOrderComplexity = () => {
                   }
                 )}
               >
-                <Texts className="text-white">{idx}</Texts>
+                <Texts
+                  weight={active ? Weight.bold : Weight.regular}
+                  className="text-white"
+                >
+                  {idx}
+                </Texts>
               </div>
             );
           })}
         </div>
 
-        <Texts
-          className={cl(
-            "text-selected opacity-0 transition-opacity delay-300 duration-500 mt-4",
-            { ["opacity-100"]: !!portion }
-          )}
-          size={TextSize.L}
-          alignCenter
-        >{`Выбрано: ${portion}`}</Texts>
+        <Selected active={!!portion}>{`Выбрано: ${portion}`}</Selected>
       </div>
 
       <TgBtn onClick={() => handleNavigate("/tg/fillings")} className="mt-16">

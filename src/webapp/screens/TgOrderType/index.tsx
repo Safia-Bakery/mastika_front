@@ -15,6 +15,7 @@ import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
 import WebSelected from "src/webapp/componets/TgSelected";
+import Selected from "src/webapp/componets/TgSelectedLabel";
 
 const typeArr = [
   {
@@ -119,16 +120,7 @@ const TgOrderType = () => {
               </Texts>
 
               {item.hasText && (
-                <Texts
-                  className={cl(
-                    "text-selected opacity-0 transition-opacity delay-300 duration-500",
-                    { ["opacity-100"]: branch?.name }
-                  )}
-                  size={TextSize.L}
-                  alignCenter
-                >
-                  {branch?.name}
-                </Texts>
+                <Selected active={!!branch?.name}>{branch?.name}</Selected>
               )}
             </div>
           );
