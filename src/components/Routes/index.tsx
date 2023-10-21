@@ -35,6 +35,7 @@ import { lazy, useEffect, useMemo } from "react";
 import Suspend from "../Suspend";
 import WebRooutes from "../WebRoutes";
 
+const TgFillings = lazy(() => import("src/webapp/screens/TgFillings"));
 const TgOrderType = lazy(() => import("src/webapp/screens/TgOrderType"));
 const TgOrderDirections = lazy(
   () => import("src/webapp/screens/TgOrderDirection")
@@ -43,7 +44,7 @@ const TgOrderComplexity = lazy(
   () => import("src/webapp/screens/TgOrderComplexity")
 );
 
-const Login = lazy(() => import("pages/Login"));
+const Login = lazy(() => import("src/pages/Login"));
 const Orders = lazy(() => import("src/pages/Orders"));
 const AddPhone = lazy(() => import("src/pages/AddPhone"));
 const AddOrder = lazy(() => import("src/pages/AddOrder"));
@@ -543,6 +544,14 @@ const Navigation = () => {
           element={
             <Suspend>
               <TgOrderComplexity />
+            </Suspend>
+          }
+        />
+        <Route
+          path="fillings"
+          element={
+            <Suspend>
+              <TgFillings />
             </Suspend>
           }
         />

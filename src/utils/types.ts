@@ -12,6 +12,7 @@ export interface BasePaginatedRes {
   page: number;
   size: number;
   pages: number;
+  items: any[];
 }
 
 export enum OrderingType {

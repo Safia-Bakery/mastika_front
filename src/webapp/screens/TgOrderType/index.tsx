@@ -102,7 +102,7 @@ const TgOrderType = () => {
                 onClick={handleType(item.id)}
                 className={cl(
                   "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
-                  { ["shadow-[0px_4px_4px_0px_#00000040]"]: active }
+                  { ["shadow-selected"]: active }
                 )}
               >
                 <img src={item.img} alt={item.title} />
@@ -121,7 +121,7 @@ const TgOrderType = () => {
               {item.hasText && (
                 <Texts
                   className={cl(
-                    "text-[rgba(0,_0,_0,_0.51)] opacity-0 transition-opacity delay-300 duration-500",
+                    "text-selected opacity-0 transition-opacity delay-300 duration-500",
                     { ["opacity-100"]: branch?.name }
                   )}
                   size={TextSize.L}
@@ -140,27 +140,7 @@ const TgOrderType = () => {
 
       <TgModal isOpen={!!modal} onClose={onClose}>
         {renderModal}
-        {/* <Texts size={TextSize.M} alignCenter>
-          Стоимость доставки по городу Ташкент
-          <Texts
-            alignCenter
-            weight={Weight.bold}
-            size={TextSize.M}
-            className="inline"
-          >
-            {" "}
-            100.000 сум.
-          </Texts>{" "}
-          Доставка будет осуществляться с фабрики🚘 Доставка за пределы города
-          не осуществляется. Спасибо за ваш выбор❤️
-        </Texts>
-
-        <TgBtn onClick={() => $confirmModal(false)} className="mt-5">
-          OK
-        </TgBtn> */}
       </TgModal>
-
-      {/* <TgBranchSelect /> */}
     </TgContainer>
   );
 };

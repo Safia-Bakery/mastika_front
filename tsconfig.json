@@ -19,10 +19,7 @@
     "noEmit": true,
     "baseUrl": "./",
     "paths": {
-      "src/*": ["./src/*"],
-      "pages/*": ["./src/pages/*"],
-      "assets/*": ["./src/assets/*"],
-      "src/components/*": ["./src/components/*"]
+      "src/*": ["./src/*"]
     },
 
     /* Linting */

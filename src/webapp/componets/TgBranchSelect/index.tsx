@@ -1,18 +1,18 @@
 import { TextSize } from "src/components/Typography";
 import Texts from "../Texts";
-import TgModal from "../TgConfirmModal";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import {
   useNavigateParams,
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useDebounce from "src/hooks/useDebounce";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import useBranches from "src/hooks/useBranches";
 import { BranchJsonType, BranchesType } from "src/utils/types";
 import useQueryString from "src/hooks/useQueryString";
 import cl from "classnames";
 import useUpdateEffect from "src/hooks/useUpdateEffect";
+import useInfiniteScroll from "src/hooks/useInfiniteScroll";
 
 const TgBranchSelect = () => {
   const navigate = useNavigateParams();
@@ -26,23 +26,16 @@ const TgBranchSelect = () => {
   const { data, isFetching, isLoading, refetch } = useBranches({
     page,
     ...(!!query && { name: query }),
+    enabled: true,
   });
 
   const [items, $items] = useState<BranchesType["items"]>([]);
-  const observer: any = useRef();
-  const lastBookElementRef = useCallback(
-    (node: any) => {
-      if (isFetching || isLoading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && data?.pages && data?.pages >= page) {
-          $page((prev) => prev + 1);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [isFetching, isLoading]
-  );
+  const lastBookElementRef = useInfiniteScroll({
+    isLoading: isLoading || isFetching,
+    data,
+    page,
+    $page,
+  });
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     $query(e.target.value);
