@@ -16,6 +16,7 @@ module.exports = {
         tgPrimary: "#DCC38B",
         tgBorder: "#F1F1F1",
         selected: "rgba(0, 0, 0, 0.51)",
+        tgGray: "#C3D2DC",
       },
       boxShadow: {
         // selected: "0px 4px 4px 0px #00000040",

@@ -79,7 +79,7 @@ const TgBranchSelect = () => {
       <div className="relative">
         <div
           onClick={close}
-          className="rounded-full h-5 w-5 bg-[#C3D2DC] flex items-center justify-center absolute top-[50%] -translate-y-[50%]"
+          className="rounded-full h-5 w-5 bg-tgGray flex items-center justify-center absolute top-[50%] -translate-y-[50%]"
         >
           <img
             height={7}
