@@ -45,6 +45,11 @@ const routes = [
     url: "/roles",
     screen: MainPermissions.roles,
   },
+  {
+    name: "Test: View Web App",
+    url: "/tg/order-type",
+    screen: MainPermissions.roles,
+  },
 ];
 
 const Sidebar = () => {
