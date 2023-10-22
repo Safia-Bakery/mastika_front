@@ -15,6 +15,7 @@ interface Props {
   startDate?: Date;
   endDate?: Date;
   selectsRange?: boolean;
+  showTimeInput?: boolean;
   inputStyle?: InputStyle;
   placeholder?: string;
 }
@@ -29,6 +30,7 @@ const MainDatePicker: FC<Props> = ({
   selectsRange,
   inputStyle = InputStyle.primary,
   placeholder,
+  showTimeInput,
 }) => {
   return (
     <DatePicker
@@ -45,6 +47,7 @@ const MainDatePicker: FC<Props> = ({
       placeholderText={placeholder}
       endDate={endDate}
       isClearable
+      showTimeInput={showTimeInput}
       shouldCloseOnSelect={false}
       selectsRange={selectsRange}
       {...register}
