@@ -28,6 +28,7 @@ const MainSelect: FC<Props> = ({
   return (
     <select
       className={cl(
+        className,
         "mb-2 w-full rounded-lg",
         styles.inputBox,
         styles[inputStyle]

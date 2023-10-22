@@ -158,7 +158,12 @@ const TgPackage = () => {
           className="border border-tgBorder rounded-xl mt-4"
         />
 
-        <TgBtn onClick={() => null} className={cl("mt-4 font-bold")}>
+        {/* <input type="color" /> */}
+
+        <TgBtn
+          onClick={handleNavigate("/tg/details")}
+          className={cl("mt-4 font-bold")}
+        >
           Перейти к деталям заказа
         </TgBtn>
       </form>

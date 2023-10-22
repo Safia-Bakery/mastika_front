@@ -19,7 +19,7 @@ import useUser from "src/hooks/useUser";
 import { errorToast, successToast } from "src/utils/toast";
 import { BranchJsonType, OrderingType, PaymentTypes } from "src/utils/types";
 
-const orderArray = [
+export const orderArray = [
   {
     id: OrderingType.delivery,
     name: "Доставка",
