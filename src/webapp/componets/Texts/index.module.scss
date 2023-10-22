@@ -1,6 +1,7 @@
 .base {
   font-family: var(--circle);
   display: block;
+  transition: all 0.5s;
 }
 
 .medium {
@@ -62,6 +63,6 @@
   font-size: 12px;
 
   @media (max-width: 760px) {
-    font-size: 8px;
+    font-size: 10px;
   }
 }

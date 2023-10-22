@@ -126,7 +126,7 @@ const TgOrderType = () => {
           );
         })}
       </div>
-      <TgBtn onClick={handleNavigate} className="mt-9">
+      <TgBtn onClick={handleNavigate} className="mt-9 font-bold">
         Далее
       </TgBtn>
 

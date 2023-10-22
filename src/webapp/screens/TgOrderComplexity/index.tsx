@@ -112,7 +112,10 @@ const TgOrderComplexity = () => {
         <Selected active={!!portion}>{`Выбрано: ${portion}`}</Selected>
       </div>
 
-      <TgBtn onClick={() => handleNavigate("/tg/fillings")} className="mt-16">
+      <TgBtn
+        onClick={() => handleNavigate("/tg/fillings")}
+        className="mt-16 font-bold"
+      >
         Далее
       </TgBtn>
     </TgContainer>

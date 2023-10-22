@@ -93,7 +93,7 @@ const TgOrderDirections = () => {
         })}
       </div>
 
-      <TgBtn onClick={handleNavigate} className="mt-9">
+      <TgBtn onClick={handleNavigate} className="mt-9 font-bold">
         Перейти к деталям оформления
       </TgBtn>
       {renderModal}

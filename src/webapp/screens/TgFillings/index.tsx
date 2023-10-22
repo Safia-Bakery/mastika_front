@@ -34,7 +34,7 @@ const TgFillings = () => {
         <div className="relative">
           <div
             onClick={toggleModal}
-            className="rounded-full h-5 w-5 bg-[#C3D2DC] flex items-center justify-center absolute top-[50%] -translate-y-[50%]"
+            className="rounded-full h-5 w-5 bg-tgGray flex items-center justify-center absolute top-[50%] -translate-y-[50%]"
           >
             <img
               height={7}
@@ -165,7 +165,7 @@ const TgFillings = () => {
       <TgBtn onClick={handleNavigate("/tg/package")} className="mt-7">
         <Texts
           weight={Weight.bold}
-          className="inline-block !w-min whitespace-nowrap"
+          className="inline-block !w-min whitespace-nowrap font-bold"
         >
           Далее
         </Texts>
