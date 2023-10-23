@@ -1,7 +1,9 @@
 import cl from "classnames";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgContainer from "src/webapp/componets/TgContainer";
@@ -19,10 +21,20 @@ const TgOrderComplexity = () => {
   const [floors, $floors] = useState<number>();
   const [portion, $portion] = useState<number>();
 
-  const handleNavigate = (url: string) => navigate(url);
+  const dispatch = useAppDispatch();
+  const handleSubmit = () => {
+    dispatch(
+      tgAddItem({
+        complexity: { name: "complexity", value: complexity },
+        floors,
+        portion,
+      })
+    );
+    navigate("/tg/fillings");
+  };
 
-  return (
-    <TgContainer>
+  const renderComplexity = useMemo(() => {
+    return (
       <div className="border-b border-b-tgBorder">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Укажите степень сложности
@@ -32,6 +44,7 @@ const TgOrderComplexity = () => {
             const active = item.id === complexity;
             return (
               <TgBtn
+                key={item.id}
                 onClick={() => $complexity(item.id)}
                 className={cl("px-3 !min-w-[140px] max-w-[250px] !w-min", {
                   ["shadow-selected"]: active,
@@ -50,16 +63,22 @@ const TgOrderComplexity = () => {
 
         <Selected active={!!complexity}>{`Выбрано: ${complexity}`}</Selected>
       </div>
-      <div className="border-b border-b-tgBorder">
+    );
+  }, [complexity]);
+
+  const renderFloors = useMemo(() => {
+    return (
+      <div className="border-b border-b-tgBorder ">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Выберите этажность
         </Texts>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-4">
           {[...Array(4)].map((_, idx) => {
             const active = idx === floors;
             return (
               <div
+                key={idx}
                 onClick={() => $floors(idx)}
                 className={cl(
                   "rounded-full bg-tgPrimary w-12 h-12 flex items-center justify-center transition duration-[0.6s]",
@@ -80,16 +99,22 @@ const TgOrderComplexity = () => {
         </div>
         <Selected active={!!floors}>{`Выбрано: ${floors}`}</Selected>
       </div>
+    );
+  }, [floors]);
+
+  const renderPortions = useMemo(() => {
+    return (
       <div className="border-b border-b-tgBorder">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Введите нужное количество порций
         </Texts>
 
-        <div className="flex max-w-[300px] gap-3 flex-wrap mx-auto">
+        <div className="flex max-w-[300px] gap-3 flex-wrap mx-auto mt-4">
           {[...Array(12)].map((_, idx) => {
             const active = idx === portion;
             return (
               <div
+                key={idx}
                 onClick={() => $portion(idx)}
                 className={cl(
                   "rounded-full bg-tgPrimary w-10 h-10 flex items-center justify-center transition duration-[0.6s]",
@@ -111,11 +136,16 @@ const TgOrderComplexity = () => {
 
         <Selected active={!!portion}>{`Выбрано: ${portion}`}</Selected>
       </div>
+    );
+  }, [portion]);
 
-      <TgBtn
-        onClick={() => handleNavigate("/tg/fillings")}
-        className="mt-16 font-bold"
-      >
+  return (
+    <TgContainer>
+      {renderComplexity}
+      {renderFloors}
+      {renderPortions}
+
+      <TgBtn onClick={handleSubmit} className="mt-16 font-bold">
         Далее
       </TgBtn>
     </TgContainer>

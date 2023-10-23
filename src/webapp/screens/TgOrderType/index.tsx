@@ -8,6 +8,8 @@ import {
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
@@ -35,20 +37,42 @@ const TgOrderType = () => {
   const [orderType, $orderType] = useState<OrderingType>(OrderingType.delivery);
   const navigateParam = useNavigateParams();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const modal = Number(useQueryString("modal"));
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
+
+  const items = useAppSelector(tgItemsSelector);
+
+  console.log(items, "items");
 
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
 
   const handleType = (val: OrderingType) => () => $orderType(val);
+
   const handleNavigate = () => {
-    if (branch?.id && orderType === OrderingType.pickup)
+    if (branch?.id && orderType === OrderingType.pickup) {
+      dispatch(
+        tgAddItem({
+          delivery_type: { value: OrderingType.pickup },
+          branch: { name: branch.name, value: branch.id },
+        })
+      );
       navigate("/tg/order-directions");
-    else navigateParam({ modal: 1 });
+    } else navigateParam({ modal: 1 });
   };
+
   const onClose = () => removeParams(["modal", "branch"]);
+
+  const handleConfirm = () => {
+    dispatch(
+      tgAddItem({
+        delivery_type: { value: OrderingType.delivery },
+      })
+    );
+    navigate("/tg/order-directions");
+  };
 
   const renderModal = useMemo(() => {
     if (!!modal) {
@@ -71,10 +95,7 @@ const TgOrderType = () => {
               города не осуществляется. Спасибо за ваш выбор❤️
             </Texts>
 
-            <TgBtn
-              onClick={() => navigate("/tg/order-directions")}
-              className="mt-5"
-            >
+            <TgBtn onClick={handleConfirm} className="mt-5">
               OK
             </TgBtn>
           </>

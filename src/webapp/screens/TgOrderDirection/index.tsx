@@ -2,6 +2,8 @@ import cl from "classnames";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
@@ -12,6 +14,11 @@ const TgOrderDirections = () => {
   const navigate = useNavigate();
   const [modal, $modal] = useState(false);
   const [selected, $selected] = useState<number>();
+
+  const dispatch = useAppDispatch();
+  const items = useAppSelector(tgItemsSelector);
+
+  console.log(items, "items");
 
   const toggleModal = () => $modal((prev) => !prev);
 
@@ -49,7 +56,10 @@ const TgOrderDirections = () => {
     );
   }, [modal]);
 
-  const handleNavigate = () => navigate("/tg/complexity");
+  const handleNavigate = () => {
+    dispatch(tgAddItem({ direction: { name: "Mastic", value: selected } }));
+    navigate("/tg/complexity");
+  };
 
   return (
     <TgContainer>

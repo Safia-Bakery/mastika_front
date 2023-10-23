@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
@@ -12,7 +12,9 @@ import {
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
 import { orderArray } from "src/pages/AddOrder";
-import { OrderType, OrderingType } from "src/utils/types";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
 import TgBtn from "src/webapp/componets/TgBtn";
@@ -21,20 +23,31 @@ import TgContainer from "src/webapp/componets/TgContainer";
 
 const TgDetails = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
   const modal = Number(useQueryString("modal"));
   const [orderType, $orderType] = useState<OrderingType>();
   useBranches({ enabled: orderType === OrderingType.pickup });
+  const items = useAppSelector(tgItemsSelector);
 
-  const branchJson = useQueryString("branch");
-  const branch = branchJson && JSON.parse(branchJson);
+  console.log(items, "items");
 
   const handleNavigate = (url: string) => navigate(url);
   const onClose = () => removeParams(["modal", "branch"]);
 
+  const branchJson = useQueryString("branch");
+  const branch = branchJson && JSON.parse(branchJson);
+
+  useEffect(() => {
+    if (branch?.id)
+      dispatch(
+        tgAddItem({ branch: { name: branch?.name, value: branch?.id } })
+      );
+  }, [branch?.id]);
+
   const renderType = useMemo(() => {
-    if (orderType === OrderingType.delivery)
+    if (items?.delivery_type?.value === OrderingType.delivery)
       return (
         <>
           <BaseInput
@@ -84,7 +97,7 @@ const TgDetails = () => {
             onClick={() => navigateParams({ modal: 1 })}
             className="font-bold mt-2"
           >
-            {branch?.name ? branch.name : "ВЫБЕРИТЕ ФИЛИАЛ"}
+            {items.branch?.name ? items.branch.name : "ВЫБЕРИТЕ ФИЛИАЛ"}
           </TgBtn>
 
           <TgModal onClose={onClose} isOpen={!!modal}>
@@ -92,7 +105,78 @@ const TgDetails = () => {
           </TgModal>
         </>
       );
-  }, [orderType, modal]);
+  }, [items?.delivery_type, modal, items.branch?.name]);
+
+  const renderOrderType = useMemo(() => {
+    if (items.delivery_type?.value)
+      return (
+        <MainSelect
+          values={orderArray}
+          value={items.delivery_type?.value}
+          onChange={(e) =>
+            dispatch(
+              tgAddItem({ delivery_type: { value: Number(e.target.value) } })
+            )
+          }
+          inputStyle={InputStyle.white}
+          className="!h-6 border !bg-tgGray rounded-md !w-24 !p-0 text-xs !mb-0"
+        />
+      );
+  }, [items.delivery_type?.value]);
+
+  const renderDetails = useMemo(() => {
+    return (
+      <>
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Направление</Texts>
+
+          <Texts size={TextSize.L}>{items.direction?.name}</Texts>
+        </div>
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Степень сложности</Texts>
+
+          <Texts size={TextSize.L}>{items.complexity?.name}</Texts>
+        </div>
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Этажность</Texts>
+
+          <Texts size={TextSize.L}>{items.floors}</Texts>
+        </div>
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Порции</Texts>
+
+          <Texts size={TextSize.L}>{items.portion}</Texts>
+        </div>
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Тип начинки</Texts>
+
+          <Texts size={TextSize.L}>{items.filling_type?.name}</Texts>
+        </div>
+        {items?.filling &&
+          Object.keys(items?.filling)?.map((item) => (
+            <div className="flex justify-between items-center">
+              <Texts size={TextSize.L}>Начинка {item} этаж</Texts>
+
+              <Texts size={TextSize.L}>{items.filling?.[item].name}</Texts>
+            </div>
+          ))}
+        {items?.palette &&
+          Object.keys(items?.palette)?.map((item) => (
+            <div className="flex justify-between items-center">
+              <Texts size={TextSize.L}>Номер палитры {item} этаж</Texts>
+
+              <Texts size={TextSize.L}>{items.palette?.[item]}</Texts>
+            </div>
+          ))}
+
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Упаковка</Texts>
+
+          <Texts size={TextSize.L}>{items.orderPackage?.name}</Texts>
+        </div>
+      </>
+    );
+  }, [items]);
   return (
     <TgContainer>
       <div className="flex justify-between items-center w-full">
@@ -110,11 +194,12 @@ const TgDetails = () => {
           </div>
           <Texts size={TextSize.M}>Назад</Texts>
         </div>
-        <MainSelect
-          values={orderArray}
+        {renderOrderType}
+        {/* <MainSelect
+          values={items.delivery_type?.value}
           inputStyle={InputStyle.white}
           className="!h-6 border !bg-tgGray rounded-md !w-24 !p-0 text-xs !mb-0"
-        />
+        /> */}
       </div>
 
       <Texts className="my-4 " size={TextSize.XL} uppercase>
@@ -149,12 +234,12 @@ const TgDetails = () => {
           <Texts size={TextSize.S}>Посмотреть фото</Texts>
         </TgBtn>
       </div>
-
-      <div className="flex justify-between items-center">
+      {renderDetails}
+      {/* <div className="flex justify-between items-center">
         <Texts size={TextSize.L}>Направление</Texts>
 
         <Texts size={TextSize.L}>Мастичный</Texts>
-      </div>
+      </div> */}
 
       <div className="border-b border-b-tgBorder mt-5" />
 

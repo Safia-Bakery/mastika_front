@@ -7,7 +7,7 @@ import reducer from "./reducers/reducers";
 const persistConfig = {
   key: "mastika",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "tgOrder"],
 };
 
 export const store = configureStore({

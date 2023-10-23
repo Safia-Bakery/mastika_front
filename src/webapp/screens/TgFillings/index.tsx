@@ -1,13 +1,16 @@
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
 import cl from "classnames";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useForm } from "react-hook-form";
 
 const fillingArr = [
   { id: 1, name: "Стандартная" },
@@ -17,10 +20,25 @@ const fillingArr = [
 
 const TgFillings = () => {
   const navigate = useNavigate();
-  const [filling, $filling] = useState<number>();
-  const [colorModal, $colorModal] = useState(false);
 
-  const handleNavigate = (url: string) => () => navigate(url);
+  const [colorModal, $colorModal] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const { register, getValues, reset, watch } = useForm();
+
+  const { filling_type, floors, filling, palette } =
+    useAppSelector(tgItemsSelector);
+
+  const handleSubmit = () => {
+    const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
+      acc[idx + 1] = getValues(`${idx + 1}`);
+      return acc;
+    }, {});
+    dispatch(
+      tgAddItem({ palette: paletteVals, palette_details: getValues("details") })
+    );
+    navigate("/tg/package");
+  };
 
   const toggleModal = () => $colorModal((prev) => !prev);
 
@@ -56,19 +74,26 @@ const TgFillings = () => {
       </TgModal>
     );
   }, [colorModal]);
-  return (
-    <TgContainer>
+
+  const renderFillingType = useMemo(() => {
+    return (
       <div className="border-b border-b-tgBorder">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Укажите степень сложности
         </Texts>
         <div className="flex flex-wrap gap-3 justify-center mt-4 transition-all">
           {fillingArr.map((item) => {
-            const active = item.id === filling;
+            const active = item.id === filling_type?.value;
             return (
               <TgBtn
                 key={item.id}
-                onClick={() => $filling(item.id)}
+                onClick={() =>
+                  dispatch(
+                    tgAddItem({
+                      filling_type: { name: item.name, value: item.id },
+                    })
+                  )
+                }
                 className={cl("px-3 max-w-[85px] !h-[30px]", {
                   ["shadow-selected"]: active,
                 })}
@@ -85,93 +110,170 @@ const TgFillings = () => {
           })}
         </div>
 
-        <Selected active={!!filling}>{`Выбрано: ${filling}`}</Selected>
+        <Selected
+          active={!!filling_type?.value}
+        >{`Выбрано: ${filling_type?.name}`}</Selected>
       </div>
+    );
+  }, [filling_type]);
 
-      <div className="border-b border-b-tgBorder mt-6">
-        <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-          Выберите начинку: 1 этаж
-        </Texts>
-        <div className="flex flex-wrap gap-3 justify-center mt-4">
-          {[...Array(6)].map((_, idx) => {
-            const active = idx === 1;
-            return (
-              <TgBtn
-                key={idx}
-                onClick={() => $filling(idx)}
-                className={cl("px-3 max-w-[85px] !h-[30px]", {
-                  ["shadow-selected"]: active,
-                })}
-              >
-                <Texts
-                  weight={active ? Weight.bold : Weight.regular}
-                  className="inline-block !w-min whitespace-nowrap"
+  const renderFillingFloors = useMemo(() => {
+    return [...Array(floors)].map((_, idx) => {
+      return (
+        <div className="border-b border-b-tgBorder mt-6" key={idx}>
+          <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
+            Выберите начинку: {idx + 1} этаж
+          </Texts>
+          <div className="flex flex-wrap gap-3 justify-center mt-4">
+            {[...Array(6)].map((_, childIdx) => {
+              const active = childIdx === filling?.[idx + 1]?.value;
+              return (
+                <TgBtn
+                  key={childIdx}
+                  onClick={() =>
+                    dispatch(
+                      tgAddItem({
+                        filling: {
+                          ...filling,
+                          ...{ [idx + 1]: { name: "Радуга", value: childIdx } },
+                        },
+                      })
+                    )
+                  }
+                  className={cl("px-3 max-w-[85px] !h-[30px]", {
+                    ["shadow-selected"]: active,
+                  })}
                 >
-                  {"Радуга"}
-                </Texts>
-              </TgBtn>
-            );
-          })}
-        </div>
+                  <Texts
+                    weight={active ? Weight.bold : Weight.regular}
+                    className="inline-block !w-min whitespace-nowrap"
+                  >
+                    {"Радуга"}
+                  </Texts>
+                </TgBtn>
+              );
+            })}
+          </div>
 
-        <Selected active={!!filling}>{`Выбрано: ${filling}`}</Selected>
-      </div>
-      <div className="border-b border-b-tgBorder mt-6">
-        <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-          Выберите начинку: 2 этаж
-        </Texts>
-        <div className="flex flex-wrap gap-3 justify-center mt-4">
-          {[...Array(6)].map((_, idx) => {
-            const active = idx === 1;
-            return (
-              <TgBtn
-                key={idx}
-                onClick={() => $filling(idx)}
-                className={cl("px-3 max-w-[85px] !h-[30px]", {
-                  ["shadow-selected"]: active,
-                })}
-              >
-                <Texts
-                  weight={active ? Weight.bold : Weight.regular}
-                  className="inline-block !w-min whitespace-nowrap"
-                >
-                  {"Радуга"}
-                </Texts>
-              </TgBtn>
-            );
-          })}
+          <Selected active={!!filling?.[idx + 1]?.name}>{`Выбрано: ${
+            filling?.[idx + 1]?.value
+          }`}</Selected>
         </div>
+      );
+    });
+    // return (
+    //   // <div className="border-b border-b-tgBorder mt-6">
+    //   //   <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
+    //   //     Выберите начинку: 1 этаж
+    //   //   </Texts>
+    //   //   <div className="flex flex-wrap gap-3 justify-center mt-4">
+    //   //     {[...Array(6)].map((_, idx) => {
+    //   //       const active = idx === 1;
+    //   //       return (
+    //   //         <TgBtn
+    //   //           key={idx}
+    //   //           onClick={() => $filling(idx)}
+    //   //           className={cl("px-3 max-w-[85px] !h-[30px]", {
+    //   //             ["shadow-selected"]: active,
+    //   //           })}
+    //   //         >
+    //   //           <Texts
+    //   //             weight={active ? Weight.bold : Weight.regular}
+    //   //             className="inline-block !w-min whitespace-nowrap"
+    //   //           >
+    //   //             {"Радуга"}
+    //   //           </Texts>
+    //   //         </TgBtn>
+    //   //       );
+    //   //     })}
+    //   //   </div>
 
-        <Selected active={!!filling}>{`Выбрано: ${filling}`}</Selected>
-      </div>
-      <div className="flex justify-between mt-4">
-        <Texts size={TextSize.XL} uppercase>
+    //   //   <Selected active={!!filling}>{`Выбрано: ${filling}`}</Selected>
+    //   // </div>
+    // );
+  }, [filling]);
+
+  const renderPaletteFloors = useMemo(() => {
+    return (
+      <>
+        {[...Array(floors)].map((_, idx) => {
+          return (
+            <Fragment key={idx}>
+              {/* <div className="flex justify-between "> */}
+              <Texts size={TextSize.XL} className="mt-4" uppercase>
+                Введите номер палитры для:{" "}
+                <Texts weight={Weight.bold} size={TextSize.XL} uppercase>
+                  этаж {idx + 1}
+                </Texts>
+              </Texts>
+              {/* <div onClick={toggleModal}>
+              <img src="/assets/icons/info.svg" alt="info" />
+            </div> */}
+              {/* </div> */}
+              <div className="relative">
+                <MainInput
+                  inputStyle={InputStyle.white}
+                  className="border rounded-xl border-tgBorder mt-3 !h-12"
+                  placeholder="№"
+                  value={getValues(`${idx + 1}`) || ""}
+                  register={register(`${idx + 1}`)}
+                />
+                <input
+                  type="color"
+                  {...register(`${idx + 1}`)}
+                  className="opacity-0 absolute top-0 bottom-0 right-0 left-0 w-full h-full"
+                />
+              </div>
+            </Fragment>
+          );
+        })}
+
+        <Texts size={TextSize.XL} className="mt-4" uppercase>
           Введите номер палитры для:{" "}
           <Texts weight={Weight.bold} size={TextSize.XL} uppercase>
-            этаж 1
+            Деталей
           </Texts>
         </Texts>
-        <div onClick={toggleModal}>
-          <img src="/assets/icons/info.svg" alt="info" />
+        <div className="relative">
+          <MainInput
+            inputStyle={InputStyle.white}
+            className="border rounded-xl border-tgBorder mt-3 !h-12"
+            placeholder="№"
+            register={register("details")}
+          />
+          <input
+            type="color"
+            {...register("details")}
+            className="opacity-0 absolute top-0 bottom-0 right-0 left-0 w-full h-full"
+          />
         </div>
-      </div>
+      </>
+    );
+  }, [palette]);
 
-      <MainInput
-        inputStyle={InputStyle.white}
-        className="border rounded-xl border-tgBorder mt-3 !h-12"
-        placeholder="№"
-      />
+  return (
+    <TgContainer>
+      <form>
+        {renderFillingType}
+        {renderFillingFloors}
+        {renderPaletteFloors}
+        <TgBtn onClick={handleSubmit} className="mt-7">
+          <Texts
+            weight={Weight.bold}
+            className="inline-block !w-min whitespace-nowrap font-bold"
+          >
+            Далее
+          </Texts>
+        </TgBtn>
 
-      <TgBtn onClick={handleNavigate("/tg/package")} className="mt-7">
-        <Texts
-          weight={Weight.bold}
-          className="inline-block !w-min whitespace-nowrap font-bold"
-        >
-          Далее
-        </Texts>
-      </TgBtn>
+        {/* <input
+          type="color"
+          // {...register(`${idx + 1}`)}
+          // className="opacity-0 absolute top-0 bottom-0 right-0 left-0 w-full h-full"
+        /> */}
 
-      {renderModal}
+        {renderModal}
+      </form>
     </TgContainer>
   );
 };

@@ -535,3 +535,8 @@ export interface CartItems extends ProductType {
   comment?: string;
   total?: number;
 }
+
+export enum HandleCount {
+  increment = "increment",
+  decrement = "decrement",
+}

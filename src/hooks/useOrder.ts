@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiClient from "src/main";
 import { OrderType } from "src/utils/types";
 
-export const useOrders = ({
+export const useOrder = ({
   enabled = true,
   id,
 }: {
@@ -18,4 +18,4 @@ export const useOrders = ({
     enabled,
   });
 };
-export default useOrders;
+export default useOrder;
