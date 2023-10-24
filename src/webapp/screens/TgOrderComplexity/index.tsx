@@ -4,8 +4,15 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import { TextSize, Weight } from "src/components/Typography";
-import { tgAddItem } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch } from "src/redux/utils/types";
+import useCategoriesFull from "src/hooks/useCategoryFull";
+import {
+  useNavigateParams,
+  useRemoveParams,
+} from "src/hooks/useCustomNavigate";
+import useQueryString from "src/hooks/useQueryString";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { ContentType, ModalType, SubCategType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import TgBtn from "src/webapp/componets/TgBtn";
@@ -13,68 +20,158 @@ import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
 
-const complexityArr = [
-  { id: 1, name: "Средний" },
-  { id: 2, name: "Сложный" },
-  { id: 3, name: "Гравитационный Свадебдный" },
-];
-
 const numberArr = [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27];
 
 const TgOrderComplexity = () => {
   const navigate = useNavigate();
-  const [complexity, $complexity] = useState<{ value: number; name: string }>();
+  const removeParam = useRemoveParams();
+  const navigateParam = useNavigateParams();
+  const dispatch = useAppDispatch();
+  const [complexity, $complexity] = useState<{
+    [key: number]: { value: number; name: string };
+  }>();
   const [floors, $floors] = useState<number>();
   const [portion, $portion] = useState<number>();
-  const [modal, $modal] = useState(false);
-  const { register, getValues } = useForm();
+  const [img, $img] = useState<number>();
 
-  const toggleModal = () => $modal((prev) => !prev);
+  const modal = useQueryString("modal");
+  const { register, getValues, watch } = useForm();
+  const { direction } = useAppSelector(tgItemsSelector);
+  const { data } = useCategoriesFull({
+    id: Number(direction?.value)!,
+    enabled: !!direction?.value,
+  });
 
-  const dispatch = useAppDispatch();
+  const contentTypes = (subCateg: SubCategType) => {
+    switch (subCateg.contenttype_id) {
+      case ContentType.number: {
+        return (
+          <div className="border-b border-b-tgBorder pb-4" key={subCateg.id}>
+            <Texts className="my-4" size={TextSize.XL} alignCenter uppercase>
+              {subCateg.name}
+            </Texts>
+            <MainInput type="number" register={register(`${subCateg.id}`)} />
+          </div>
+        );
+      }
+      case ContentType.select: {
+        return (
+          <div className="border-b border-b-tgBorder" key={subCateg.id}>
+            <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
+              {subCateg.name}
+            </Texts>
+            <div className="flex flex-wrap gap-5 justify-center mt-4">
+              {subCateg.subcat_vs_selval.map((item) => {
+                const active = item.id === complexity?.[subCateg.id]?.value;
+                return (
+                  <TgBtn
+                    key={item.id}
+                    onClick={() =>
+                      $complexity((prev) => ({
+                        ...prev,
+                        ...{
+                          [subCateg.id]: { name: item.content, value: item.id },
+                        },
+                      }))
+                    }
+                    className={cl("px-3 !min-w-[140px] max-w-[250px] !w-min", {
+                      ["shadow-selected !bg-tgSelected"]: active,
+                    })}
+                  >
+                    <Texts
+                      weight={active ? Weight.bold : Weight.regular}
+                      className="inline-block !w-min whitespace-nowrap"
+                    >
+                      {item.content}
+                    </Texts>
+                  </TgBtn>
+                );
+              })}
+            </div>
+
+            <Selected active={!!complexity?.[subCateg.id]?.name}>{`Выбрано: ${
+              complexity?.[subCateg.id]?.name
+            }`}</Selected>
+          </div>
+        );
+      }
+
+      case ContentType.image: {
+        const imageLength = watch(`${subCateg.id}`)?.length;
+        $img(subCateg.id);
+        return (
+          <div className="border-b border-b-tgBorder pb-4" key={subCateg.id}>
+            <Texts className="my-4" size={TextSize.XL} alignCenter uppercase>
+              {subCateg.name}
+            </Texts>
+            <div className=" flex gap-2">
+              <TgBtn
+                onClick={() => null}
+                className={cl("!bg-tgGrays !rounded-2xl relative !w-40", {
+                  ["!bg-tgPrimary"]: !!imageLength,
+                })}
+              >
+                <Texts size={TextSize.M} weight={Weight.bold}>
+                  {!imageLength
+                    ? "Загрузить фотографии"
+                    : `Загружено ${imageLength} фото`}
+                </Texts>
+
+                <input
+                  type="file"
+                  multiple
+                  className="h-full w-full absolute opacity-0"
+                  {...register(`${subCateg.id}`)}
+                />
+              </TgBtn>
+
+              {imageLength && (
+                <TgBtn
+                  className="!w-40 !rounded-2xl"
+                  onClick={() => navigateParam({ modal: ModalType.image })}
+                >
+                  Смотреть
+                </TgBtn>
+              )}
+            </div>
+          </div>
+        );
+      }
+      case ContentType.string: {
+        return (
+          <div className="border-b border-b-tgBorder pb-4" key={subCateg.id}>
+            <Texts className="my-4" size={TextSize.XL} alignCenter uppercase>
+              {subCateg.name}
+            </Texts>
+            <MainInput type="string" register={register(`${subCateg.id}`)} />
+          </div>
+        );
+      }
+
+      default:
+        break;
+    }
+  };
+
   const handleSubmit = () => {
+    const dynamic = data?.category_vs_subcategory.reduce((acc: any, item) => {
+      if (!!getValues(`${item.id}`))
+        acc[`${item.id}`] =
+          typeof getValues(`${item.id}`) == "object"
+            ? getValues(`${item.id}`)[0]
+            : getValues(`${item.id}`);
+      return acc;
+    }, {});
     dispatch(
       tgAddItem({
         complexity,
         floors,
         portion,
+        dynamic,
       })
     );
     navigate("/tg/fillings");
   };
-
-  const renderComplexity = useMemo(() => {
-    return (
-      <div className="border-b border-b-tgBorder">
-        <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-          Укажите степень сложности
-        </Texts>
-        <div className="flex flex-wrap gap-5 justify-center mt-4">
-          {complexityArr.map((item) => {
-            const active = item.id === complexity?.value;
-            return (
-              <TgBtn
-                key={item.id}
-                onClick={() => $complexity({ name: item.name, value: item.id })}
-                className={cl("px-3 !min-w-[140px] max-w-[250px] !w-min", {
-                  ["shadow-selected"]: active,
-                })}
-              >
-                <Texts
-                  weight={active ? Weight.bold : Weight.regular}
-                  className="inline-block !w-min whitespace-nowrap"
-                >
-                  {item.name}
-                </Texts>
-              </TgBtn>
-            );
-          })}
-        </div>
-
-        <Selected active={!!complexity}>{`Выбрано: ${complexity}`}</Selected>
-      </div>
-    );
-  }, [complexity]);
 
   const renderFloors = useMemo(() => {
     return (
@@ -93,7 +190,7 @@ const TgOrderComplexity = () => {
                 className={cl(
                   "rounded-full bg-tgPrimary w-12 h-12 flex items-center justify-center transition duration-[0.6s]",
                   {
-                    ["shadow-selected"]: active,
+                    ["shadow-selected !bg-tgSelected"]: active,
                   }
                 )}
               >
@@ -112,31 +209,54 @@ const TgOrderComplexity = () => {
     );
   }, [floors]);
 
+  const renderContents = useMemo(() => {
+    return data?.category_vs_subcategory.map((item) => {
+      if (item.contenttype_id !== ContentType.image) return contentTypes(item);
+    });
+  }, [data?.category_vs_subcategory, complexity]);
+
+  const renderImg = useMemo(() => {
+    return data?.category_vs_subcategory.map((item) => {
+      if (item.contenttype_id === ContentType.image) return contentTypes(item);
+    });
+  }, [data?.category_vs_subcategory, watch(`${img}`)]);
+
+  console.log(watch(`${img}`), "watch(`${img}`)");
+
   const renderModal = useMemo(() => {
     const handleManulaPortion = () => {
       $portion(Number(getValues("portionManual")));
-      toggleModal();
+      removeParam(["modal"]);
     };
-
-    return (
-      <TgModal isOpen={modal}>
-        <form>
-          <Texts className="my-4" size={TextSize.XL} uppercase>
-            Введите этажность
-          </Texts>
-
-          <MainInput
-            type="number"
-            inputStyle={InputStyle.white}
-            register={register("portionManual")}
+    switch (modal) {
+      case ModalType.image: {
+        return (
+          <img
+            src={URL.createObjectURL(watch(`${img}`)?.[0])}
+            alt="uploaded-image"
           />
+        );
+      }
+      case ModalType.portion:
+        return (
+          <>
+            <Texts className="my-4" size={TextSize.XL} uppercase>
+              Введите этажность
+            </Texts>
+            <MainInput
+              type="number"
+              inputStyle={InputStyle.white}
+              register={register("portionManual")}
+            />
+            <TgBtn onClick={handleManulaPortion} className="mt-4 font-bold">
+              OK
+            </TgBtn>
+          </>
+        );
 
-          <TgBtn onClick={handleManulaPortion} className="mt-4 font-bold">
-            OK
-          </TgBtn>
-        </form>
-      </TgModal>
-    );
+      default:
+        break;
+    }
   }, [modal]);
 
   const renderPortions = useMemo(() => {
@@ -156,7 +276,7 @@ const TgOrderComplexity = () => {
                 className={cl(
                   "rounded-full bg-tgPrimary w-10 h-10 flex items-center justify-center transition duration-[0.6s]",
                   {
-                    ["shadow-selected"]: active,
+                    ["shadow-selected !bg-tgSelected"]: active,
                   }
                 )}
               >
@@ -170,7 +290,7 @@ const TgOrderComplexity = () => {
             );
           })}
           <div
-            onClick={toggleModal}
+            onClick={() => navigateParam({ modal: ModalType.portion })}
             className={cl(
               "rounded-full bg-tgGray w-10 h-10 flex items-center justify-center transition"
             )}
@@ -184,18 +304,23 @@ const TgOrderComplexity = () => {
     );
   }, [portion]);
 
+  const closeModal = () => removeParam(["modal"]);
+
   return (
     <TgContainer>
-      <TgBackBtn link="order-directions" />
-      {renderComplexity}
-      {renderFloors}
-      {renderPortions}
-
-      {renderModal}
-
-      <TgBtn onClick={handleSubmit} className="mt-16 font-bold">
-        Далее
-      </TgBtn>
+      <form>
+        <TgBackBtn link="order-directions" />
+        {renderFloors}
+        {renderPortions}
+        {renderImg}
+        {renderContents}
+        <TgModal onClose={closeModal} isOpen={!!modal}>
+          {renderModal}
+        </TgModal>
+        <TgBtn onClick={handleSubmit} className="mt-16 font-bold">
+          Далее
+        </TgBtn>
+      </form>
     </TgContainer>
   );
 };

@@ -2,6 +2,7 @@ import cl from "classnames";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
+import useCategories from "src/hooks/useCategories";
 import { tgAddItem } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch } from "src/redux/utils/types";
 import Texts from "src/webapp/componets/Texts";
@@ -14,7 +15,8 @@ import WebSelected from "src/webapp/componets/TgSelected";
 const TgOrderDirections = () => {
   const navigate = useNavigate();
   const [modal, $modal] = useState(false);
-  const [selected, $selected] = useState<number>();
+  const [selected, $selected] = useState<{ name: string; value: number }>();
+  const { data } = useCategories({});
 
   const dispatch = useAppDispatch();
 
@@ -55,7 +57,7 @@ const TgOrderDirections = () => {
   }, [modal]);
 
   const handleNavigate = () => {
-    dispatch(tgAddItem({ direction: { name: "Mastic", value: selected } }));
+    dispatch(tgAddItem({ direction: selected }));
     navigate("/tg/complexity");
   };
 
@@ -71,35 +73,36 @@ const TgOrderDirections = () => {
         </div>
       </div>
       <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline flex-wrap gap-2">
-        {[...Array(6)].map((_, idx) => {
-          const active = selected === idx;
-          return (
-            <div
-              key={idx}
-              className="flex flex-1 flex-col justify-center items-center"
-            >
+        {!!data?.length &&
+          data.map((item) => {
+            const active = selected?.value === item.id;
+            return (
               <div
-                onClick={() => $selected(idx)}
-                className={cl(
-                  "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
-                  { ["shadow-selected"]: active }
-                )}
+                key={item.id}
+                className="flex flex-1 flex-col justify-center items-center"
               >
-                <img src={"/assets/images/pickup.png"} alt={"item.title"} />
-                <WebSelected className={cl({ ["opacity-100"]: active })} />
-              </div>
+                <div
+                  onClick={() => $selected({ name: item.name, value: item.id })}
+                  className={cl(
+                    "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
+                    { ["shadow-selected"]: active }
+                  )}
+                >
+                  <img src={"/assets/images/pickup.png"} alt={"item.title"} />
+                  <WebSelected className={cl({ ["opacity-100"]: active })} />
+                </div>
 
-              <Texts
-                className="mt-4"
-                size={TextSize.L}
-                weight={active ? Weight.bold : Weight.regular}
-                alignCenter
-              >
-                Мастичный
-              </Texts>
-            </div>
-          );
-        })}
+                <Texts
+                  className="mt-4"
+                  size={TextSize.L}
+                  weight={active ? Weight.bold : Weight.regular}
+                  alignCenter
+                >
+                  {item.name}
+                </Texts>
+              </div>
+            );
+          })}
       </div>
 
       <TgBtn onClick={handleNavigate} className="mt-9 font-bold">

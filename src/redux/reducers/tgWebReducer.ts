@@ -28,6 +28,7 @@ interface State {
     additions?: DetailsType[];
     examplePhoto?: any;
     comments?: string;
+    dynamic?: { [key: number | string]: number | string };
 
     client?: string;
     manager?: string;

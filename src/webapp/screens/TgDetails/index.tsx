@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
@@ -28,8 +29,17 @@ const TgDetails = () => {
   const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
   const modal = Number(useQueryString("modal"));
+  const address_name = useQueryString("address_name");
+  const lat = useQueryString("lat");
+  const long = useQueryString("long");
   const items = useAppSelector(tgItemsSelector);
+
+  const { register, reset, getValues, setValue } = useForm();
   useBranches({ enabled: items.delivery_type?.value === OrderingType.pickup });
+
+  useEffect(() => {
+    if (address_name) setValue("address_name", address_name);
+  }, [address_name]);
 
   console.log(items, "items");
   const handleNavigate = (url: string) => navigate(url);
@@ -68,11 +78,12 @@ const TgDetails = () => {
             <MainInput
               inputStyle={InputStyle.white}
               className="!h-12"
+              register={register("address_name")}
               placeholder={"Введите адрес доставки"}
             />
           </BaseInput>
           <TgBtn
-            onClick={() => handleNavigate("/tg/fillings")}
+            onClick={() => handleNavigate("/tg/map")}
             className="font-bold"
           >
             указать на карте
@@ -98,6 +109,8 @@ const TgDetails = () => {
         </>
       );
   }, [items?.delivery_type, modal, items.branch?.name]);
+
+  console.log(address_name, "address_name");
 
   const renderOrderType = useMemo(() => {
     if (items.delivery_type?.value)
@@ -179,83 +192,71 @@ const TgDetails = () => {
 
   return (
     <TgContainer>
-      <div className="flex justify-between items-center w-full">
-        <TgBackBtn link="package" />
-        {/* <div className="flex gap-2">
-          <div
-            onClick={() => navigate(-1)}
-            className="rounded-full h-5 w-5 bg-tgGray flex items-center justify-center "
-          >
-            <img
-              height={7}
-              width={7}
-              src="/assets/icons/backArrow.svg"
-              alt="backArrow"
-            />
-          </div>
-          <Texts size={TextSize.M}>Назад</Texts>
-        </div> */}
-        {renderOrderType}
-      </div>
+      <form>
+        <div className="flex justify-between items-center w-full">
+          <TgBackBtn link="package" />
+          {renderOrderType}
+        </div>
 
-      <Texts className="my-4 " size={TextSize.XL} uppercase>
-        Детали заказа
-      </Texts>
-
-      {renderType}
-      <div className="border-b border-b-tgBorder mt-4" />
-
-      <BaseInput
-        labelClassName="!text-base"
-        className="mt-4"
-        label="Дата / Время"
-      >
-        <MainDatePicker
-          inputStyle={InputStyle.white}
-          className="!h-12"
-          showTimeInput
-          placeholder={"Введите адрес доставки"}
-        />
-      </BaseInput>
-
-      <div className="flex justify-between items-center mt-7 mb-4">
-        <Texts size={TextSize.XL} uppercase>
-          Ваш торт
+        <Texts className="my-4 " size={TextSize.XL} uppercase>
+          Детали заказа
         </Texts>
 
-        <TgBtn
-          onClick={() => null}
-          className={"!bg-tgPrimary !rounded-2xl relative !w-32 !h-7"}
+        {renderType}
+        <div className="border-b border-b-tgBorder mt-4" />
+
+        <BaseInput
+          labelClassName="!text-base"
+          className="mt-4"
+          label="Дата / Время"
         >
-          <Texts size={TextSize.S}>Посмотреть фото</Texts>
+          <MainDatePicker
+            inputStyle={InputStyle.white}
+            className="!h-12"
+            showTimeInput
+            placeholder={"Введите адрес доставки"}
+          />
+        </BaseInput>
+
+        <div className="flex justify-between items-center mt-7 mb-4">
+          <Texts size={TextSize.XL} uppercase>
+            Ваш торт
+          </Texts>
+
+          <TgBtn
+            onClick={() => null}
+            className={"!bg-tgPrimary !rounded-2xl relative !w-32 !h-7"}
+          >
+            <Texts size={TextSize.S}>Посмотреть фото</Texts>
+          </TgBtn>
+        </div>
+        {renderDetails}
+        <div className="border-b border-b-tgBorder mt-5" />
+
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.L}>Стоимость торта</Texts>
+
+          <Texts size={TextSize.L}>371 000 сум</Texts>
+        </div>
+        <div className="flex justify-between items-center mt-1">
+          <Texts size={TextSize.L}>Доставка</Texts>
+
+          <Texts size={TextSize.L}>100 000 сум</Texts>
+        </div>
+
+        <div className="flex justify-between items-center mt-5">
+          <Texts size={TextSize.L}>Общее</Texts>
+
+          <Texts size={TextSize.L}>471 000 сум</Texts>
+        </div>
+
+        <TgBtn
+          onClick={() => handleNavigate("/tg/success")}
+          className="font-bold mt-20"
+        >
+          Подтвердить / Заказать
         </TgBtn>
-      </div>
-      {renderDetails}
-      <div className="border-b border-b-tgBorder mt-5" />
-
-      <div className="flex justify-between items-center">
-        <Texts size={TextSize.L}>Стоимость торта</Texts>
-
-        <Texts size={TextSize.L}>371 000 сум</Texts>
-      </div>
-      <div className="flex justify-between items-center mt-1">
-        <Texts size={TextSize.L}>Доставка</Texts>
-
-        <Texts size={TextSize.L}>100 000 сум</Texts>
-      </div>
-
-      <div className="flex justify-between items-center mt-5">
-        <Texts size={TextSize.L}>Общее</Texts>
-
-        <Texts size={TextSize.L}>471 000 сум</Texts>
-      </div>
-
-      <TgBtn
-        onClick={() => handleNavigate("/tg/success")}
-        className="font-bold mt-20"
-      >
-        Подтвердить / Заказать
-      </TgBtn>
+      </form>
     </TgContainer>
   );
 };

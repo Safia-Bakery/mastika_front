@@ -14,6 +14,7 @@ module.exports = {
         hoverGray: "#C2C2C2",
         danger: "#FA444F",
         tgPrimary: "#DCC38B",
+        tgSelected: "#AAC57F",
         tgBorder: "#F1F1F1",
         selected: "rgba(0, 0, 0, 0.51)",
         tgGray: "#C3D2DC",

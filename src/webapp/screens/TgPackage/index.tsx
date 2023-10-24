@@ -94,7 +94,7 @@ const TgPackage = () => {
                     )
                   }
                   className={cl("px-3 !h-[35px]", {
-                    ["shadow-selected"]: active,
+                    ["shadow-selected !bg-tgSelected"]: active,
                   })}
                 >
                   <Texts

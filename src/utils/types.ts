@@ -540,3 +540,7 @@ export enum HandleCount {
   increment = "increment",
   decrement = "decrement",
 }
+export enum ModalType {
+  image = "image",
+  portion = "portion",
+}

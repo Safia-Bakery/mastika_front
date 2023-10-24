@@ -94,28 +94,8 @@ const ShowOrder = () => {
       }
 
       case ContentType.image: {
-        // return <UploadComponent name={subCateg.id} />;
         return (
           <input type="file" multiple={false} {...register(`${subCateg.id}`)} />
-
-          // <div className="w-full max-w-xs mx-auto">
-          //   <label
-          //     htmlFor="fileInput"
-          //     className="block text-gray-600 text-sm font-bold"
-          //   >
-          //     Choose a file:
-          //   </label>
-          //   <label className="w-full flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm cursor-pointer">
-          //     <span className="text-sm">Select File</span>
-          //     <input
-          //       type="file"
-          //       id="fileInput"
-          //       name="fileInput"
-          //       className="hidden"
-          //     />
-          //   </label>
-
-          // </div>
         );
       }
       case ContentType.string: {

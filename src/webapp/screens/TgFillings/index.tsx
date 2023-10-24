@@ -96,7 +96,7 @@ const TgFillings = () => {
                   )
                 }
                 className={cl("px-3 max-w-[85px] !h-[30px]", {
-                  ["shadow-selected"]: active,
+                  ["shadow-selected !bg-tgSelected"]: active,
                 })}
               >
                 <Texts
@@ -142,7 +142,7 @@ const TgFillings = () => {
                     )
                   }
                   className={cl("px-3 max-w-[85px] !h-[30px]", {
-                    ["shadow-selected"]: active,
+                    ["shadow-selected !bg-tgSelected"]: active,
                   })}
                 >
                   <Texts
@@ -162,36 +162,6 @@ const TgFillings = () => {
         </div>
       );
     });
-    // return (
-    //   // <div className="border-b border-b-tgBorder mt-6">
-    //   //   <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-    //   //     Выберите начинку: 1 этаж
-    //   //   </Texts>
-    //   //   <div className="flex flex-wrap gap-3 justify-center mt-4">
-    //   //     {[...Array(6)].map((_, idx) => {
-    //   //       const active = idx === 1;
-    //   //       return (
-    //   //         <TgBtn
-    //   //           key={idx}
-    //   //           onClick={() => $filling(idx)}
-    //   //           className={cl("px-3 max-w-[85px] !h-[30px]", {
-    //   //             ["shadow-selected"]: active,
-    //   //           })}
-    //   //         >
-    //   //           <Texts
-    //   //             weight={active ? Weight.bold : Weight.regular}
-    //   //             className="inline-block !w-min whitespace-nowrap"
-    //   //           >
-    //   //             {"Радуга"}
-    //   //           </Texts>
-    //   //         </TgBtn>
-    //   //       );
-    //   //     })}
-    //   //   </div>
-
-    //   //   <Selected active={!!filling}>{`Выбрано: ${filling}`}</Selected>
-    //   // </div>
-    // );
   }, [filling]);
 
   const renderPaletteFloors = useMemo(() => {

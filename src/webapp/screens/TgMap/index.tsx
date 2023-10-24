@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   YMaps,
   Map,
@@ -7,25 +8,30 @@ import {
   SearchControl,
   YMapsApi,
 } from "react-yandex-maps";
-import styles from "./index.module.scss";
-import "./index.scss";
+// import styles from "./index.module.scss";
+// import "./index.scss";
 import { useNavigateParams } from "src/hooks/useCustomNavigate";
+import TgBtn from "src/webapp/componets/TgBtn";
 
 interface GeocodeResult {
   name: string;
 }
 
-const YandexMap = () => {
+const TgMap = () => {
   const ymaps = useRef<any>();
   const map = useRef<any>();
-  const navigate = useNavigateParams();
+  const navigateParams = useNavigateParams();
+  const navigate = useNavigate();
   const [markerCoords, setMarkerCoords] = useState<number[]>([
     41.30524669891599, 69.24100608330389,
   ]);
 
+  // Your Yandex Geocoding API key
   const apiKey = "51697f82-c9b3-463e-8305-c7ed2bfe3ad3";
 
   useEffect(() => {
+    // Fetch the address using the Yandex Geocoding API
+    //41.302941, 69.173430
     fetch(
       `https://geocode-maps.yandex.ru/1.x/?apikey=${apiKey}&geocode=${markerCoords
         .reverse()
@@ -35,11 +41,12 @@ const YandexMap = () => {
       .then((data) => {
         const geocodeResult: GeocodeResult =
           data.response.GeoObjectCollection.featureMember[0].GeoObject;
-        navigate({
+        navigateParams({
           address_name: geocodeResult.name,
           lat: markerCoords[0],
           long: markerCoords[1],
         });
+        // setAddress(geocodeResult.name);
       })
       .catch((error) => {
         console.error("Error fetching address:", error);
@@ -79,15 +86,15 @@ const YandexMap = () => {
 
   return (
     <YMaps>
-      <div className={styles.mapBlock}>
+      <div className="w-full h-[100lvh] relative">
         <Map
           defaultState={{
             center: [41.30524669891599, 69.24100608330389],
             zoom: 12,
           }}
           width={"100%"}
-          className="h-[480px]"
-          height={"100%"}
+          className="h-full"
+          height={"100lvh"}
           onClick={handleMapClick}
           modules={["control.SearchControl"]}
           onLoad={(ymapsInstance: YMapsApi) => {
@@ -120,8 +127,15 @@ const YandexMap = () => {
           Get Current Position
         </button> */}
       </div>
+
+      <TgBtn
+        onClick={() => navigate("/tg/details" + window?.location?.search)}
+        className="font-bold absolute bottom-2 right-2 !w-40"
+      >
+        Готово
+      </TgBtn>
     </YMaps>
   );
 };
 
-export default YandexMap;
+export default TgMap;

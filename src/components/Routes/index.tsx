@@ -35,6 +35,7 @@ import { lazy, useEffect, useMemo } from "react";
 import Suspend from "../Suspend";
 import WebRooutes from "../WebRoutes";
 
+const TgMap = lazy(() => import("src/webapp/screens/TgMap"));
 const TgSuccessOrder = lazy(() => import("src/webapp/screens/TgSuccessOrder"));
 const TgDetails = lazy(() => import("src/webapp/screens/TgDetails"));
 const TgPackage = lazy(() => import("src/webapp/screens/TgPackage"));
@@ -579,6 +580,14 @@ const Navigation = () => {
           element={
             <Suspend>
               <TgSuccessOrder />
+            </Suspend>
+          }
+        />
+        <Route
+          path="map"
+          element={
+            <Suspend>
+              <TgMap />
             </Suspend>
           }
         />

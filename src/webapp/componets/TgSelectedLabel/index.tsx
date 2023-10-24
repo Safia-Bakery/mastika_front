@@ -19,7 +19,7 @@ const TgSelectedLabel: FC<Props> = ({ children, active, className }) => {
       size={TextSize.L}
       alignCenter
     >
-      {children}
+      {!!active && children}
     </Texts>
   );
 };
