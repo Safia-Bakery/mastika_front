@@ -19,6 +19,7 @@ import {
   tgItemsSelector,
 } from "src/redux/reducers/tgWebReducer";
 import { HandleCount } from "src/utils/types";
+import TgBackBtn from "src/webapp/componets/TgBackBtn";
 
 const packageArr = [
   { id: 1, name: "Премиум" },
@@ -200,6 +201,7 @@ const TgPackage = () => {
   return (
     <TgContainer>
       <form>
+        <TgBackBtn link="fillings" />
         {renderPackage}
         {prenderAdditions}
 

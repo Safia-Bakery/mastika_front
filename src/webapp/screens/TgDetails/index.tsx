@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
@@ -16,6 +16,7 @@ import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
+import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
@@ -27,24 +28,15 @@ const TgDetails = () => {
   const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
   const modal = Number(useQueryString("modal"));
-  const [orderType, $orderType] = useState<OrderingType>();
-  useBranches({ enabled: orderType === OrderingType.pickup });
   const items = useAppSelector(tgItemsSelector);
+  useBranches({ enabled: items.delivery_type?.value === OrderingType.pickup });
 
   console.log(items, "items");
-
   const handleNavigate = (url: string) => navigate(url);
   const onClose = () => removeParams(["modal", "branch"]);
 
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
-
-  useEffect(() => {
-    if (branch?.id)
-      dispatch(
-        tgAddItem({ branch: { name: branch?.name, value: branch?.id } })
-      );
-  }, [branch?.id]);
 
   const renderType = useMemo(() => {
     if (items?.delivery_type?.value === OrderingType.delivery)
@@ -154,7 +146,7 @@ const TgDetails = () => {
         </div>
         {items?.filling &&
           Object.keys(items?.filling)?.map((item) => (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center" key={item}>
               <Texts size={TextSize.L}>Начинка {item} этаж</Texts>
 
               <Texts size={TextSize.L}>{items.filling?.[item].name}</Texts>
@@ -162,7 +154,7 @@ const TgDetails = () => {
           ))}
         {items?.palette &&
           Object.keys(items?.palette)?.map((item) => (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center" key={item}>
               <Texts size={TextSize.L}>Номер палитры {item} этаж</Texts>
 
               <Texts size={TextSize.L}>{items.palette?.[item]}</Texts>
@@ -177,12 +169,21 @@ const TgDetails = () => {
       </>
     );
   }, [items]);
+
+  useEffect(() => {
+    if (branch?.id)
+      dispatch(
+        tgAddItem({ branch: { name: branch?.name, value: branch?.id } })
+      );
+  }, [branch?.id]);
+
   return (
     <TgContainer>
       <div className="flex justify-between items-center w-full">
-        <div className="flex gap-2">
+        <TgBackBtn link="package" />
+        {/* <div className="flex gap-2">
           <div
-            onClick={close}
+            onClick={() => navigate(-1)}
             className="rounded-full h-5 w-5 bg-tgGray flex items-center justify-center "
           >
             <img
@@ -193,7 +194,7 @@ const TgDetails = () => {
             />
           </div>
           <Texts size={TextSize.M}>Назад</Texts>
-        </div>
+        </div> */}
         {renderOrderType}
       </div>
 
@@ -242,8 +243,6 @@ const TgDetails = () => {
 
         <Texts size={TextSize.L}>100 000 сум</Texts>
       </div>
-
-      {/* total */}
 
       <div className="flex justify-between items-center mt-5">
         <Texts size={TextSize.L}>Общее</Texts>

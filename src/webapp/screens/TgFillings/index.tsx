@@ -11,6 +11,7 @@ import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useForm } from "react-hook-form";
+import TgBackBtn from "src/webapp/componets/TgBackBtn";
 
 const fillingArr = [
   { id: 1, name: "Стандартная" },
@@ -79,7 +80,7 @@ const TgFillings = () => {
     return (
       <div className="border-b border-b-tgBorder">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-          Укажите степень сложности
+          Выберите тип начинки
         </Texts>
         <div className="flex flex-wrap gap-3 justify-center mt-4 transition-all">
           {fillingArr.map((item) => {
@@ -239,6 +240,7 @@ const TgFillings = () => {
 
   return (
     <TgContainer>
+      <TgBackBtn link="complexity" />
       <form>
         {renderFillingType}
         {renderFillingFloors}

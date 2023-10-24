@@ -103,15 +103,8 @@ const TgOrderType = () => {
     }
   }, [modal]);
 
-  return (
-    <TgContainer className="flex flex-col gap-2">
-      <Texts alignCenter uppercase size={TextSize.XXL} className="mt-6 mb-7">
-        Построй торт
-      </Texts>
-      <Texts size={TextSize.XL} weight={Weight.bold} uppercase alignCenter>
-        выберите Тип заказа
-      </Texts>
-
+  const renderType = useMemo(() => {
+    return (
       <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline">
         {typeArr.map((item) => {
           const active = item.id === orderType;
@@ -147,6 +140,53 @@ const TgOrderType = () => {
           );
         })}
       </div>
+    );
+  }, [orderType, branch?.name]);
+
+  return (
+    <TgContainer className="flex flex-col gap-2">
+      <Texts alignCenter uppercase size={TextSize.XXL} className="mt-6 mb-7">
+        Построй торт
+      </Texts>
+      <Texts size={TextSize.XL} weight={Weight.bold} uppercase alignCenter>
+        выберите Тип заказа
+      </Texts>
+      {renderType}
+      {/* <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline">
+        {typeArr.map((item) => {
+          const active = item.id === orderType;
+          return (
+            <div
+              key={item.id}
+              className="flex flex-1 flex-col justify-center items-center"
+            >
+              <div
+                onClick={handleType(item.id)}
+                className={cl(
+                  "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
+                  { ["shadow-selected"]: active }
+                )}
+              >
+                <img src={item.img} alt={item.title} />
+                <WebSelected className={cl({ ["opacity-100"]: active })} />
+              </div>
+
+              <Texts
+                className="mt-4"
+                size={TextSize.L}
+                weight={active ? Weight.bold : Weight.regular}
+                alignCenter
+              >
+                {item.title}
+              </Texts>
+
+              {item.hasText && (
+                <Selected active={!!branch?.name}>{branch?.name}</Selected>
+              )}
+            </div>
+          );
+        })}
+      </div> */}
       <TgBtn onClick={handleNavigate} className="mt-9 font-bold">
         Далее
       </TgBtn>

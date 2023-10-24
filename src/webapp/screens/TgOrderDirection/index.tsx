@@ -2,9 +2,10 @@ import cl from "classnames";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
-import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { tgAddItem } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch } from "src/redux/utils/types";
 import Texts from "src/webapp/componets/Texts";
+import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
@@ -16,9 +17,6 @@ const TgOrderDirections = () => {
   const [selected, $selected] = useState<number>();
 
   const dispatch = useAppDispatch();
-  const items = useAppSelector(tgItemsSelector);
-
-  console.log(items, "items");
 
   const toggleModal = () => $modal((prev) => !prev);
 
@@ -63,7 +61,8 @@ const TgOrderDirections = () => {
 
   return (
     <TgContainer>
-      <div className="flex justify-between items-start">
+      <TgBackBtn link="order-type" />
+      <div className="flex justify-between items-start mt-2">
         <Texts size={TextSize.XXL} uppercase>
           Выберите направление торта
         </Texts>
@@ -72,7 +71,7 @@ const TgOrderDirections = () => {
         </div>
       </div>
       <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline flex-wrap gap-2">
-        {[...Array(6)].map((item, idx) => {
+        {[...Array(6)].map((_, idx) => {
           const active = selected === idx;
           return (
             <div
