@@ -206,22 +206,12 @@ const TgFillings = () => {
                   этаж {idx + 1}
                 </Texts>
               </Texts>
-              {/* <div onClick={toggleModal}>
-              <img src="/assets/icons/info.svg" alt="info" />
-            </div> */}
-              {/* </div> */}
               <div className="relative">
                 <MainInput
                   inputStyle={InputStyle.white}
                   className="border rounded-xl border-tgBorder mt-3 !h-12"
-                  placeholder="№"
-                  value={getValues(`${idx + 1}`) || ""}
-                  register={register(`${idx + 1}`)}
-                />
-                <input
                   type="color"
-                  {...register(`${idx + 1}`)}
-                  className="opacity-0 absolute top-0 bottom-0 right-0 left-0 w-full h-full"
+                  register={register(`${idx + 1}`)}
                 />
               </div>
             </Fragment>
@@ -238,13 +228,9 @@ const TgFillings = () => {
           <MainInput
             inputStyle={InputStyle.white}
             className="border rounded-xl border-tgBorder mt-3 !h-12"
+            type="color"
             placeholder="№"
             register={register("details")}
-          />
-          <input
-            type="color"
-            {...register("details")}
-            className="opacity-0 absolute top-0 bottom-0 right-0 left-0 w-full h-full"
           />
         </div>
       </>
@@ -265,13 +251,6 @@ const TgFillings = () => {
             Далее
           </Texts>
         </TgBtn>
-
-        {/* <input
-          type="color"
-          // {...register(`${idx + 1}`)}
-          // className="opacity-0 absolute top-0 bottom-0 right-0 left-0 w-full h-full"
-        /> */}
-
         {renderModal}
       </form>
     </TgContainer>

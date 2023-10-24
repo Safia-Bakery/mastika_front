@@ -195,11 +195,6 @@ const TgDetails = () => {
           <Texts size={TextSize.M}>Назад</Texts>
         </div>
         {renderOrderType}
-        {/* <MainSelect
-          values={items.delivery_type?.value}
-          inputStyle={InputStyle.white}
-          className="!h-6 border !bg-tgGray rounded-md !w-24 !p-0 text-xs !mb-0"
-        /> */}
       </div>
 
       <Texts className="my-4 " size={TextSize.XL} uppercase>
@@ -235,12 +230,6 @@ const TgDetails = () => {
         </TgBtn>
       </div>
       {renderDetails}
-      {/* <div className="flex justify-between items-center">
-        <Texts size={TextSize.L}>Направление</Texts>
-
-        <Texts size={TextSize.L}>Мастичный</Texts>
-      </div> */}
-
       <div className="border-b border-b-tgBorder mt-5" />
 
       <div className="flex justify-between items-center">
