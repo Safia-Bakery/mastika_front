@@ -319,9 +319,9 @@ const ShowOrder = () => {
         address: order.address,
         payment_type: order.payment_type,
         system: "",
-        operator: order.order_vs_user.username,
+        operator: order.order_vs_user?.username,
         comment: order.comment,
-        ...(!order.is_delivery && { branch: order.order_br.name }),
+        ...(!order.is_delivery && { branch: order.order_br?.name }),
       });
     }
   }, [order]);

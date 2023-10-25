@@ -12,6 +12,7 @@ import {
 import useQueryString from "src/hooks/useQueryString";
 import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { imageConverter } from "src/utils/helpers";
 import { ContentType, ModalType, SubCategType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
@@ -22,13 +23,13 @@ import Selected from "src/webapp/componets/TgSelectedLabel";
 
 const numberArr = [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27];
 
-const TgOrderComplexity = () => {
+const TgSubCategory = () => {
   const navigate = useNavigate();
   const removeParam = useRemoveParams();
   const navigateParam = useNavigateParams();
   const dispatch = useAppDispatch();
-  const [complexity, $complexity] = useState<{
-    [key: number]: { value: number; name: string };
+  const [selects, $selects] = useState<{
+    [key: number | string]: { value: number; name: string };
   }>();
   const [floors, $floors] = useState<number>();
   const [portion, $portion] = useState<number>();
@@ -62,12 +63,12 @@ const TgOrderComplexity = () => {
             </Texts>
             <div className="flex flex-wrap gap-5 justify-center mt-4">
               {subCateg.subcat_vs_selval.map((item) => {
-                const active = item.id === complexity?.[subCateg.id]?.value;
+                const active = item.id === selects?.[subCateg.id]?.value;
                 return (
                   <TgBtn
                     key={item.id}
                     onClick={() =>
-                      $complexity((prev) => ({
+                      $selects((prev) => ({
                         ...prev,
                         ...{
                           [subCateg.id]: { name: item.content, value: item.id },
@@ -89,8 +90,8 @@ const TgOrderComplexity = () => {
               })}
             </div>
 
-            <Selected active={!!complexity?.[subCateg.id]?.name}>{`Выбрано: ${
-              complexity?.[subCateg.id]?.name
+            <Selected active={!!selects?.[subCateg.id]?.name}>{`Выбрано: ${
+              selects?.[subCateg.id]?.name
             }`}</Selected>
           </div>
         );
@@ -107,7 +108,7 @@ const TgOrderComplexity = () => {
             <div className=" flex gap-2">
               <TgBtn
                 onClick={() => null}
-                className={cl("!bg-tgGrays !rounded-2xl relative !w-40", {
+                className={cl("!bg-tgGray !rounded-2xl relative !w-40", {
                   ["!bg-tgPrimary"]: !!imageLength,
                 })}
               >
@@ -125,7 +126,7 @@ const TgOrderComplexity = () => {
                 />
               </TgBtn>
 
-              {imageLength && (
+              {!!imageLength && (
                 <TgBtn
                   className="!w-40 !rounded-2xl"
                   onClick={() => navigateParam({ modal: ModalType.image })}
@@ -162,12 +163,19 @@ const TgOrderComplexity = () => {
             : getValues(`${item.id}`);
       return acc;
     }, {});
+
+    const select =
+      selects &&
+      Object.keys(selects).reduce((acc: any, item) => {
+        acc[item] = selects[item].value;
+        return acc;
+      }, {});
     dispatch(
       tgAddItem({
-        complexity,
+        complexity: selects,
         floors,
         portion,
-        dynamic,
+        dynamic: { ...dynamic, ...select },
       })
     );
     navigate("/tg/fillings");
@@ -213,15 +221,13 @@ const TgOrderComplexity = () => {
     return data?.category_vs_subcategory.map((item) => {
       if (item.contenttype_id !== ContentType.image) return contentTypes(item);
     });
-  }, [data?.category_vs_subcategory, complexity]);
+  }, [data?.category_vs_subcategory, selects]);
 
   const renderImg = useMemo(() => {
     return data?.category_vs_subcategory.map((item) => {
       if (item.contenttype_id === ContentType.image) return contentTypes(item);
     });
   }, [data?.category_vs_subcategory, watch(`${img}`)]);
-
-  console.log(watch(`${img}`), "watch(`${img}`)");
 
   const renderModal = useMemo(() => {
     const handleManulaPortion = () => {
@@ -232,7 +238,7 @@ const TgOrderComplexity = () => {
       case ModalType.image: {
         return (
           <img
-            src={URL.createObjectURL(watch(`${img}`)?.[0])}
+            src={imageConverter(watch(`${img}`)?.[0])}
             alt="uploaded-image"
           />
         );
@@ -325,4 +331,4 @@ const TgOrderComplexity = () => {
   );
 };
 
-export default TgOrderComplexity;
+export default TgSubCategory;

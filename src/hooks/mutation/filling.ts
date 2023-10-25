@@ -3,30 +3,28 @@ import apiClient from "src/main";
 
 interface Body {
   name: string;
+  category_id: number;
+  ptype: number;
+
   status?: number;
   id?: number;
-  price?: number;
-  image?: any;
 }
 
-const categoryMutation = () => {
-  return useMutation(["handle_category"], async (body: Body) => {
-    const contentType = "multipart/form-data";
+const fillingMutation = () => {
+  return useMutation(["handle_fillings"], async (body: Body) => {
     if (!body.id) {
       const { data } = await apiClient.post({
-        url: "/v1/category",
+        url: "/v1/fillings",
         body,
-        contentType,
       });
       return data;
     } else {
       const { data } = await apiClient.put({
-        url: "/v1/category",
+        url: "/v1/fillings",
         body,
-        contentType,
       });
       return data;
     }
   });
 };
-export default categoryMutation;
+export default fillingMutation;

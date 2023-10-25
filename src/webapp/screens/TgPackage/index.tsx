@@ -20,6 +20,7 @@ import {
 } from "src/redux/reducers/tgWebReducer";
 import { HandleCount } from "src/utils/types";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
+import useProducts from "src/hooks/useProducts";
 
 const packageArr = [
   { id: 1, name: "Премиум" },
@@ -36,6 +37,9 @@ const TgPackage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { orderPackage, additions } = useAppSelector(tgItemsSelector);
+  const { data: products } = useProducts({
+    group_id: "30ed6a72-8771-4c81-91ad-e4b71305858d",
+  });
 
   const cart = useAppSelector(tgCartSelector);
 
@@ -44,7 +48,9 @@ const TgPackage = () => {
   const handleSubmit = () => {
     const { image, comments } = getValues();
     const additions = Object.values(cart);
-    dispatch(tgAddItem({ examplePhoto: image, comments, additions }));
+    dispatch(
+      tgAddItem({ examplePhoto: Array.from(image), comments, additions })
+    );
     navigate("/tg/details");
   };
 
@@ -121,7 +127,7 @@ const TgPackage = () => {
 
   const prenderAdditions = useMemo(() => {
     return (
-      <div className="border-b border-b-tgBorder pb-4">
+      <div className="border-b border-b-tgBorder pb-4 gap-2">
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Дополнительно к заказу
         </Texts>
@@ -135,14 +141,18 @@ const TgPackage = () => {
           Не обязательный пункт
         </Selected>
         <div className="mt-3 flex flex-col gap-2">
-          {additionsArr.map((item, idx) => (
+          {products?.map((item, idx) => (
             <div className="flex justify-between" key={item.id}>
-              <Texts size={TextSize.L}>{item.name}</Texts>
-              <Texts size={TextSize.L}>{item.price} сум</Texts>
+              <Texts className="flex flex-1" alignCenter size={TextSize.L}>
+                {item.name}
+              </Texts>
+              <Texts className="!flex flex-1 items-center" size={TextSize.L}>
+                {item.price} сум
+              </Texts>
 
               {!cart?.[item.id] ? (
                 <TgBtn
-                  className="!bg-tgGray !h-5 !w-20 "
+                  className="!bg-tgGray !h-5 !w-20 flex my-auto"
                   onClick={() =>
                     dispatch(
                       tgAddToCart({
@@ -157,7 +167,7 @@ const TgPackage = () => {
                   <Texts size={TextSize.XS}>Добавить</Texts>
                 </TgBtn>
               ) : (
-                <div className="flex items-center justify-center gap-4 w-20 bg-tgGray rounded-2xl text-white ">
+                <div className="flex items-center justify-center gap-4 w-20 bg-tgGray rounded-2xl text-white !h-5 my-auto">
                   <div
                     onClick={() =>
                       dispatch(
@@ -196,7 +206,7 @@ const TgPackage = () => {
         </div>
       </div>
     );
-  }, [additions, cart]);
+  }, [cart, products]);
 
   return (
     <TgContainer>

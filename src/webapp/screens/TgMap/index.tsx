@@ -48,9 +48,7 @@ const TgMap = () => {
         });
         // setAddress(geocodeResult.name);
       })
-      .catch((error) => {
-        console.error("Error fetching address:", error);
-      });
+      .catch((error) => {});
   }, [markerCoords]);
 
   const addSearchControlEvents = () => {
@@ -98,7 +96,6 @@ const TgMap = () => {
           onClick={handleMapClick}
           modules={["control.SearchControl"]}
           onLoad={(ymapsInstance: YMapsApi) => {
-            console.log(ymapsInstance, "ymapsInstance");
             ymaps.current = ymapsInstance;
             addSearchControlEvents();
           }}
@@ -109,10 +106,7 @@ const TgMap = () => {
             options={{ preset: "islands#icon", iconColor: "red" }}
           />
 
-          <GeolocationControl
-            onLoad={(e) => console.log(e, "GeolocationControl")}
-            options={{ float: "left" }}
-          />
+          <GeolocationControl options={{ float: "left" }} />
           <SearchControl
             options={{
               float: "left",

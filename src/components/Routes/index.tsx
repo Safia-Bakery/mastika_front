@@ -44,9 +44,7 @@ const TgOrderType = lazy(() => import("src/webapp/screens/TgOrderType"));
 const TgOrderDirections = lazy(
   () => import("src/webapp/screens/TgOrderDirection")
 );
-const TgOrderComplexity = lazy(
-  () => import("src/webapp/screens/TgOrderComplexity")
-);
+const TgSubCategory = lazy(() => import("src/webapp/screens/TgSubCategory"));
 
 const Login = lazy(() => import("src/pages/Login"));
 const Orders = lazy(() => import("src/pages/Orders"));
@@ -59,6 +57,7 @@ const Categories = lazy(() => import("src/pages/Categories"));
 const EditAddSubCategories = lazy(
   () => import("src/pages/EditAddSubCategories")
 );
+const Fillings = lazy(() => import("src/pages/Fillings"));
 const Comments = lazy(() => import("src/pages/Comments"));
 const Roles = lazy(() => import("src/pages/Roles"));
 const EditAddRole = lazy(() => import("src/pages/EditAddRole"));
@@ -147,6 +146,21 @@ const Navigation = () => {
         element: <Comments />,
         path: "/comments",
         screen: MainPermissions.comments,
+      },
+      {
+        element: <Fillings />,
+        path: "/fillings",
+        screen: MainPermissions.categories,
+      },
+      {
+        element: <EditAddFillings />,
+        path: "/fillings/add",
+        screen: MainPermissions.categories,
+      },
+      {
+        element: <EditAddFillings />,
+        path: "/fillings/:id",
+        screen: MainPermissions.categories,
       },
       {
         element: <Categories />,
@@ -434,43 +448,7 @@ const Navigation = () => {
           {/* <Route element={<Suspend><ShowSubCategChild /></Suspend>} path={":id/:subid/show"} /> */}
         </Route>
 
-        <Route path={"/fillings"}>
-          {/* 
-            
-              --complexity - {standart, PP, premium}
-              --filling - {standart} -> {raduga, rafaello }
-
-              Fillings -> complexity(standart) -> filling(raduga, rafaello)
-
-              /filling/:id - standart show
-              /filling/add - add like a standart
-              /filling/edit/:id - edit standart
-
-              /filling/:id/add - add new complexity, like a rafaello, raduga
-              /filling/:id/:complexity - show raduga, inside of standart
-              /filling/:id/:complexity/edit - edit raduga
-              
-              /filling/:id/:complexity/add - add new filling, floors portions
-              /filling/:id/:complexity/:filling/edit - edit portion, 
-
-            
-            */}
-          <Route
-            element={
-              <Suspend>
-                <EditAddFillings />
-              </Suspend>
-            }
-            path={"add"}
-          />
-          <Route
-            element={
-              <Suspend>
-                <EditAddFillings />
-              </Suspend>
-            }
-            path={"edit/:id"}
-          />
+        {/* <Route path={"/fillings"}>
           <Route
             element={
               <Suspend>
@@ -521,7 +499,7 @@ const Navigation = () => {
             }
             path={":id/:complexity/:filling/edit"}
           />
-        </Route>
+        </Route> */}
       </Route>
 
       {/* <WebNavigations /> */}
@@ -547,7 +525,7 @@ const Navigation = () => {
           path="complexity"
           element={
             <Suspend>
-              <TgOrderComplexity />
+              <TgSubCategory />
             </Suspend>
           }
         />

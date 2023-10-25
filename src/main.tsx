@@ -12,8 +12,6 @@ import Loading from "./components/Loader/index.tsx";
 //  https://api.cakes.safiabakery.uz/docs
 //  http://10.0.1.155:8000/docs
 
-//hello
-
 export const baseURL = "https://api.cakes.safiabakery.uz";
 // export const baseURL = "http://10.0.1.155:8000";
 export default new BaseAPIClient(baseURL, store);

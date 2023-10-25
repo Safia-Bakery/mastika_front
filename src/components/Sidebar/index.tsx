@@ -31,6 +31,11 @@ const routes = [
     url: "/categories",
     screen: MainPermissions.categories,
   },
+  {
+    name: "Начинки",
+    url: "/fillings",
+    screen: MainPermissions.fillings,
+  },
   { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
   {
     name: "Отзывы",

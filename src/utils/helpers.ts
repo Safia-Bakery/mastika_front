@@ -1,5 +1,11 @@
 import { QueryClient } from "@tanstack/react-query";
-import { EPresetTimes, OrderStatus, PaymentTypes, SystemTypes } from "./types";
+import {
+  EPresetTimes,
+  OrderStatus,
+  PaymentTypes,
+  SystemTypes,
+  fillingType,
+} from "./types";
 
 export const itemsPerPage = 50;
 
@@ -20,6 +26,25 @@ export const orderStatus = (status: OrderStatus | undefined) => {
     default:
       return "";
   }
+};
+
+export const getFillingType = (val: fillingType) => {
+  switch (val) {
+    case fillingType.pp:
+      return "ПП";
+    case fillingType.premium:
+      return "Премиум";
+    case fillingType.standart:
+      return "Стандартная";
+
+    default:
+      break;
+  }
+};
+
+export const imageConverter = (img: File) => {
+  if (img?.size) return URL.createObjectURL(img);
+  return "";
 };
 // export const numberWithCommas = (val: number) => {
 //   return val

@@ -46,8 +46,10 @@ const MainDatePicker: FC<Props> = ({
       startDate={startDate}
       placeholderText={placeholder}
       endDate={endDate}
+      timeFormat="p"
+      dateFormat="Pp"
       isClearable
-      showTimeInput={showTimeInput}
+      showTimeSelect={showTimeInput}
       shouldCloseOnSelect={false}
       selectsRange={selectsRange}
       {...register}

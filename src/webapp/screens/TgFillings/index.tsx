@@ -12,6 +12,15 @@ import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useForm } from "react-hook-form";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
+import useFillings from "src/hooks/useFillings";
+import { FillingArr } from "src/pages/EditAddFillings";
+
+interface FillingType {
+  [key: number | string]: {
+    name: string;
+    value: number;
+  };
+}
 
 const fillingArr = [
   { id: 1, name: "Стандартная" },
@@ -21,14 +30,23 @@ const fillingArr = [
 
 const TgFillings = () => {
   const navigate = useNavigate();
+  const [selectFilling, $selectFilling] = useState<{
+    name: string;
+    value: number;
+  }>();
+  const [filling, $filling] = useState<FillingType>();
+
+  const { data: fillings } = useFillings({
+    ptype: selectFilling?.value,
+    enabled: !!selectFilling?.value,
+  });
 
   const [colorModal, $colorModal] = useState(false);
   const dispatch = useAppDispatch();
 
   const { register, getValues, reset, watch } = useForm();
 
-  const { filling_type, floors, filling, palette } =
-    useAppSelector(tgItemsSelector);
+  const { filling_type, floors, palette } = useAppSelector(tgItemsSelector);
 
   const handleSubmit = () => {
     const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
@@ -36,7 +54,12 @@ const TgFillings = () => {
       return acc;
     }, {});
     dispatch(
-      tgAddItem({ palette: paletteVals, palette_details: getValues("details") })
+      tgAddItem({
+        palette: paletteVals,
+        palette_details: getValues("details"),
+        filling_type: selectFilling,
+        filling,
+      })
     );
     navigate("/tg/package");
   };
@@ -83,17 +106,18 @@ const TgFillings = () => {
           Выберите тип начинки
         </Texts>
         <div className="flex flex-wrap gap-3 justify-center mt-4 transition-all">
-          {fillingArr.map((item) => {
-            const active = item.id === filling_type?.value;
+          {FillingArr.map((item) => {
+            const active = item.id === selectFilling?.value;
             return (
               <TgBtn
                 key={item.id}
-                onClick={() =>
-                  dispatch(
-                    tgAddItem({
-                      filling_type: { name: item.name, value: item.id },
-                    })
-                  )
+                onClick={
+                  () => $selectFilling({ value: item.id, name: item.name })
+                  // dispatch(
+                  //   tgAddItem({
+                  //     filling_type: { name: item.name, value: item.id },
+                  //   })
+                  // )
                 }
                 className={cl("px-3 max-w-[85px] !h-[30px]", {
                   ["shadow-selected !bg-tgSelected"]: active,
@@ -112,57 +136,56 @@ const TgFillings = () => {
         </div>
 
         <Selected
-          active={!!filling_type?.value}
-        >{`Выбрано: ${filling_type?.name}`}</Selected>
+          active={!!selectFilling?.name}
+        >{`Выбрано: ${selectFilling?.name}`}</Selected>
       </div>
     );
-  }, [filling_type]);
+  }, [selectFilling]);
 
   const renderFillingFloors = useMemo(() => {
     return [...Array(floors)].map((_, idx) => {
-      return (
-        <div className="border-b border-b-tgBorder mt-6" key={idx}>
-          <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-            Выберите начинку: {idx + 1} этаж
-          </Texts>
-          <div className="flex flex-wrap gap-3 justify-center mt-4">
-            {[...Array(6)].map((_, childIdx) => {
-              const active = childIdx === filling?.[idx + 1]?.value;
-              return (
-                <TgBtn
-                  key={childIdx}
-                  onClick={() =>
-                    dispatch(
-                      tgAddItem({
-                        filling: {
-                          ...filling,
-                          ...{ [idx + 1]: { name: "Радуга", value: childIdx } },
-                        },
+      if (!!fillings?.length)
+        return (
+          <div className="border-b border-b-tgBorder mt-6" key={idx}>
+            <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
+              Выберите начинку: {idx + 1} этаж
+            </Texts>
+            <div className="flex flex-wrap gap-3 justify-center mt-4">
+              {fillings?.map((item, childIdx) => {
+                const active = childIdx === filling?.[idx + 1]?.value;
+                return (
+                  <TgBtn
+                    key={childIdx}
+                    onClick={() =>
+                      $filling({
+                        [idx + 1]: { name: item.name, value: childIdx },
                       })
-                    )
-                  }
-                  className={cl("px-3 max-w-[85px] !h-[30px]", {
-                    ["shadow-selected !bg-tgSelected"]: active,
-                  })}
-                >
-                  <Texts
-                    weight={active ? Weight.bold : Weight.regular}
-                    className="inline-block !w-min whitespace-nowrap"
+                    }
+                    className={cl(
+                      "px-3 max-w-[85px] !h-[30px] overflow-hidden",
+                      {
+                        ["shadow-selected !bg-tgSelected"]: active,
+                      }
+                    )}
                   >
-                    {"Радуга"}
-                  </Texts>
-                </TgBtn>
-              );
-            })}
-          </div>
+                    <Texts
+                      weight={active ? Weight.bold : Weight.regular}
+                      className="inline-block !w-min whitespace-nowrap"
+                    >
+                      {item.name}
+                    </Texts>
+                  </TgBtn>
+                );
+              })}
+            </div>
 
-          <Selected active={!!filling?.[idx + 1]?.name}>{`Выбрано: ${
-            filling?.[idx + 1]?.value
-          }`}</Selected>
-        </div>
-      );
+            <Selected active={!!filling?.[idx + 1]?.name}>{`Выбрано: ${
+              filling?.[idx + 1]?.name
+            }`}</Selected>
+          </div>
+        );
     });
-  }, [filling]);
+  }, [filling, fillings]);
 
   const renderPaletteFloors = useMemo(() => {
     return (

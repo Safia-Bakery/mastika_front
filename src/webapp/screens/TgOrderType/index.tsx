@@ -8,8 +8,8 @@ import {
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
-import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { tgAddItem } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch } from "src/redux/utils/types";
 import { OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
@@ -41,10 +41,6 @@ const TgOrderType = () => {
   const modal = Number(useQueryString("modal"));
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
-
-  const items = useAppSelector(tgItemsSelector);
-
-  console.log(items, "items");
 
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);

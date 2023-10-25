@@ -111,6 +111,14 @@ export interface CategoryTypes {
   id: number;
   status: number;
   price: number;
+  image?: string;
+}
+
+export interface FillingTypes {
+  id: number;
+  name: string;
+  category_id: number;
+  ptype: number;
 }
 
 export interface ContentTypes {
@@ -543,4 +551,11 @@ export enum HandleCount {
 export enum ModalType {
   image = "image",
   portion = "portion",
+  branch = "branch",
+}
+
+export enum fillingType {
+  standart = 0,
+  premium = 1,
+  pp = 2,
 }

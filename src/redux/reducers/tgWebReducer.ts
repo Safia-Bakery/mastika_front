@@ -26,7 +26,7 @@ interface State {
     palette_details?: number | string;
     orderPackage?: DetailsType;
     additions?: DetailsType[];
-    examplePhoto?: any;
+    examplePhoto?: File[];
     comments?: string;
     dynamic?: { [key: number | string]: number | string };
 
@@ -36,7 +36,7 @@ interface State {
 
     branch?: ValueType;
 
-    date?: string;
+    date?: Date;
   };
   cart: { [key: string]: DetailsType };
 }

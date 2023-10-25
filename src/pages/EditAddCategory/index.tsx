@@ -21,19 +21,20 @@ const EditAddCategory: FC = () => {
     getValues,
   } = useForm();
 
-  const { data, isLoading, refetch } = useCategories({
-    id: Number(id),
+  const { data, refetch } = useCategories({
+    ...(!!id && { id: Number(id) }),
     enabled: !!id,
   });
   const { mutate, isLoading: mutateLoading } = categoryMutation();
 
   const onSubmit = () => {
-    const { name, status } = getValues();
+    const { name, status, image } = getValues();
     mutate(
       {
         name,
-        status,
+        image: image[0],
         ...(!!id && { id: Number(id) }),
+        ...(!!status && { status }),
       },
       {
         onSuccess: () => {
@@ -66,9 +67,20 @@ const EditAddCategory: FC = () => {
             />
           </BaseInput>
 
-          <BaseInput label="СТАТУС">
-            <MainCheckBox label="Активный" register={register("status")} />
+          <BaseInput label="ЗАГРУЗИТЬ ФОТО" className="relative">
+            <MainInput />
+            <MainInput
+              type="file"
+              register={register("image", { required: "Обязательное поле" })}
+              className="opacity-0 absolute right-0 bottom-0"
+            />
           </BaseInput>
+
+          {!!id && (
+            <BaseInput label="СТАТУС">
+              <MainCheckBox label="Активный" register={register("status")} />
+            </BaseInput>
+          )}
         </div>
         <div className="flex flex-1 justify-end">
           <Button

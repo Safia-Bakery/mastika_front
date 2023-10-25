@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
 import useCategories from "src/hooks/useCategories";
+import { baseURL } from "src/main";
 import { tgAddItem } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch } from "src/redux/utils/types";
 import Texts from "src/webapp/componets/Texts";
@@ -88,7 +89,7 @@ const TgOrderDirections = () => {
                     { ["shadow-selected"]: active }
                   )}
                 >
-                  <img src={"/assets/images/pickup.png"} alt={"item.title"} />
+                  <img src={`${baseURL}/${item?.image}`} alt={item.name} />
                   <WebSelected className={cl({ ["opacity-100"]: active })} />
                 </div>
 
