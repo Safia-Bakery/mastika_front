@@ -4,7 +4,7 @@ import apiClient from "src/main";
 interface BodyTypes {
   order_id: number;
   product_id: string;
-  comment: string;
+  comment?: string;
   amount: number;
 }
 const orderProducts = () => {

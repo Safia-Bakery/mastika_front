@@ -245,18 +245,18 @@ const ShowOrder = () => {
       {
         order_user: client,
         phone_number: phone,
-        ...(extraPhone && { extra_number: extraPhone }),
         payment_type: Number(payment_type),
         firstly_payment: Number(prepay),
         comment,
         deliver_date: delivery_date,
         address,
+        id: Number(id),
+        category_id: activeCateg,
+        ...(extraPhone && { extra_number: extraPhone }),
         // near_to: "",
         // department_id: "",
-        category_id: activeCateg,
         // lat: "",
         // long: "",
-        id: Number(id),
       },
       {
         onSuccess: () => {

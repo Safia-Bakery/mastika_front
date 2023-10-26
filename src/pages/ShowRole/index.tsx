@@ -90,9 +90,7 @@ const ShowRole = () => {
                           key={child?.id}
                           className="border-b-2 border-b-gray-400 hover:bg-hoverGray transition-colors"
                         >
-                          <td className="text-left">
-                            {child?.name} = {child.id}
-                          </td>
+                          <td className="text-left">{child?.name}</td>
                           <td width={50}>
                             <input
                               type="checkbox"

@@ -12,7 +12,11 @@ const UsersFilter = () => {
 
   return (
     <div className="flex gap-1 my-4">
-      <MainInput inputStyle={InputStyle.white} placeholder={"Пользователи"} />
+      <MainInput
+        inputStyle={InputStyle.white}
+        className="flex flex-1"
+        placeholder={"Пользователи"}
+      />
       <MainSelect
         className="flex-1"
         inputStyle={InputStyle.white}

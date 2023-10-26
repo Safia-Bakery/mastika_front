@@ -24,7 +24,11 @@ const OrdersFilter: FC<Props> = ({ add }) => {
   const [startDate, endDate] = range;
   return (
     <div className="flex gap-1 my-4">
-      <MainInput inputStyle={InputStyle.white} placeholder={"Поиск заявки"} />
+      <MainInput
+        inputStyle={InputStyle.white}
+        placeholder={"Поиск заявки"}
+        className="flex flex-1"
+      />
       <MainSelect
         className="flex-1"
         inputStyle={InputStyle.white}

@@ -42,7 +42,7 @@ const MainDatePicker: FC<Props> = ({
         styles[inputStyle],
         className
       )}
-      wrapperClassName="mb-2 w-full"
+      wrapperClassName="mb-2 w-full flex flex-1"
       startDate={startDate}
       placeholderText={placeholder}
       endDate={endDate}

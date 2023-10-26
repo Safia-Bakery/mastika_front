@@ -7,7 +7,7 @@ import "./index.scss";
 import { EffectCards } from "swiper/modules";
 import { useAppSelector } from "src/redux/utils/types";
 import { tgItemsSelector } from "src/redux/reducers/tgWebReducer";
-import { imageConverter } from "src/utils/helpers";
+import { baseURL } from "src/main";
 
 const TgSwiper = () => {
   const { examplePhoto } = useAppSelector(tgItemsSelector);
@@ -20,9 +20,9 @@ const TgSwiper = () => {
         className="mySwiper"
       >
         {!!examplePhoto?.length &&
-          examplePhoto?.map((item: File, idx) => (
+          examplePhoto?.map((item, idx) => (
             <SwiperSlide key={idx}>
-              <img src={imageConverter(item)} alt={`image-${idx}`} />
+              <img src={`${baseURL}/${item}`} alt={`image-${idx}`} />
             </SwiperSlide>
           ))}
       </Swiper>

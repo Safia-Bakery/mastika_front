@@ -1,12 +1,11 @@
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
 import cl from "classnames";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
-import TgModal from "src/webapp/componets/TgConfirmModal";
 import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import { InputStyle } from "src/components/BaseInputs/MainInput";
 import { useForm } from "react-hook-form";
@@ -21,37 +20,44 @@ import {
 import { HandleCount } from "src/utils/types";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useProducts from "src/hooks/useProducts";
+import tgUploadImage from "src/hooks/mutation/tgUploadImage";
 
 const packageArr = [
   { id: 1, name: "Премиум" },
   { id: 2, name: "Бесплатная" },
 ];
 
-const additionsArr = [
-  { id: 1, name: "Топпер", price: 10000 },
-  { id: 2, name: "Свечка", price: 30000 },
-  { id: 3, name: "Шоколад", price: 20000 },
-];
-
 const TgPackage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { orderPackage, additions } = useAppSelector(tgItemsSelector);
+  const { mutate: uploadImage } = tgUploadImage();
+  const { orderPackage } = useAppSelector(tgItemsSelector);
   const { data: products } = useProducts({
     group_id: "30ed6a72-8771-4c81-91ad-e4b71305858d",
   });
 
   const cart = useAppSelector(tgCartSelector);
 
-  const { register, watch, getValues } = useForm();
+  const { register, watch, getValues, handleSubmit } = useForm();
 
-  const handleSubmit = () => {
+  const onSubmit = () => {
     const { image, comments } = getValues();
-    const additions = Object.values(cart);
-    dispatch(
-      tgAddItem({ examplePhoto: Array.from(image), comments, additions })
-    );
-    navigate("/tg/details");
+    if (!!image.length) {
+      const filesArray = Array.from(image);
+      const formData = new FormData();
+      filesArray.forEach((file: any, index) => {
+        formData.append("image", file);
+      });
+      uploadImage(formData, {
+        onSuccess: (data: any) => {
+          dispatch(tgAddItem({ examplePhoto: data.images, comments }));
+          navigate("/tg/details");
+        },
+      });
+    } else {
+      dispatch(tgAddItem({ comments }));
+      navigate("/tg/details");
+    }
   };
 
   const renderImageUpload = useMemo(() => {
@@ -210,7 +216,7 @@ const TgPackage = () => {
 
   return (
     <TgContainer>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <TgBackBtn link="fillings" />
         {renderPackage}
         {prenderAdditions}
@@ -234,7 +240,11 @@ const TgPackage = () => {
           className="border border-tgBorder rounded-xl mt-4"
         />
 
-        <TgBtn onClick={handleSubmit} className={cl("mt-4 font-bold")}>
+        <TgBtn onClick={() => null} className={cl("mt-4 font-bold relative")}>
+          <button
+            type="submit"
+            className="absolute bottom-0 left-0 top-0 right-0"
+          />
           Перейти к деталям заказа
         </TgBtn>
       </form>

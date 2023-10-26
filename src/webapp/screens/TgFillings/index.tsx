@@ -48,6 +48,9 @@ const TgFillings = () => {
 
   const { filling_type, floors, palette } = useAppSelector(tgItemsSelector);
 
+  const handleFilling = (val: FillingType) => () =>
+    $filling((prev) => ({ ...prev, ...val }));
+
   const handleSubmit = () => {
     const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
       acc[idx + 1] = getValues(`${idx + 1}`);
@@ -156,11 +159,9 @@ const TgFillings = () => {
                 return (
                   <TgBtn
                     key={childIdx}
-                    onClick={() =>
-                      $filling({
-                        [idx + 1]: { name: item.name, value: childIdx },
-                      })
-                    }
+                    onClick={handleFilling({
+                      [idx + 1]: { name: item.name, value: childIdx },
+                    })}
                     className={cl(
                       "px-3 max-w-[85px] !h-[30px] overflow-hidden",
                       {

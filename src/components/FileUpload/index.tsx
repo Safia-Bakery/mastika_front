@@ -1,7 +1,5 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
-import styles from "./index.module.scss";
-import cl from "classnames";
+import { ChangeEvent, FC, useState } from "react";
+import { useAppDispatch } from "src/redux/utils/types";
 import { addImage } from "src/redux/reducers/imageUpload";
 
 export interface FileItem {

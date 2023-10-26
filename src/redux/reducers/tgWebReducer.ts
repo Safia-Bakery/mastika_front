@@ -25,8 +25,8 @@ interface State {
     palette?: { [key: number | string]: number | string };
     palette_details?: number | string;
     orderPackage?: DetailsType;
-    additions?: DetailsType[];
-    examplePhoto?: File[];
+    // additions?: DetailsType[];
+    examplePhoto?: string[];
     comments?: string;
     dynamic?: { [key: number | string]: number | string };
 
@@ -53,7 +53,7 @@ const initialState: State = {
     palette: undefined,
     palette_details: undefined,
     orderPackage: undefined,
-    additions: undefined,
+    // additions: undefined,
     examplePhoto: undefined,
     comments: undefined,
   },
@@ -69,6 +69,14 @@ export const tgReducer = createSlice({
     },
     tgAddToCart: (state, { payload }: PayloadAction<DetailsType>) => {
       state.cart[payload?.value!] = payload;
+    },
+
+    tgClearCart: (state) => {
+      state.cart = {};
+    },
+
+    tgClearItems: (state) => {
+      state = initialState;
     },
 
     tgHandleCount: (
@@ -94,5 +102,11 @@ export const tgReducer = createSlice({
 export const tgItemsSelector = (state: RootState) => state.tgOrder.items;
 export const tgCartSelector = (state: RootState) => state.tgOrder.cart;
 
-export const { tgAddItem, tgHandleCount, tgAddToCart } = tgReducer.actions;
+export const {
+  tgAddItem,
+  tgHandleCount,
+  tgAddToCart,
+  tgClearCart,
+  tgClearItems,
+} = tgReducer.actions;
 export default tgReducer.reducer;

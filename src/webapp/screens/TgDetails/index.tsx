@@ -9,6 +9,7 @@ import MainSelect from "src/components/BaseInputs/MainSelect";
 import { TextSize, Weight } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
 import orderDynamic from "src/hooks/mutation/orderDynamic";
+import orderProducts from "src/hooks/mutation/orderProducts";
 import useBranches from "src/hooks/useBranches";
 import {
   useNavigateParams,
@@ -16,7 +17,13 @@ import {
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
 import { orderArray } from "src/pages/AddOrder";
-import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import {
+  tgAddItem,
+  tgCartSelector,
+  tgClearCart,
+  tgClearItems,
+  tgItemsSelector,
+} from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { errorToast, successToast } from "src/utils/toast";
 import { ModalType, OrderingType } from "src/utils/types";
@@ -42,6 +49,8 @@ const TgDetails = () => {
   const [delivery_date, $delivery_date] = useState<Date>();
   const { mutate } = orderMutation();
   const { mutate: dynamicVals } = orderDynamic();
+  const { mutate: productMutation } = orderProducts();
+  const cart = useAppSelector(tgCartSelector);
 
   console.log(items, "items");
 
@@ -65,17 +74,23 @@ const TgDetails = () => {
   const onClose = () => removeParams(["modal", "branch"]);
 
   const onSubmit = () => {
-    const { client_phone, manager_phone, date_time, address_name } =
-      getValues();
+    const { client_phone, manager_phone, address_name } = getValues();
+    dispatch(tgClearCart());
+    const filler = Object.keys(items.filling!)?.reduce((acc: any, item) => {
+      if (!!items.filling?.[item].value?.toString()) {
+        acc[item] = `${items.filling?.[item].value}`;
+      }
+      return acc;
+    }, {});
 
+    console.log(filler, "filler");
     mutate(
       {
         order_user: "name",
-        // phone_number: phone,
-        // firstly_payment: 1,
         is_delivery,
-        // ...(phone2 && { extra_number: phone2 }),
-        ...(address_name && !!is_delivery && { location: address_name }),
+        ...(client_phone && !!is_delivery && { phone_number: client_phone }),
+        ...(manager_phone && !!is_delivery && { extra_number: manager_phone }),
+        // ...(address_name && !!is_delivery && { location: address_name }),
         ...(address_name && !!is_delivery && { address: address_name }),
         // ...(house && !!is_delivery && { apartment: house }),
         // ...(refAddr && !!is_delivery && { near_to: refAddr }),
@@ -89,19 +104,44 @@ const TgDetails = () => {
         comment: items.comments,
         deliver_date: delivery_date,
         category_id: items.direction?.value,
+        packaging: items.orderPackage?.value,
+        complexity: items.complexity?.value,
+        filler,
+        ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
+        color_details: items.palette_details,
+        color: items.palette,
       },
       {
         onSuccess: (data: any) => {
-          dynamicVals(
-            { ...items.dynamic, ...{ order_id: Number(data.id) } },
-            {
-              onSuccess: () => {
-                successToast("dynamics submitted");
-                handleNavigate(`/tg/success?id=${data.id}`);
-              },
-              onError: (e: any) => errorToast(e.message),
+          if (data.id) {
+            if (!!Object.keys(cart)?.length) {
+              const products = Object.keys(cart)?.map((item) => {
+                return {
+                  order_id: data.id,
+                  product_id: cart?.[item].value?.toString()!,
+                  // comment: getValues(`${item.id}`),
+                  amount: cart?.[item].count!,
+                };
+              });
+              productMutation(products, {
+                onSuccess: () => {
+                  dispatch(tgClearCart());
+                  successToast("products submitted");
+                },
+              });
             }
-          );
+            dynamicVals(
+              { ...items.dynamic, ...{ order_id: Number(data.id) } },
+              {
+                onError: (e: any) => errorToast(e.message),
+                onSuccess: () => {
+                  successToast("dynamics submitted");
+                  handleNavigate(`/tg/success?id=${data.id}`);
+                  dispatch(tgClearItems());
+                },
+              }
+            );
+          }
         },
       }
     );
@@ -184,7 +224,7 @@ const TgDetails = () => {
             )
           }
           inputStyle={InputStyle.white}
-          className="!h-6 border !bg-tgGray rounded-md !w-24 !p-0 text-xs !mb-0"
+          className="!h-6 border !bg-tgGray rounded-md !max-w-[90px] !p-0 text-xs !mb-0"
         />
       );
   }, [items.delivery_type?.value]);
@@ -248,11 +288,14 @@ const TgDetails = () => {
           <Texts size={TextSize.L}>{""}</Texts>
         </div>
 
-        {items.additions?.map((item) => (
-          <div className="flex justify-between items-center" key={item.value}>
-            <Texts size={TextSize.L}>{item.name}</Texts>
+        {Object.keys(cart)?.map((item) => (
+          <div
+            className="flex justify-between items-center"
+            key={cart?.[item].value}
+          >
+            <Texts size={TextSize.L}>{cart?.[item].name}</Texts>
 
-            <Texts size={TextSize.L}>x{item.count}</Texts>
+            <Texts size={TextSize.L}>x{cart?.[item].count}</Texts>
           </div>
         ))}
       </>

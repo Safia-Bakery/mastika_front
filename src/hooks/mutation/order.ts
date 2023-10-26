@@ -23,6 +23,21 @@ interface Body {
   id?: number;
 
   deny_reason?: string;
+
+  complexity?: number;
+  packaging?: number;
+  filler?: {
+    additionalProp1: string;
+    additionalProp2: string;
+    additionalProp3: string;
+  };
+  images: string[];
+  color: {
+    additionalProp1: string;
+    additionalProp2: string;
+    additionalProp3: string;
+  };
+  color_details: string;
 }
 
 const orderMutation = () => {
