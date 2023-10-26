@@ -89,7 +89,9 @@ const TgOrderDirections = () => {
                     { ["shadow-selected"]: active }
                   )}
                 >
-                  <img src={`${baseURL}/${item?.image}`} alt={item.name} />
+                  {item?.image && (
+                    <img src={`${baseURL}/${item?.image}`} alt={item.name} />
+                  )}
                   <WebSelected className={cl({ ["opacity-100"]: active })} />
                 </div>
 

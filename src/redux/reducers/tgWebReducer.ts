@@ -76,7 +76,7 @@ export const tgReducer = createSlice({
     },
 
     tgClearItems: (state) => {
-      state = initialState;
+      state.items = initialState.items;
     },
 
     tgHandleCount: (

@@ -1,7 +1,7 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppSelector } from "src/redux/utils/types";
 import useToken from "src/hooks/useToken";
-import { MainPermissions } from "src/utils/types";
+import { MainPermissions, OrderStatus } from "src/utils/types";
 import Loading from "../Loader";
 import { tokenSelector } from "src/redux/reducers/auth";
 import { lazy, useEffect, useMemo } from "react";
@@ -100,6 +100,7 @@ const Navigation = () => {
       {
         element: (
           <Orders
+            status={OrderStatus.accepted}
             edit={MainPermissions.edit_rec_orders}
             add={MainPermissions.add_rec_orders}
           />

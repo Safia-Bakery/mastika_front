@@ -53,7 +53,7 @@ const TgFillings = () => {
 
   const handleSubmit = () => {
     const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
-      acc[idx + 1] = getValues(`${idx + 1}`);
+      acc[`${idx + 1}`] = getValues(`${idx + 1}`);
       return acc;
     }, {});
     dispatch(
@@ -155,12 +155,12 @@ const TgFillings = () => {
             </Texts>
             <div className="flex flex-wrap gap-3 justify-center mt-4">
               {fillings?.map((item, childIdx) => {
-                const active = childIdx === filling?.[idx + 1]?.value;
+                const active = item.id === filling?.[idx + 1]?.value;
                 return (
                   <TgBtn
                     key={childIdx}
                     onClick={handleFilling({
-                      [idx + 1]: { name: item.name, value: childIdx },
+                      [idx + 1]: { name: item.name, value: item.id },
                     })}
                     className={cl(
                       "px-3 max-w-[85px] !h-[30px] overflow-hidden",

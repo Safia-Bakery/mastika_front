@@ -11,13 +11,14 @@ import Loading from "src/components/Loader";
 import Pagination from "src/components/Pagination";
 import EmptyList from "src/components/EmptyList";
 import useOrders from "src/hooks/useOrders";
-import { MainPermissions } from "src/utils/types";
+import { MainPermissions, OrderStatus } from "src/utils/types";
 import { orderStatus } from "src/utils/helpers";
 import useToken from "src/hooks/useToken";
 
 interface Props {
   edit: MainPermissions;
   add: MainPermissions;
+  status?: OrderStatus;
 }
 
 const column = [
@@ -29,13 +30,13 @@ const column = [
   { name: "Статус", key: "" },
 ];
 
-const Orders: FC<Props> = ({ edit, add }) => {
+const Orders: FC<Props> = ({ edit, add, status }) => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [sortKey, setSortKey] = useState();
   const { data } = useToken({});
   const perms = data?.permissions;
 
-  const { data: orders, isLoading } = useOrders({});
+  const { data: orders, isLoading } = useOrders({ status });
 
   const handleSort = (key: any) => {
     if (key === sortKey) {
@@ -112,7 +113,7 @@ const Orders: FC<Props> = ({ edit, add }) => {
                       />
                     )}
                   </td>
-                  <td>{order?.order_br?.name}</td>
+                  <td>{order?.order_br?.branch_dr?.name}</td>
                   <td>{orderStatus(order.status)}</td>
                 </tr>
               ))}

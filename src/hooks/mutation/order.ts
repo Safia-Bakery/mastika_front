@@ -27,17 +27,13 @@ interface Body {
   complexity?: number;
   packaging?: number;
   filler?: {
-    additionalProp1: string;
-    additionalProp2: string;
-    additionalProp3: string;
+    [key: number | string]: string;
   };
-  images: string[];
-  color: {
-    additionalProp1: string;
-    additionalProp2: string;
-    additionalProp3: string;
+  images?: string[];
+  color?: {
+    [key: number | string]: string;
   };
-  color_details: string;
+  color_details?: string;
 }
 
 const orderMutation = () => {

@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import { lazy, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
+import Suspend from "src/components/Suspend";
 import { TextSize, Weight } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
 import orderDynamic from "src/hooks/mutation/orderDynamic";
@@ -33,7 +34,8 @@ import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
-import TgSwiper from "src/webapp/componets/TgSwiper";
+
+const TgSwiper = lazy(() => import("src/webapp/componets/TgSwiper"));
 
 const TgDetails = () => {
   const navigate = useNavigate();
@@ -76,14 +78,15 @@ const TgDetails = () => {
   const onSubmit = () => {
     const { client_phone, manager_phone, address_name } = getValues();
     dispatch(tgClearCart());
-    const filler = Object.keys(items.filling!)?.reduce((acc: any, item) => {
-      if (!!items.filling?.[item].value?.toString()) {
-        acc[item] = `${items.filling?.[item].value}`;
-      }
-      return acc;
-    }, {});
+    const filler = items.filling
+      ? Object.keys(items.filling!)?.reduce((acc: any, item) => {
+          if (!!items.filling?.[item].value?.toString()) {
+            acc[`${item}`] = `${items.filling?.[item].value}`;
+          }
+          return acc;
+        }, {})
+      : null;
 
-    console.log(filler, "filler");
     mutate(
       {
         order_user: "name",
@@ -106,8 +109,9 @@ const TgDetails = () => {
         category_id: items.direction?.value,
         packaging: items.orderPackage?.value,
         complexity: items.complexity?.value,
-        filler,
+
         ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
+        ...(!!filler && { filler }),
         color_details: items.palette_details,
         color: items.palette,
       },
@@ -123,6 +127,9 @@ const TgDetails = () => {
                   amount: cart?.[item].count!,
                 };
               });
+              // if (!Object.values(items.dynamic!).length) {
+              //   dispatch(tgClearItems());
+              // }
               productMutation(products, {
                 onSuccess: () => {
                   dispatch(tgClearCart());
@@ -130,19 +137,21 @@ const TgDetails = () => {
                 },
               });
             }
+            // if (items.dynamic && !!Object.keys(items.dynamic).length)
             dynamicVals(
               { ...items.dynamic, ...{ order_id: Number(data.id) } },
               {
                 onError: (e: any) => errorToast(e.message),
                 onSuccess: () => {
+                  dispatch(tgClearItems());
                   successToast("dynamics submitted");
                   handleNavigate(`/tg/success?id=${data.id}`);
-                  dispatch(tgClearItems());
                 },
               }
             );
           }
         },
+        onError: (e: any) => errorToast(e.message),
       }
     );
   };
@@ -333,7 +342,11 @@ const TgDetails = () => {
       case ModalType.branch:
         return <TgBranchSelect />;
       case ModalType.image:
-        return <TgSwiper />;
+        return (
+          <Suspend>
+            <TgSwiper />
+          </Suspend>
+        );
 
       default:
         break;

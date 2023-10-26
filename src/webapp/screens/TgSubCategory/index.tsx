@@ -23,6 +23,12 @@ import Selected from "src/webapp/componets/TgSelectedLabel";
 
 const numberArr = [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27];
 
+const complexityArr = [
+  { id: 1, name: "Средний" },
+  { id: 2, name: "Сложный" },
+  { id: 3, name: "Гравитационный Свадебдный" },
+];
+
 const TgSubCategory = () => {
   const navigate = useNavigate();
   const removeParam = useRemoveParams();
@@ -31,6 +37,7 @@ const TgSubCategory = () => {
   const [selects, $selects] = useState<{
     [key: number | string]: { value: number; name: string };
   }>();
+  const [complexity, $complexity] = useState<{ value: number; name: string }>();
   const [floors, $floors] = useState<number>();
   const [portion, $portion] = useState<number>();
   const [img, $img] = useState<number>();
@@ -154,6 +161,41 @@ const TgSubCategory = () => {
     }
   };
 
+  const renderComplexity = useMemo(() => {
+    return (
+      <div className="border-b border-b-tgBorder">
+        <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
+          Укажите степень сложности
+        </Texts>
+        <div className="flex flex-wrap gap-5 justify-center mt-4">
+          {complexityArr.map((item) => {
+            const active = item.id === complexity?.value;
+            return (
+              <TgBtn
+                key={item.id}
+                onClick={() => $complexity({ name: item.name, value: item.id })}
+                className={cl("px-3 !min-w-[140px] max-w-[250px] !w-min", {
+                  ["shadow-selected"]: active,
+                })}
+              >
+                <Texts
+                  weight={active ? Weight.bold : Weight.regular}
+                  className="inline-block !w-min whitespace-nowrap"
+                >
+                  {item.name}
+                </Texts>
+              </TgBtn>
+            );
+          })}
+        </div>
+
+        <Selected
+          active={!!complexity?.name}
+        >{`Выбрано: ${complexity?.name}`}</Selected>
+      </div>
+    );
+  }, [complexity]);
+
   const handleSubmit = () => {
     const dynamic = data?.category_vs_subcategory.reduce((acc: any, item) => {
       if (!!getValues(`${item.id}`))
@@ -172,7 +214,7 @@ const TgSubCategory = () => {
       }, {});
     dispatch(
       tgAddItem({
-        complexity: selects,
+        complexity,
         floors,
         portion,
         dynamic: { ...dynamic, ...select },
@@ -316,6 +358,7 @@ const TgSubCategory = () => {
     <TgContainer>
       <form>
         <TgBackBtn link="order-directions" />
+        {renderComplexity}
         {renderFloors}
         {renderPortions}
         {renderImg}

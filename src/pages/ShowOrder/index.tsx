@@ -321,7 +321,7 @@ const ShowOrder = () => {
         system: "",
         operator: order.order_vs_user?.username,
         comment: order.comment,
-        ...(!order.is_delivery && { branch: order.order_br?.name }),
+        ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
     }
   }, [order]);
