@@ -21,11 +21,7 @@ import { HandleCount } from "src/utils/types";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useProducts from "src/hooks/useProducts";
 import tgUploadImage from "src/hooks/mutation/tgUploadImage";
-
-const packageArr = [
-  { id: 1, name: "Премиум" },
-  { id: 2, name: "Бесплатная" },
-];
+import { packageArr } from "src/utils/helpers";
 
 const TgPackage = () => {
   const navigate = useNavigate();

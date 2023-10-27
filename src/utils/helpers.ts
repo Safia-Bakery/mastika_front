@@ -85,3 +85,12 @@ export const systems = [
   { id: SystemTypes.tg, name: "Телеграм бот" },
   { id: SystemTypes.web, name: "Сайт" },
 ];
+export const complexityArr = [
+  { id: 1, name: "Средний" },
+  { id: 2, name: "Сложный" },
+  { id: 3, name: "Гравитационный Свадебдный" },
+];
+export const packageArr = [
+  { id: 1, name: "Премиум" },
+  { id: 2, name: "Бесплатная" },
+];

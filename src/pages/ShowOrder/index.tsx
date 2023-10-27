@@ -29,7 +29,13 @@ import {
 import useOrder from "src/hooks/useOrder";
 import useQueryString from "src/hooks/useQueryString";
 import { baseURL } from "src/main";
-import { orderStatus, payments, systems } from "src/utils/helpers";
+import {
+  complexityArr,
+  orderStatus,
+  packageArr,
+  payments,
+  systems,
+} from "src/utils/helpers";
 import { errorToast, successToast } from "src/utils/toast";
 
 import {
@@ -229,6 +235,8 @@ const ShowOrder = () => {
       operator,
       payment_type,
       system,
+      complexity,
+      packaging,
     } = getValues();
     const dynamic = subCategories?.category_vs_subcategory.reduce(
       (acc: any, item) => {
@@ -252,6 +260,8 @@ const ShowOrder = () => {
         address,
         id: Number(id),
         category_id: activeCateg,
+        complexity,
+        packaging,
         ...(extraPhone && { extra_number: extraPhone }),
         // near_to: "",
         // department_id: "",
@@ -321,6 +331,8 @@ const ShowOrder = () => {
         system: "",
         operator: order.order_vs_user?.username,
         comment: order.comment,
+        complexity: order.complexity,
+        packaging: order.packaging,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
     }
@@ -383,6 +395,25 @@ const ShowOrder = () => {
     );
   }, [order?.status]);
 
+  const renderSampleImage = useMemo(() => {
+    if (!!order?.images.length)
+      return (
+        <div className="">
+          <Typography size={TextSize.XXL}>Примерный вариант торта</Typography>
+          <div className="max-w-md w-full flex flex-wrap gap-4 mt-4">
+            {order?.images.map((item) => (
+              <img
+                src={`${baseURL}/${item}`}
+                className="object-contain"
+                alt="uploaded-image"
+              />
+            ))}
+          </div>
+        </div>
+      );
+    return null;
+  }, [order?.images]);
+
   useEffect(() => {
     setTimeout(() => {
       if (!!data?.value && !!subCategories?.category_vs_subcategory?.length) {
@@ -426,7 +457,32 @@ const ShowOrder = () => {
                 </BaseInput>
               )}
             </div>
-            <div className="p-2 ml-6 flex flex-1 flex-col ">
+            <div className="p-2 ml-6 flex flex-1 flex-col">
+              <BaseInput label="Complexity" className="mb-2">
+                <MainSelect
+                  values={complexityArr}
+                  inputStyle={InputStyle.primary}
+                  register={register("complexity")}
+                />
+              </BaseInput>
+              {/* color color details etajnost fillings */}
+              <BaseInput label="Packaging" className="mb-2">
+                <MainSelect
+                  values={packageArr}
+                  inputStyle={InputStyle.primary}
+                  register={register("packaging")}
+                />
+              </BaseInput>
+
+              {/* {order?.order_fill.map((item) => (
+                <BaseInput label={`filling ${item.floor +1} floor`} className="mb-2">
+                <MainSelect
+                  values={packageArr}
+                  inputStyle={InputStyle.primary}
+                  register={register("packaging")}
+                />
+              </BaseInput>
+              ))} */}
               <BaseInput label="Предоплата">
                 <MainRadioBtns
                   value={prepay}
@@ -504,7 +560,13 @@ const ShowOrder = () => {
             </Button>
           </div>
         )}
+        {renderSampleImage}
       </Card>
+
+      {/* <div className="flex justify-between items-center">
+        <Typography size={TextSize.XXL}>Товары</Typography> */}
+
+      {/* </div> */}
 
       {renderModal}
     </>

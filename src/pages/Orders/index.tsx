@@ -26,7 +26,7 @@ const column = [
   { name: "Сфера", key: "id" },
   { name: "Дата поступления", key: "type" },
   { name: "Тип", key: "fillial.name" },
-  { name: "Филиал", key: "category.name" },
+  { name: "Филиал / Адрес", key: "category.name" },
   { name: "Статус", key: "" },
 ];
 
@@ -46,17 +46,6 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
       setSortOrder("asc");
     }
   };
-
-  // const sortData = useMemo(() => {
-  //   if (branches?.items && sortKey) {
-  //     return [...branches?.items].sort((a, b) => {
-  //       if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-  //       if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-  //       else return 0;
-  //     });
-  //   }
-  //   return [];
-  // }, [branches?.items, sortKey, sortOrder]);
 
   return (
     <Container>
@@ -96,7 +85,7 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
                       </div>
                     </div>
                   </td>
-                  <td>Бенто</td>
+                  <td>{order?.order_vs_category?.name}</td>
                   <td>{dayjs(order?.created_at).format("DD.MM.YYYY HH:mm")}</td>
                   <td>
                     {!!order.is_delivery ? (
@@ -113,7 +102,13 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
                       />
                     )}
                   </td>
-                  <td>{order?.order_br?.branch_dr?.name}</td>
+                  <td>
+                    <div className="text-ellipsis max-w-xs w-full overflow-hidden whitespace-nowrap mx-auto">
+                      {order.is_delivery
+                        ? order.address
+                        : order?.order_br?.branch_dr?.name}
+                    </div>
+                  </td>
                   <td>{orderStatus(order.status)}</td>
                 </tr>
               ))}

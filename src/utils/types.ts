@@ -364,6 +364,22 @@ export interface OrderType {
       apartment: string;
       home: string;
       near_to: string;
+      images: string[];
+      packaging: number;
+      complexity: number;
+      color: { [key: number]: string };
+      color_details: string;
+      order_fill: {
+        id: number;
+        filling_id: number;
+        floor: number;
+        filler: {
+          id: number;
+          name: string;
+          category_id: number;
+          ptype: number;
+        };
+      }[];
       order_vs_category: {
         name: string;
         id: number;

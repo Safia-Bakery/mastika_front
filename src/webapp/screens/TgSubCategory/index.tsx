@@ -12,7 +12,7 @@ import {
 import useQueryString from "src/hooks/useQueryString";
 import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
-import { imageConverter } from "src/utils/helpers";
+import { complexityArr, imageConverter } from "src/utils/helpers";
 import { ContentType, ModalType, SubCategType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
@@ -22,12 +22,6 @@ import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
 
 const numberArr = [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27];
-
-const complexityArr = [
-  { id: 1, name: "Средний" },
-  { id: 2, name: "Сложный" },
-  { id: 3, name: "Гравитационный Свадебдный" },
-];
 
 const TgSubCategory = () => {
   const navigate = useNavigate();
