@@ -1,5 +1,5 @@
 import cl from "classnames";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
 import useBranches from "src/hooks/useBranches";
@@ -8,6 +8,7 @@ import {
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
+import { loginHandler } from "src/redux/reducers/auth";
 import { tgAddItem } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch } from "src/redux/utils/types";
 import { OrderingType } from "src/utils/types";
@@ -39,8 +40,13 @@ const TgOrderType = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const modal = Number(useQueryString("modal"));
+  const token = useQueryString("token");
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
+
+  useEffect(() => {
+    if (token) dispatch(loginHandler(token));
+  }, [token]);
 
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
