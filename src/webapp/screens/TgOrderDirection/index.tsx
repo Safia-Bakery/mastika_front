@@ -1,11 +1,11 @@
 import cl from "classnames";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
 import useCategories from "src/hooks/useCategories";
 import { baseURL } from "src/main";
-import { tgAddItem } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch } from "src/redux/utils/types";
+import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import TgBtn from "src/webapp/componets/TgBtn";
@@ -13,11 +13,17 @@ import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
 import WebSelected from "src/webapp/componets/TgSelected";
 
+interface ValueType {
+  name?: string;
+  value?: number | string;
+}
+
 const TgOrderDirections = () => {
   const navigate = useNavigate();
   const [modal, $modal] = useState(false);
-  const [selected, $selected] = useState<{ name: string; value: number }>();
+  const [selected, $selected] = useState<ValueType>();
   const { data } = useCategories({});
+  const { direction } = useAppSelector(tgItemsSelector);
 
   const dispatch = useAppDispatch();
 
@@ -58,9 +64,17 @@ const TgOrderDirections = () => {
   }, [modal]);
 
   const handleNavigate = () => {
-    dispatch(tgAddItem({ direction: selected }));
-    navigate("/tg/complexity");
+    if (!!selected) {
+      dispatch(tgAddItem({ direction: selected }));
+      navigate("/tg/complexity");
+    }
   };
+  const handleSelect = (item: ValueType) => () => $selected(item);
+  useEffect(() => {
+    if (direction) $selected(direction);
+  }, [direction]);
+
+  console.log(selected, "selected");
 
   return (
     <TgContainer>
@@ -83,7 +97,7 @@ const TgOrderDirections = () => {
                 className="flex flex-1 flex-col justify-center items-center"
               >
                 <div
-                  onClick={() => $selected({ name: item.name, value: item.id })}
+                  onClick={handleSelect({ name: item.name, value: item.id })}
                   className={cl(
                     "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
                     { ["shadow-selected"]: active }

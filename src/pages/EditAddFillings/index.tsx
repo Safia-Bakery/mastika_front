@@ -11,13 +11,7 @@ import Typography, { TextSize } from "src/components/Typography";
 import fillingMutation from "src/hooks/mutation/filling";
 import useCategories from "src/hooks/useCategories";
 import useFillings from "src/hooks/useFillings";
-import { fillingType } from "src/utils/types";
-
-export const FillingArr = [
-  { name: "ПП", id: fillingType.pp },
-  { name: "Премиум", id: fillingType.premium },
-  { name: "Стандартная", id: fillingType.standart },
-];
+import { FillingArr } from "src/utils/helpers";
 
 const EditAddFillings = () => {
   const navigate = useNavigate();

@@ -13,7 +13,7 @@ import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useForm } from "react-hook-form";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useFillings from "src/hooks/useFillings";
-import { FillingArr } from "src/pages/EditAddFillings";
+import { FillingArr } from "src/utils/helpers";
 
 interface FillingType {
   [key: number | string]: {

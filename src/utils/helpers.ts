@@ -94,3 +94,9 @@ export const packageArr = [
   { id: 1, name: "Премиум" },
   { id: 2, name: "Бесплатная" },
 ];
+
+export const FillingArr = [
+  { name: "ПП", id: fillingType.pp },
+  { name: "Премиум", id: fillingType.premium },
+  { name: "Стандартная", id: fillingType.standart },
+];

@@ -29,7 +29,6 @@ export const useFillings = ({
           return response as FillingTypes[];
         }),
     enabled,
-    refetchOnMount: true,
   });
 };
 export default useFillings;
