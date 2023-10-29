@@ -1,9 +1,9 @@
 import cl from "classnames";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
-import { TextSize, Weight } from "src/components/Typography";
+import Typography, { TextSize, Weight } from "src/components/Typography";
 import useCategoriesFull from "src/hooks/useCategoryFull";
 import {
   useNavigateParams,
@@ -13,13 +13,24 @@ import useQueryString from "src/hooks/useQueryString";
 import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
 import { complexityArr, imageConverter } from "src/utils/helpers";
-import { ContentType, ModalType, SubCategType } from "src/utils/types";
+import {
+  ContentType,
+  CustomObj,
+  ModalType,
+  SubCategType,
+} from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
+
+interface Errortypes {
+  complexity?: string;
+  floors?: string;
+  portion?: string;
+}
 
 const numberArr = [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27];
 
@@ -28,13 +39,17 @@ const TgSubCategory = () => {
   const removeParam = useRemoveParams();
   const navigateParam = useNavigateParams();
   const dispatch = useAppDispatch();
-  const [selects, $selects] = useState<{
-    [key: number | string]: { value: number; name: string };
+  const [selects, $selects] = useState<CustomObj>();
+  const [complexity, $complexity] = useState<{
+    value?: number | string;
+    name?: string;
   }>();
-  const [complexity, $complexity] = useState<{ value: number; name: string }>();
   const [floors, $floors] = useState<number>();
   const [portion, $portion] = useState<number>();
   const [img, $img] = useState<number>();
+  const items = useAppSelector(tgItemsSelector);
+
+  const [error, $error] = useState<Errortypes>();
 
   const modal = useQueryString("modal");
   const { register, getValues, watch } = useForm();
@@ -43,6 +58,41 @@ const TgSubCategory = () => {
     id: Number(direction?.value)!,
     enabled: !!direction?.value,
   });
+
+  console.log(error, "error");
+
+  const handleSubmit = () => {
+    if (!floors || !portion || !complexity?.value) {
+      if (!portion) $error({ portion: "portions are required" });
+      if (!floors) $error({ floors: "floors are required" });
+      if (!complexity?.value) $error({ complexity: "complexity is required" });
+    } else {
+      const dynamic = data?.category_vs_subcategory.reduce((acc: any, item) => {
+        if (!!getValues(`${item.id}`))
+          acc[`${item.id}`] =
+            typeof getValues(`${item.id}`) == "object"
+              ? getValues(`${item.id}`)[0]
+              : getValues(`${item.id}`);
+        return acc;
+      }, {});
+
+      const select =
+        selects &&
+        Object.keys(selects).reduce((acc: any, item) => {
+          acc[item] = selects[item].value;
+          return acc;
+        }, {});
+      dispatch(
+        tgAddItem({
+          complexity,
+          floors,
+          portion,
+          dynamic: { ...dynamic, ...select },
+        })
+      );
+      navigate("/tg/fillings");
+    }
+  };
 
   const contentTypes = (subCateg: SubCategType) => {
     switch (subCateg.contenttype_id) {
@@ -183,39 +233,22 @@ const TgSubCategory = () => {
           })}
         </div>
 
-        <Selected
-          active={!!complexity?.name}
-        >{`Выбрано: ${complexity?.name}`}</Selected>
+        {complexity?.name ? (
+          <Selected
+            active={!!complexity?.name}
+          >{`Выбрано: ${complexity?.name}`}</Selected>
+        ) : (
+          <Typography
+            className="text-red-600 w-full my-2"
+            size={TextSize.M}
+            alignCenter
+          >
+            {error?.complexity}
+          </Typography>
+        )}
       </div>
     );
-  }, [complexity]);
-
-  const handleSubmit = () => {
-    const dynamic = data?.category_vs_subcategory.reduce((acc: any, item) => {
-      if (!!getValues(`${item.id}`))
-        acc[`${item.id}`] =
-          typeof getValues(`${item.id}`) == "object"
-            ? getValues(`${item.id}`)[0]
-            : getValues(`${item.id}`);
-      return acc;
-    }, {});
-
-    const select =
-      selects &&
-      Object.keys(selects).reduce((acc: any, item) => {
-        acc[item] = selects[item].value;
-        return acc;
-      }, {});
-    dispatch(
-      tgAddItem({
-        complexity,
-        floors,
-        portion,
-        dynamic: { ...dynamic, ...select },
-      })
-    );
-    navigate("/tg/fillings");
-  };
+  }, [complexity, error?.complexity]);
 
   const renderFloors = useMemo(() => {
     return (
@@ -248,10 +281,20 @@ const TgSubCategory = () => {
             );
           })}
         </div>
-        <Selected active={!!floors}>{`Выбрано: ${floors}`}</Selected>
+        {!floors ? (
+          <Typography
+            className="text-red-600 w-full my-2"
+            size={TextSize.M}
+            alignCenter
+          >
+            {error?.floors}
+          </Typography>
+        ) : (
+          <Selected active={!!floors}>{`Выбрано: ${floors}`}</Selected>
+        )}
       </div>
     );
-  }, [floors]);
+  }, [floors, error?.floors]);
 
   const renderContents = useMemo(() => {
     return data?.category_vs_subcategory.map((item) => {
@@ -340,13 +383,28 @@ const TgSubCategory = () => {
             <Texts className="text-white">+</Texts>
           </div>
         </div>
-
-        <Selected active={!!portion}>{`Выбрано: ${portion}`}</Selected>
+        {!portion ? (
+          <Typography
+            className="text-red-600 w-full my-2"
+            size={TextSize.M}
+            alignCenter
+          >
+            {error?.portion}
+          </Typography>
+        ) : (
+          <Selected active={!!portion}>{`Выбрано: ${portion}`}</Selected>
+        )}
       </div>
     );
-  }, [portion]);
+  }, [portion, error?.portion]);
 
   const closeModal = () => removeParam(["modal"]);
+
+  useEffect(() => {
+    if (items.complexity) $complexity(items.complexity);
+    if (items.floors) $floors(items.floors);
+    if (items.portion) $portion(items.portion);
+  }, [items.complexity, items.floors, items.portion]);
 
   return (
     <TgContainer>

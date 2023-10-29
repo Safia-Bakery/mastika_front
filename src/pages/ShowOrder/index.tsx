@@ -124,10 +124,10 @@ const ShowOrder = () => {
 
   const renderSubCategs = useMemo(() => {
     if (subLoading && !!activeCateg) return <Loading />;
-    if (!subCategories?.category_vs_subcategory.length && !activeCateg)
+    if (!subCategories?.category_vs_subcategory?.length && !activeCateg)
       return <EmptyList title="Выберите категорию выше" />;
 
-    if (!subCategories?.category_vs_subcategory.length && !subLoading)
+    if (!subCategories?.category_vs_subcategory?.length && !subLoading)
       return <EmptyList />;
     return subCategories?.category_vs_subcategory?.map((sub) => (
       <BaseInput
@@ -351,7 +351,7 @@ const ShowOrder = () => {
 
   const resetFillings = useCallback(() => {
     setTimeout(() => {
-      if (!!order?.order_fill.length) {
+      if (!!order?.order_fill?.length) {
         order.order_fill.map((item) => {
           setValue(`filling${item.floor}`, item.filling_id);
         });
@@ -424,7 +424,7 @@ const ShowOrder = () => {
   }, [order?.status]);
 
   const renderSampleImage = useMemo(() => {
-    if (!!order?.images.length)
+    if (!!order?.images?.length)
       return (
         <div className="">
           <Typography size={TextSize.XXL}>Примерный вариант торта</Typography>
@@ -588,11 +588,6 @@ const ShowOrder = () => {
         )}
         {renderSampleImage}
       </Card>
-
-      {/* <div className="flex justify-between items-center">
-        <Typography size={TextSize.XXL}>Товары</Typography> */}
-
-      {/* </div> */}
 
       {renderModal}
     </>

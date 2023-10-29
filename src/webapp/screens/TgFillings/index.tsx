@@ -1,7 +1,7 @@
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
 import cl from "classnames";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
@@ -14,30 +14,18 @@ import { useForm } from "react-hook-form";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useFillings from "src/hooks/useFillings";
 import { FillingArr } from "src/utils/helpers";
-
-interface FillingType {
-  [key: number | string]: {
-    name: string;
-    value: number;
-  };
-}
-
-const fillingArr = [
-  { id: 1, name: "Стандартная" },
-  { id: 2, name: "Премиум" },
-  { id: 3, name: "ПП" },
-];
+import { CustomObj } from "src/utils/types";
 
 const TgFillings = () => {
   const navigate = useNavigate();
   const [selectFilling, $selectFilling] = useState<{
-    name: string;
-    value: number;
+    name?: string;
+    value?: number | string;
   }>();
-  const [filling, $filling] = useState<FillingType>();
+  const [filling, $filling] = useState<CustomObj>();
 
   const { data: fillings } = useFillings({
-    ptype: selectFilling?.value,
+    ptype: Number(selectFilling?.value),
     enabled: !!selectFilling?.value,
   });
 
@@ -48,7 +36,7 @@ const TgFillings = () => {
 
   const { filling_type, floors, palette } = useAppSelector(tgItemsSelector);
 
-  const handleFilling = (val: FillingType) => () =>
+  const handleFilling = (val: CustomObj) => () =>
     $filling((prev) => ({ ...prev, ...val }));
 
   const handleSubmit = () => {
@@ -231,6 +219,10 @@ const TgFillings = () => {
       </>
     );
   }, [palette]);
+
+  useEffect(() => {
+    if (filling_type) $selectFilling(filling_type);
+  }, [filling_type]);
 
   return (
     <TgContainer>

@@ -14,6 +14,7 @@ import useOrders from "src/hooks/useOrders";
 import { MainPermissions, OrderStatus } from "src/utils/types";
 import { orderStatus } from "src/utils/helpers";
 import useToken from "src/hooks/useToken";
+import useQueryString from "src/hooks/useQueryString";
 
 interface Props {
   edit: MainPermissions;
@@ -35,8 +36,9 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
   const [sortKey, setSortKey] = useState();
   const { data } = useToken({});
   const perms = data?.permissions;
+  const page = Number(useQueryString("page")) || 1;
 
-  const { data: orders, isLoading } = useOrders({ status });
+  const { data: orders, isLoading } = useOrders({ status, page });
 
   const handleSort = (key: any) => {
     if (key === sortKey) {
@@ -119,7 +121,7 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
         {!isLoading && !orders?.items.length && <EmptyList />}
 
         {!!orders?.items.length && (
-          <Pagination className="ml-8 mt-4" totalPages={1} />
+          <Pagination className="ml-8 mt-4" totalPages={orders.pages} />
         )}
       </Card>
     </Container>

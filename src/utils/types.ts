@@ -575,3 +575,9 @@ export enum fillingType {
   premium = 1,
   pp = 2,
 }
+export interface CustomObj {
+  [key: number | string]: { value?: number | string; name?: string };
+}
+export interface Errortypes {
+  [key: number | string]: string;
+}

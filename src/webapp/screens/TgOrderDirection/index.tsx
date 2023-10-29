@@ -24,6 +24,7 @@ const TgOrderDirections = () => {
   const [selected, $selected] = useState<ValueType>();
   const { data } = useCategories({});
   const { direction } = useAppSelector(tgItemsSelector);
+  const [error, $error] = useState<string>();
 
   const dispatch = useAppDispatch();
 
@@ -67,14 +68,15 @@ const TgOrderDirections = () => {
     if (!!selected) {
       dispatch(tgAddItem({ direction: selected }));
       navigate("/tg/complexity");
+      $error(undefined);
+    } else {
+      $error("Выберите направление");
     }
   };
   const handleSelect = (item: ValueType) => () => $selected(item);
   useEffect(() => {
     if (direction) $selected(direction);
   }, [direction]);
-
-  console.log(selected, "selected");
 
   return (
     <TgContainer>
@@ -108,7 +110,6 @@ const TgOrderDirections = () => {
                   )}
                   <WebSelected className={cl({ ["opacity-100"]: active })} />
                 </div>
-
                 <Texts
                   className="mt-4"
                   size={TextSize.L}
@@ -120,6 +121,15 @@ const TgOrderDirections = () => {
               </div>
             );
           })}
+        {error && (
+          <Texts
+            className="text-red-600 w-full my-2"
+            size={TextSize.M}
+            alignCenter
+          >
+            {error}
+          </Texts>
+        )}
       </div>
 
       <TgBtn onClick={handleNavigate} className="mt-9 font-bold">
