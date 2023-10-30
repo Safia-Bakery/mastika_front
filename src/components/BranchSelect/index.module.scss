@@ -21,11 +21,12 @@
   overflow-y: auto;
   background-color: var(--lightGray);
   border-radius: 0.5rem;
+  position: absolute;
 }
 .close {
   position: absolute;
   right: 8px;
-  top: 62%;
+  top: 41%;
   z-index: 10;
   transform: translateY(-50%);
 }

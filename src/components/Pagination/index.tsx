@@ -7,7 +7,6 @@ import cl from "classnames";
 
 interface PaginationProps {
   totalPages?: number;
-  refetch?: () => void;
   className?: string;
 }
 

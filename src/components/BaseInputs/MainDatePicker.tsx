@@ -18,6 +18,7 @@ interface Props {
   showTimeInput?: boolean;
   inputStyle?: InputStyle;
   placeholder?: string;
+  shouldCloseOnSelect?: boolean;
 }
 
 const MainDatePicker: FC<Props> = ({
@@ -31,6 +32,7 @@ const MainDatePicker: FC<Props> = ({
   inputStyle = InputStyle.primary,
   placeholder,
   showTimeInput,
+  shouldCloseOnSelect,
 }) => {
   return (
     <DatePicker
@@ -50,7 +52,7 @@ const MainDatePicker: FC<Props> = ({
       dateFormat="Pp"
       isClearable
       showTimeSelect={showTimeInput}
-      shouldCloseOnSelect={false}
+      shouldCloseOnSelect={shouldCloseOnSelect}
       selectsRange={selectsRange}
       {...register}
     />

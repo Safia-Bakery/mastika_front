@@ -334,7 +334,7 @@ const ShowOrder = () => {
 
         {order?.order_fill.reverse().map((item) => (
           <BaseInput
-            label={`Начинка ${item.floor + 1} этаж`}
+            label={`Начинка ${item.floor} этаж`}
             className="mb-2"
             key={item.id}
           >
@@ -378,7 +378,7 @@ const ShowOrder = () => {
         comment: order.comment,
         complexity: order.complexity,
         packaging: order.packaging,
-        filling_type: order?.order_fill?.[0].filler.ptype,
+        filling_type: order?.order_fill?.[0]?.filler?.ptype,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
     }

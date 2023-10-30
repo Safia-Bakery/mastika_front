@@ -1,27 +1,29 @@
-import { ChangeEvent, FC, useCallback, useEffect, useRef } from "react";
+import { ChangeEvent, FC, useEffect } from "react";
 import styles from "./index.module.scss";
 import { useState } from "react";
 import BaseInput from "../BaseInputs";
-import MainInput from "../BaseInputs/MainInput";
+import MainInput, { InputStyle } from "../BaseInputs/MainInput";
 import useDebounce from "src/hooks/useDebounce";
 import cl from "classnames";
 import {
   useNavigateParams,
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
-// import useBranches from "src/hooks/useBranches";
 import useQueryString from "src/hooks/useQueryString";
 import { BranchJsonType, BranchesType } from "src/utils/types";
 import useBranches from "src/hooks/useBranches";
+import useUpdateEffect from "src/hooks/useUpdateEffect";
+import useInfiniteScroll from "src/hooks/useInfiniteScroll";
 
 interface Props {
   label?: string;
+  inputStyle?: InputStyle;
+  enabled?: boolean;
 }
 
-const BranchSelect: FC<Props> = ({ label }) => {
+const BranchSelect: FC<Props> = ({ label, inputStyle, enabled }) => {
   const navigate = useNavigateParams();
   const removeParam = useRemoveParams();
-  const initialLoadRef = useRef(true);
   const [query, $query] = useDebounce("");
   const [search, $search] = useState("");
   const [page, $page] = useState(1);
@@ -30,23 +32,19 @@ const BranchSelect: FC<Props> = ({ label }) => {
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
 
-  const { data, isFetching, isLoading } = useBranches({});
+  const { data, isFetching, refetch, isLoading } = useBranches({
+    enabled,
+    page,
+    ...(!!query && { body: { name: query } }),
+  });
 
   const [items, $items] = useState<BranchesType["items"]>([]);
-  const observer: any = useRef();
-  const lastBookElementRef = useCallback(
-    (node: any) => {
-      if (isFetching || isLoading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && data?.pages && data?.pages >= page) {
-          $page((prev) => prev + 1);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [isFetching, isLoading]
-  );
+  const lastItem = useInfiniteScroll({
+    isLoading: isFetching || isLoading,
+    data,
+    page,
+    $page,
+  });
 
   const onClose = () => {
     $focused(false);
@@ -60,7 +58,7 @@ const BranchSelect: FC<Props> = ({ label }) => {
   };
 
   const close = () => {
-    removeParam(["branch", "choose_fillial"]);
+    removeParam(["branch"]);
     $search("");
     $focused(false);
   };
@@ -76,19 +74,13 @@ const BranchSelect: FC<Props> = ({ label }) => {
     $focused(false);
   };
 
-  const handleFocus = () => $focused(true);
+  const handleFocus = () => {
+    if (!enabled) refetch();
+    $focused(true);
+  };
 
-  useEffect(() => {
-    if (initialLoadRef.current) {
-      initialLoadRef.current = false;
-      return;
-    }
-
-    const fetchData = async () => {
-      // await refetch();
-    };
-
-    fetchData();
+  useUpdateEffect(() => {
+    refetch();
   }, [query]);
 
   useEffect(() => {
@@ -116,8 +108,10 @@ const BranchSelect: FC<Props> = ({ label }) => {
             />
           )}
           <MainInput
+            inputStyle={inputStyle}
             onChange={handleSearch}
             value={search}
+            placeholder={"Филиал"}
             onFocus={handleFocus}
           />
         </BaseInput>
@@ -128,7 +122,7 @@ const BranchSelect: FC<Props> = ({ label }) => {
                 return (
                   <li
                     key={item.id}
-                    ref={lastBookElementRef}
+                    ref={lastItem}
                     onClick={() =>
                       handleProduct({ id: item.id, name: item.name })
                     }

@@ -1,5 +1,19 @@
 .select {
   height: 40px !important;
+  position: relative;
+
+  &:hover {
+    .selectClear {
+      opacity: 1;
+    }
+  }
+  .selectClear {
+    position: absolute;
+    top: 10px;
+    right: 4px;
+    opacity: 0;
+    transition: 0.3s;
+  }
 }
 .textArea {
   height: initial !important;
@@ -25,7 +39,7 @@
   white-space: nowrap;
   overflow: hidden;
   border-radius: 12px;
-  padding: 8px;
+  padding: 7px 8px;
   outline: none;
   height: 35px;
 }

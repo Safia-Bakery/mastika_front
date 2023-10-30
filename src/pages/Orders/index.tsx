@@ -38,7 +38,22 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
   const perms = data?.permissions;
   const page = Number(useQueryString("page")) || 1;
 
-  const { data: orders, isLoading } = useOrders({ status, page });
+  const branchJson = useQueryString("branch");
+  const branch = branchJson && JSON.parse(branchJson);
+
+  const sphere = useQueryString("sphere") || undefined;
+  const order_status = Number(useQueryString("status"));
+  const orderType = useQueryString("orderType") || undefined;
+  const created_at = useQueryString("created_at") || undefined;
+
+  const { data: orders, isLoading } = useOrders({
+    page,
+    sphere,
+    status: !!order_status ? order_status : status,
+    ...(!!branch?.id && { branch_id: branch?.id }),
+    ...(!!orderType && { is_delivery: Number(orderType) }),
+    ...(!!created_at && { created_at: dayjs(created_at).format("YYYY-MM-DD") }),
+  });
 
   const handleSort = (key: any) => {
     if (key === sortKey) {

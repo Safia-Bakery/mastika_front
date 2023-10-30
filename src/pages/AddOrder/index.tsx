@@ -17,7 +17,7 @@ import useOrders from "src/hooks/useOrders";
 import useQueryString from "src/hooks/useQueryString";
 import useUser from "src/hooks/useUser";
 import { errorToast, successToast } from "src/utils/toast";
-import { BranchJsonType, OrderingType, PaymentTypes } from "src/utils/types";
+import { BranchJsonType, OrderingType } from "src/utils/types";
 
 export const orderArray = [
   {

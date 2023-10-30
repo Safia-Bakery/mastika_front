@@ -3,7 +3,7 @@ import Selected from "src/webapp/componets/TgSelectedLabel";
 import cl from "classnames";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextSize, Weight } from "src/components/Typography";
+import Typography, { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
@@ -16,6 +16,15 @@ import useFillings from "src/hooks/useFillings";
 import { FillingArr } from "src/utils/helpers";
 import { CustomObj } from "src/utils/types";
 
+interface Errortypes {
+  1?: string;
+  2?: string;
+  3?: string;
+  4?: string;
+  filling_type?: string;
+  filling?: string;
+}
+
 const TgFillings = () => {
   const navigate = useNavigate();
   const [selectFilling, $selectFilling] = useState<{
@@ -23,6 +32,14 @@ const TgFillings = () => {
     value?: number | string;
   }>();
   const [filling, $filling] = useState<CustomObj>();
+  const [error, $error] = useState<Errortypes>();
+  const items = useAppSelector(tgItemsSelector);
+
+  useEffect(() => {
+    if (items.filling) {
+      $filling(items.filling);
+    }
+  }, []);
 
   const { data: fillings } = useFillings({
     ptype: Number(selectFilling?.value),
@@ -32,7 +49,7 @@ const TgFillings = () => {
   const [colorModal, $colorModal] = useState(false);
   const dispatch = useAppDispatch();
 
-  const { register, getValues, reset, watch } = useForm();
+  const { register, getValues } = useForm();
 
   const { filling_type, floors, palette } = useAppSelector(tgItemsSelector);
 
@@ -40,19 +57,26 @@ const TgFillings = () => {
     $filling((prev) => ({ ...prev, ...val }));
 
   const handleSubmit = () => {
-    const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
-      acc[`${idx + 1}`] = getValues(`${idx + 1}`);
-      return acc;
-    }, {});
-    dispatch(
-      tgAddItem({
-        palette: paletteVals,
-        palette_details: getValues("details"),
-        filling_type: selectFilling,
-        filling,
-      })
-    );
-    navigate("/tg/package");
+    if (!filling || Object.keys(filling).length !== floors || !selectFilling) {
+      if (!filling || Object.keys(filling).length !== floors)
+        $error({ filling: "fillings are required" });
+
+      if (!selectFilling) $error({ filling_type: "filling type is required" });
+    } else {
+      const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
+        acc[`${idx + 1}`] = getValues(`${idx + 1}`);
+        return acc;
+      }, {});
+      dispatch(
+        tgAddItem({
+          palette: paletteVals,
+          palette_details: getValues("details"),
+          filling_type: selectFilling,
+          filling,
+        })
+      );
+      navigate("/tg/package");
+    }
   };
 
   const toggleModal = () => $colorModal((prev) => !prev);
@@ -102,13 +126,8 @@ const TgFillings = () => {
             return (
               <TgBtn
                 key={item.id}
-                onClick={
-                  () => $selectFilling({ value: item.id, name: item.name })
-                  // dispatch(
-                  //   tgAddItem({
-                  //     filling_type: { name: item.name, value: item.id },
-                  //   })
-                  // )
+                onClick={() =>
+                  $selectFilling({ value: item.id, name: item.name })
                 }
                 className={cl("px-3 max-w-[85px] !h-[30px]", {
                   ["shadow-selected !bg-tgSelected"]: active,
@@ -125,56 +144,84 @@ const TgFillings = () => {
             );
           })}
         </div>
-
-        <Selected
-          active={!!selectFilling?.name}
-        >{`Выбрано: ${selectFilling?.name}`}</Selected>
+        {selectFilling?.name ? (
+          <Selected
+            active={!!selectFilling?.name}
+          >{`Выбрано: ${selectFilling?.name}`}</Selected>
+        ) : (
+          <Typography
+            className="text-red-600 w-full my-2"
+            size={TextSize.M}
+            alignCenter
+          >
+            {error?.filling_type}
+          </Typography>
+        )}
       </div>
     );
-  }, [selectFilling]);
+  }, [selectFilling, error?.filling_type]);
 
   const renderFillingFloors = useMemo(() => {
-    return [...Array(floors)].map((_, idx) => {
-      if (!!fillings?.length)
-        return (
-          <div className="border-b border-b-tgBorder mt-6" key={idx}>
-            <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
-              Выберите начинку: {idx + 1} этаж
-            </Texts>
-            <div className="flex flex-wrap gap-3 justify-center mt-4">
-              {fillings?.map((item, childIdx) => {
-                const active = item.id === filling?.[idx + 1]?.value;
-                return (
-                  <TgBtn
-                    key={childIdx}
-                    onClick={handleFilling({
-                      [idx + 1]: { name: item.name, value: item.id },
-                    })}
-                    className={cl(
-                      "px-3 max-w-[85px] !h-[30px] overflow-hidden",
-                      {
-                        ["shadow-selected !bg-tgSelected"]: active,
-                      }
-                    )}
-                  >
-                    <Texts
-                      weight={active ? Weight.bold : Weight.regular}
-                      className="inline-block !w-min whitespace-nowrap"
-                    >
-                      {item.name}
-                    </Texts>
-                  </TgBtn>
-                );
-              })}
-            </div>
+    return (
+      <div>
+        {[...Array(floors)].map((_, idx) => {
+          if (!!fillings?.length)
+            return (
+              <div className="border-b border-b-tgBorder mt-6" key={idx}>
+                <Texts
+                  className="mt-4"
+                  size={TextSize.XL}
+                  alignCenter
+                  uppercase
+                >
+                  Выберите начинку: {idx + 1} этаж
+                </Texts>
+                <div className="flex flex-wrap gap-3 justify-center mt-4">
+                  {fillings?.map((item, childIdx) => {
+                    const active = item.id === filling?.[idx + 1]?.value;
+                    return (
+                      <TgBtn
+                        key={childIdx}
+                        onClick={handleFilling({
+                          [idx + 1]: { name: item.name, value: item.id },
+                        })}
+                        className={cl(
+                          "px-3 max-w-[85px] !h-[30px] overflow-hidden",
+                          {
+                            ["shadow-selected !bg-tgSelected"]: active,
+                          }
+                        )}
+                      >
+                        <Texts
+                          weight={active ? Weight.bold : Weight.regular}
+                          className="inline-block !w-min whitespace-nowrap"
+                        >
+                          {item.name}
+                        </Texts>
+                      </TgBtn>
+                    );
+                  })}
+                </div>
 
-            <Selected active={!!filling?.[idx + 1]?.name}>{`Выбрано: ${
-              filling?.[idx + 1]?.name
-            }`}</Selected>
-          </div>
-        );
-    });
-  }, [filling, fillings]);
+                <Selected active={!!filling?.[idx + 1]?.name}>{`Выбрано: ${
+                  filling?.[idx + 1]?.name
+                }`}</Selected>
+              </div>
+            );
+        })}
+        {error?.filling && (
+          <Typography
+            className="text-red-600 w-full my-2"
+            size={TextSize.M}
+            alignCenter
+          >
+            {error?.filling}
+          </Typography>
+        )}
+        <Selected active={!fillings?.length}>{"Начинки не найдены"}</Selected>
+      </div>
+    );
+  }, [filling, fillings, error?.filling]);
 
   const renderPaletteFloors = useMemo(() => {
     return (

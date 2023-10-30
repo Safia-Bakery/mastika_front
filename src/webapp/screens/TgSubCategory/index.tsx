@@ -59,8 +59,6 @@ const TgSubCategory = () => {
     enabled: !!direction?.value,
   });
 
-  console.log(error, "error");
-
   const handleSubmit = () => {
     if (!floors || !portion || !complexity?.value) {
       if (!portion) $error({ portion: "portions are required" });

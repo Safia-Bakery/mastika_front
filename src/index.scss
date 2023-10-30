@@ -231,7 +231,9 @@ td {
     padding-left: 4rem;
   }
 }
-
+select:invalid {
+  color: gray;
+}
 // .swiper-slide:nth-child(1n) {
 //   background-color: rgb(206, 17, 17);
 // }

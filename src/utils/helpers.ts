@@ -14,6 +14,12 @@ export const StatusName = [
   { name: "Не активный", id: 0 },
 ];
 
+export const StatusArr = [
+  { id: OrderStatus.new, name: "Новый" },
+  { id: OrderStatus.accepted, name: "Принят" },
+  { id: OrderStatus.rejected, name: "Отклонён" },
+];
+
 export const orderStatus = (status: OrderStatus | undefined) => {
   switch (status) {
     case OrderStatus.new:

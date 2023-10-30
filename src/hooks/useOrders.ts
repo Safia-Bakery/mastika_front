@@ -10,6 +10,7 @@ export const useOrders = ({
   branch_id,
   created_at,
   is_delivery,
+  sphere,
 }: {
   enabled?: boolean;
   size?: number;
@@ -17,15 +18,32 @@ export const useOrders = ({
   status?: number;
   branch_id?: string;
   created_at?: string;
-  is_delivery?: 1 | 0;
+  is_delivery?: number;
+  sphere?: string;
 }) => {
   return useQuery({
-    queryKey: ["get_orders", page, status, branch_id, created_at, is_delivery],
+    queryKey: [
+      "get_orders",
+      page,
+      status,
+      branch_id,
+      created_at,
+      is_delivery,
+      sphere,
+    ],
     queryFn: () =>
       apiClient
         .get({
           url: "/v1/orders/all",
-          params: { page, size, status, branch_id, created_at, is_delivery },
+          params: {
+            page,
+            size,
+            status,
+            branch_id,
+            created_at,
+            is_delivery,
+            sphere,
+          },
         })
         .then(({ data: response }) => (response as OrdersTypes) || null),
     enabled,
