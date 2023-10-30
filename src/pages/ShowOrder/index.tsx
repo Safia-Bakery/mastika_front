@@ -270,10 +270,6 @@ const ShowOrder = () => {
         complexity,
         packaging,
         ...(extraPhone && { extra_number: extraPhone }),
-        // near_to: "",
-        // department_id: "",
-        // lat: "",
-        // long: "",
       },
       {
         onSuccess: () => {
@@ -349,6 +345,28 @@ const ShowOrder = () => {
     );
   }, [order?.order_fill, filling, watch("filling_type")]);
 
+  const renedrColors = useMemo(() => {
+    return (
+      <>
+        {order?.color &&
+          Object.keys(order?.color).map((item) => (
+            <BaseInput label={`Цвет ${item} этаж`} className="mb-2" key={item}>
+              <MainInput
+                inputStyle={InputStyle.primary}
+                register={register(`color${item}`)}
+              />
+            </BaseInput>
+          ))}
+        <BaseInput label={`Цвет деталей`} className="mb-2">
+          <MainInput
+            inputStyle={InputStyle.primary}
+            register={register("color_details")}
+          />
+        </BaseInput>
+      </>
+    );
+  }, [order?.color]);
+
   const resetFillings = useCallback(() => {
     setTimeout(() => {
       if (!!order?.order_fill?.length) {
@@ -359,6 +377,16 @@ const ShowOrder = () => {
     }, 100);
   }, [order?.order_fill]);
 
+  const resetColors = useCallback(() => {
+    if (!!order?.color) {
+      Object.keys(order?.color).map((item) => {
+        setValue(`color${item}`, order?.color?.[item]);
+      });
+    }
+    setValue("color_details", order?.color_details);
+  }, [order?.color]);
+
+  //#reset
   useEffect(() => {
     if (order) {
       if (order.order_vs_category?.id) $activeCateg(order.order_vs_category.id);
@@ -368,16 +396,17 @@ const ShowOrder = () => {
       $updated_at(order.updated_at);
       $created_at(order.created_at);
       resetFillings();
+      resetColors();
       reset({
         order_type: !order.is_delivery ? "Самовывоз" : "Доставка",
         client: order.order_user,
         address: order.address,
         payment_type: order.payment_type,
-        system: "",
         operator: order.order_vs_user?.username,
         comment: order.comment,
         complexity: order.complexity,
         packaging: order.packaging,
+
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
@@ -548,6 +577,7 @@ const ShowOrder = () => {
                   />
                 </BaseInput>
                 {renderFillings}
+                {renedrColors}
               </div>
             </div>
           </div>

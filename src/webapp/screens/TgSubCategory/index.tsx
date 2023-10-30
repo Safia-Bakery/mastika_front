@@ -32,7 +32,12 @@ interface Errortypes {
   portion?: string;
 }
 
-const numberArr = [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27];
+const numberArr: { [key: number]: number[] } = {
+  1: [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27],
+  2: [17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37],
+  3: [37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57],
+  4: [72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92],
+};
 
 const TgSubCategory = () => {
   const navigate = useNavigate();
@@ -363,28 +368,29 @@ const TgSubCategory = () => {
         </Texts>
 
         <div className="flex max-w-[300px] gap-3 flex-wrap mx-auto mt-4">
-          {numberArr.map((item) => {
-            const active = item === portion;
-            return (
-              <div
-                key={item}
-                onClick={() => $portion(item)}
-                className={cl(
-                  "rounded-full bg-tgPrimary w-10 h-10 flex items-center justify-center transition duration-[0.6s]",
-                  {
-                    ["shadow-selected !bg-tgSelected"]: active,
-                  }
-                )}
-              >
-                <Texts
-                  weight={active ? Weight.bold : Weight.regular}
-                  className="text-white"
+          {floors &&
+            numberArr[floors].map((item) => {
+              const active = item === portion;
+              return (
+                <div
+                  key={item}
+                  onClick={() => $portion(item)}
+                  className={cl(
+                    "rounded-full bg-tgPrimary w-10 h-10 flex items-center justify-center transition duration-[0.6s]",
+                    {
+                      ["shadow-selected !bg-tgSelected"]: active,
+                    }
+                  )}
                 >
-                  {item}
-                </Texts>
-              </div>
-            );
-          })}
+                  <Texts
+                    weight={active ? Weight.bold : Weight.regular}
+                    className="text-white"
+                  >
+                    {item}
+                  </Texts>
+                </div>
+              );
+            })}
           <div
             onClick={() => navigateParam({ modal: ModalType.portion })}
             className={cl(
@@ -407,7 +413,7 @@ const TgSubCategory = () => {
         )}
       </div>
     );
-  }, [portion, error?.portion]);
+  }, [portion, error?.portion, floors]);
 
   const closeModal = () => removeParam(["modal"]);
 

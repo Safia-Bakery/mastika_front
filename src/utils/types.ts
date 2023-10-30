@@ -367,7 +367,7 @@ export interface OrderType {
       images: string[];
       packaging: number;
       complexity: number;
-      color: { [key: number]: string };
+      color: { [key: number | string]: string };
       color_details: string;
       order_fill: {
         id: number;
