@@ -1,5 +1,5 @@
 import cl from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
@@ -49,6 +49,10 @@ const TgSubCategory = () => {
   const [img, $img] = useState<number>();
   const items = useAppSelector(tgItemsSelector);
 
+  const complexityRef = useRef<any>();
+  const floorsRef = useRef<any>();
+  const portionRef = useRef<any>();
+
   const [error, $error] = useState<Errortypes>();
 
   const modal = useQueryString("modal");
@@ -61,9 +65,18 @@ const TgSubCategory = () => {
 
   const handleSubmit = () => {
     if (!floors || !portion || !complexity?.value) {
-      if (!portion) $error({ portion: "portions are required" });
-      if (!floors) $error({ floors: "floors are required" });
-      if (!complexity?.value) $error({ complexity: "complexity is required" });
+      if (!portion) {
+        portionRef?.current.scrollIntoView();
+        $error({ portion: "portions are required" });
+      }
+      if (!floors) {
+        floorsRef?.current.scrollIntoView();
+        $error({ floors: "floors are required" });
+      }
+      if (!complexity?.value) {
+        complexityRef?.current.scrollIntoView();
+        $error({ complexity: "complexity is required" });
+      }
     } else {
       const dynamic = data?.category_vs_subcategory.reduce((acc: any, item) => {
         if (!!getValues(`${item.id}`))
@@ -205,7 +218,7 @@ const TgSubCategory = () => {
 
   const renderComplexity = useMemo(() => {
     return (
-      <div className="border-b border-b-tgBorder">
+      <div className="border-b border-b-tgBorder" ref={complexityRef}>
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Укажите степень сложности
         </Texts>
@@ -250,7 +263,7 @@ const TgSubCategory = () => {
 
   const renderFloors = useMemo(() => {
     return (
-      <div className="border-b border-b-tgBorder ">
+      <div className="border-b border-b-tgBorder " ref={floorsRef}>
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Выберите этажность
         </Texts>
@@ -344,7 +357,7 @@ const TgSubCategory = () => {
 
   const renderPortions = useMemo(() => {
     return (
-      <div className="border-b border-b-tgBorder">
+      <div className="border-b border-b-tgBorder" ref={portionRef}>
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Введите нужное количество порций
         </Texts>
