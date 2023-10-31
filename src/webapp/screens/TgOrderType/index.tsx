@@ -45,9 +45,9 @@ const TgOrderType = () => {
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
 
-  window.addEventListener("beforeunload", (e) => {
-    TelegramApp.confirmClose();
-  });
+  // window.addEventListener("beforeunload", (e) => {
+  TelegramApp.confirmClose();
+  // });
 
   useEffect(() => {
     if (token) dispatch(loginHandler(token));
