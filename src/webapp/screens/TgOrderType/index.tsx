@@ -19,6 +19,7 @@ import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
 import WebSelected from "src/webapp/componets/TgSelected";
 import Selected from "src/webapp/componets/TgSelectedLabel";
+import { TelegramApp } from "src/webapp/tgHelpers";
 
 const typeArr = [
   {
@@ -44,8 +45,13 @@ const TgOrderType = () => {
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
 
+  window.addEventListener("beforeunload", (e) => {
+    TelegramApp.confirmClose();
+  });
+
   useEffect(() => {
     if (token) dispatch(loginHandler(token));
+    TelegramApp.expand();
   }, [token]);
 
   const branchJson = useQueryString("branch");

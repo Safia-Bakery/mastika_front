@@ -490,7 +490,7 @@ const ShowOrder = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           {renderStatus}
           <div className="flex flex-1">
-            <div className="p-2 ml-6 flex flex-1 gap-4">
+            <div className="p-2 flex flex-1 gap-4">
               <div className="w-80 pr-10 border-r">
                 <BaseInput label="Тип заказа" className="my-2">
                   <MainInput
