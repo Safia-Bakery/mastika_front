@@ -9,7 +9,7 @@ import {
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useDebounce from "src/hooks/useDebounce";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
 import {
   addToCart,
   clearCart,
@@ -20,7 +20,7 @@ import {
   itemsSelector,
   selectItem,
   selectedItemsSelector,
-} from "src/redux/reducers/cart";
+} from "src/store/reducers/cart";
 import cl from "classnames";
 import { useForm } from "react-hook-form";
 import EmptyList from "../EmptyList";

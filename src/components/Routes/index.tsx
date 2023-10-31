@@ -1,9 +1,9 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/redux/utils/types";
+import { useAppSelector } from "src/store/utils/types";
 import useToken from "src/hooks/useToken";
 import { MainPermissions, OrderStatus } from "src/utils/types";
 import Loading from "../Loader";
-import { tokenSelector } from "src/redux/reducers/auth";
+import { tokenSelector } from "src/store/reducers/auth";
 import { lazy, useEffect, useMemo } from "react";
 
 // import Orders from "src/pages/Orders";

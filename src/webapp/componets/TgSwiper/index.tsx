@@ -5,8 +5,8 @@ import "swiper/css/effect-cards";
 import "./index.scss";
 
 import { EffectCards } from "swiper/modules";
-import { useAppSelector } from "src/redux/utils/types";
-import { tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppSelector } from "src/store/utils/types";
+import { tgItemsSelector } from "src/store/reducers/tgWebReducer";
 import { baseURL } from "src/main";
 
 const TgSwiper = () => {

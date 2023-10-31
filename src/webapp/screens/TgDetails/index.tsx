@@ -24,8 +24,8 @@ import {
   tgClearCart,
   tgClearItems,
   tgItemsSelector,
-} from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+} from "src/store/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
 import { errorToast, successToast } from "src/utils/toast";
 import { ModalType, OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";

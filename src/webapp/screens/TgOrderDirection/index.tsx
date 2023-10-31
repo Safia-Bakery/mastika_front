@@ -1,11 +1,12 @@
 import cl from "classnames";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loading from "src/components/Loader";
 import { TextSize, Weight } from "src/components/Typography";
 import useCategories from "src/hooks/useCategories";
 import { baseURL } from "src/main";
-import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { tgAddItem, tgItemsSelector } from "src/store/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import TgBtn from "src/webapp/componets/TgBtn";
@@ -22,7 +23,7 @@ const TgOrderDirections = () => {
   const navigate = useNavigate();
   const [modal, $modal] = useState(false);
   const [selected, $selected] = useState<ValueType>();
-  const { data } = useCategories({});
+  const { data, isLoading } = useCategories({});
   const { direction } = useAppSelector(tgItemsSelector);
   const [error, $error] = useState<string>();
 
@@ -77,6 +78,8 @@ const TgOrderDirections = () => {
   useEffect(() => {
     if (direction) $selected(direction);
   }, [direction]);
+
+  if (isLoading) return <Loading absolute />;
 
   return (
     <TgContainer>

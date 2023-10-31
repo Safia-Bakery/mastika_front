@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import Sidebar from "../Sidebar";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
-import { logoutHandler, tokenSelector } from "src/redux/reducers/auth";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
+import { logoutHandler, tokenSelector } from "src/store/reducers/auth";
 import { Outlet, useNavigate } from "react-router-dom";
 import useToken from "src/hooks/useToken";
 import Loading from "../Loader";

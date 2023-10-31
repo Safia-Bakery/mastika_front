@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
+import Loading from "src/components/Loader";
 import Typography, { TextSize, Weight } from "src/components/Typography";
 import useCategoriesFull from "src/hooks/useCategoryFull";
 import {
@@ -10,8 +11,8 @@ import {
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
-import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { tgAddItem, tgItemsSelector } from "src/store/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
 import { complexityArr, imageConverter } from "src/utils/helpers";
 import {
   ContentType,
@@ -63,7 +64,7 @@ const TgSubCategory = () => {
   const modal = useQueryString("modal");
   const { register, getValues, watch } = useForm();
   const { direction } = useAppSelector(tgItemsSelector);
-  const { data } = useCategoriesFull({
+  const { data, isLoading } = useCategoriesFull({
     id: Number(direction?.value)!,
     enabled: !!direction?.value,
   });
@@ -422,6 +423,8 @@ const TgSubCategory = () => {
     if (items.floors) $floors(items.floors);
     if (items.portion) $portion(items.portion);
   }, [items.complexity, items.floors, items.portion]);
+
+  if (isLoading) return <Loading absolute />;
 
   return (
     <TgContainer>

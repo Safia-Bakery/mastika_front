@@ -8,13 +8,14 @@ import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
-import { tgAddItem, tgItemsSelector } from "src/redux/reducers/tgWebReducer";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
+import { tgAddItem, tgItemsSelector } from "src/store/reducers/tgWebReducer";
 import { useForm } from "react-hook-form";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useFillings from "src/hooks/useFillings";
 import { FillingArr } from "src/utils/helpers";
 import { CustomObj } from "src/utils/types";
+import Loading from "src/components/Loader";
 
 interface Errortypes {
   1?: string;
@@ -41,7 +42,7 @@ const TgFillings = () => {
     }
   }, []);
 
-  const { data: fillings } = useFillings({
+  const { data: fillings, isFetching } = useFillings({
     ptype: Number(selectFilling?.value),
     enabled: !!selectFilling?.value,
   });
@@ -209,6 +210,7 @@ const TgFillings = () => {
               </div>
             );
         })}
+        {isFetching && <Loading />}
         {error?.filling && (
           <Typography
             className="text-red-600 w-full my-2"
@@ -218,10 +220,12 @@ const TgFillings = () => {
             {error?.filling}
           </Typography>
         )}
-        <Selected active={!fillings?.length}>{"Начинки не найдены"}</Selected>
+        {!isFetching && (
+          <Selected active={!fillings?.length}>{"Начинки не найдены"}</Selected>
+        )}
       </div>
     );
-  }, [filling, fillings, error?.filling]);
+  }, [filling, fillings, error?.filling, isFetching]);
 
   const renderPaletteFloors = useMemo(() => {
     return (

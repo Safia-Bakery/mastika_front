@@ -9,26 +9,27 @@ import TgBtn from "src/webapp/componets/TgBtn";
 import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import { InputStyle } from "src/components/BaseInputs/MainInput";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "src/redux/utils/types";
+import { useAppDispatch, useAppSelector } from "src/store/utils/types";
 import {
   tgAddItem,
   tgAddToCart,
   tgCartSelector,
   tgHandleCount,
   tgItemsSelector,
-} from "src/redux/reducers/tgWebReducer";
+} from "src/store/reducers/tgWebReducer";
 import { HandleCount } from "src/utils/types";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useProducts from "src/hooks/useProducts";
 import tgUploadImage from "src/hooks/mutation/tgUploadImage";
 import { packageArr } from "src/utils/helpers";
+import Loading from "src/components/Loader";
 
 const TgPackage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { mutate: uploadImage } = tgUploadImage();
   const { orderPackage } = useAppSelector(tgItemsSelector);
-  const { data: products } = useProducts({
+  const { data: products, isLoading } = useProducts({
     group_id: "30ed6a72-8771-4c81-91ad-e4b71305858d",
   });
 
@@ -209,6 +210,8 @@ const TgPackage = () => {
       </div>
     );
   }, [cart, products]);
+
+  if (isLoading) return <Loading absolute />;
 
   return (
     <TgContainer>

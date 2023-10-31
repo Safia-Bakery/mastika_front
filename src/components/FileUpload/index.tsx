@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, useState } from "react";
-import { useAppDispatch } from "src/redux/utils/types";
-import { addImage } from "src/redux/reducers/imageUpload";
+import { useAppDispatch } from "src/store/utils/types";
+import { addImage } from "src/store/reducers/imageUpload";
 
 export interface FileItem {
   file: File;

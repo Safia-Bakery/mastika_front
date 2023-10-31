@@ -1,12 +1,11 @@
-import { useNavigate } from "react-router-dom";
 import { TextSize } from "src/components/Typography";
 import useQueryString from "src/hooks/useQueryString";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgContainer from "src/webapp/componets/TgContainer";
+import { TelegramApp } from "src/webapp/tgHelpers";
 
 const TgSuccessOrder = () => {
-  const navigate = useNavigate();
   const id = useQueryString("id");
 
   return (
@@ -35,7 +34,7 @@ const TgSuccessOrder = () => {
         </Texts>
 
         <TgBtn
-          onClick={() => navigate("/tg/order-type")}
+          onClick={() => TelegramApp.closeWindow()}
           className={"mt-7 font-bold"}
         >
           На главную

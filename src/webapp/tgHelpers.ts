@@ -17,6 +17,12 @@ export const TelegramApp = {
   },
 
   confirmClose() {
-    window.Telegram.WebApp.enableClosingConfirmation();
+    window.Telegram.WebApp.enableClosingConfirmation(
+      "Вы уверены что хотите закрыть окно?"
+    );
+  },
+
+  closeWindow() {
+    window.Telegram.WebApp.close();
   },
 };

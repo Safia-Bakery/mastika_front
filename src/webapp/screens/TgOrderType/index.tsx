@@ -8,9 +8,9 @@ import {
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
 import useQueryString from "src/hooks/useQueryString";
-import { loginHandler } from "src/redux/reducers/auth";
-import { tgAddItem } from "src/redux/reducers/tgWebReducer";
-import { useAppDispatch } from "src/redux/utils/types";
+import { loginHandler } from "src/store/reducers/auth";
+import { tgAddItem } from "src/store/reducers/tgWebReducer";
+import { useAppDispatch } from "src/store/utils/types";
 import { OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
@@ -45,9 +45,7 @@ const TgOrderType = () => {
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
 
-  // window.addEventListener("beforeunload", (e) => {
   TelegramApp.confirmClose();
-  // });
 
   useEffect(() => {
     if (token) dispatch(loginHandler(token));
@@ -160,41 +158,6 @@ const TgOrderType = () => {
         выберите Тип заказа
       </Texts>
       {renderType}
-      {/* <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline">
-        {typeArr.map((item) => {
-          const active = item.id === orderType;
-          return (
-            <div
-              key={item.id}
-              className="flex flex-1 flex-col justify-center items-center"
-            >
-              <div
-                onClick={handleType(item.id)}
-                className={cl(
-                  "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
-                  { ["shadow-selected"]: active }
-                )}
-              >
-                <img src={item.img} alt={item.title} />
-                <WebSelected className={cl({ ["opacity-100"]: active })} />
-              </div>
-
-              <Texts
-                className="mt-4"
-                size={TextSize.L}
-                weight={active ? Weight.bold : Weight.regular}
-                alignCenter
-              >
-                {item.title}
-              </Texts>
-
-              {item.hasText && (
-                <Selected active={!!branch?.name}>{branch?.name}</Selected>
-              )}
-            </div>
-          );
-        })}
-      </div> */}
       <TgBtn onClick={handleNavigate} className="mt-9 font-bold">
         Далее
       </TgBtn>

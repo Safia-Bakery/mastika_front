@@ -3,7 +3,7 @@ import App from "./App.tsx";
 import "./index.scss";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { persistor, store } from "./redux/rootConfig";
+import { persistor, store } from "./store/rootConfig.ts";
 import BaseAPIClient from "./api/axiosConfig.ts";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-input-2/lib/style.css";
