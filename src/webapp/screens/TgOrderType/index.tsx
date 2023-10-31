@@ -192,6 +192,7 @@ const TgOrderType = () => {
       <TgBtn onClick={handleNavigate} className="mt-9 font-bold">
         Далее
       </TgBtn>
+      <a href="/test.html">open</a>
 
       <TgModal isOpen={!!modal} onClose={onClose}>
         {renderModal}

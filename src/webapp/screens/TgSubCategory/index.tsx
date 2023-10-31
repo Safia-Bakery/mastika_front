@@ -367,7 +367,7 @@ const TgSubCategory = () => {
           Введите нужное количество порций
         </Texts>
 
-        <div className="flex max-w-[300px] gap-3 flex-wrap mx-auto mt-4">
+        <div className="flex max-w-[300px] gap-3 flex-wrap mx-auto mt-4 justify-center">
           {floors &&
             numberArr[floors].map((item) => {
               const active = item === portion;
