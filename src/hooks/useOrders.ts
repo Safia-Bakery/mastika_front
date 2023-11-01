@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "src/main";
-import { OrderType, OrdersTypes } from "src/utils/types";
+import { OrdersTypes } from "src/utils/types";
 
 export const useOrders = ({
   enabled = true,

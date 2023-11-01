@@ -1,9 +1,9 @@
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
 import cl from "classnames";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextSize, Weight } from "src/components/Typography";
+import Typography, { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import MainTextArea from "src/components/BaseInputs/MainTextArea";
@@ -30,8 +30,11 @@ const TgPackage = () => {
   const { mutate: uploadImage } = tgUploadImage();
   const { orderPackage } = useAppSelector(tgItemsSelector);
   const { data: products, isLoading } = useProducts({
-    group_id: "30ed6a72-8771-4c81-91ad-e4b71305858d",
+    group_id: "4b35d02b-af33-4175-ab84-c8beb646083b",
   });
+  const packageRef = useRef<any>();
+  const [error, $error] = useState<{ package: string }>();
+  const [itemPackage, $itemPackage] = useState<typeof orderPackage>();
 
   const cart = useAppSelector(tgCartSelector);
 
@@ -39,21 +42,32 @@ const TgPackage = () => {
 
   const onSubmit = () => {
     const { image, comments } = getValues();
-    if (!!image.length) {
-      const filesArray = Array.from(image);
-      const formData = new FormData();
-      filesArray.forEach((file: any, index) => {
-        formData.append("image", file);
-      });
-      uploadImage(formData, {
-        onSuccess: (data: any) => {
-          dispatch(tgAddItem({ examplePhoto: data.images, comments }));
-          navigate("/tg/details");
-        },
-      });
+    if (!itemPackage) {
+      $error({ package: "Выберите упаковку" });
+      packageRef?.current.scrollIntoView();
     } else {
-      dispatch(tgAddItem({ comments }));
-      navigate("/tg/details");
+      if (!!image.length) {
+        const filesArray = Array.from(image);
+        const formData = new FormData();
+        filesArray.forEach((file: any, index) => {
+          formData.append("image", file);
+        });
+        uploadImage(formData, {
+          onSuccess: (data: any) => {
+            dispatch(
+              tgAddItem({
+                examplePhoto: data.images,
+                comments,
+                orderPackage: itemPackage,
+              })
+            );
+            navigate("/tg/details");
+          },
+        });
+      } else {
+        dispatch(tgAddItem({ comments, orderPackage: itemPackage }));
+        navigate("/tg/details");
+      }
     }
   };
 
@@ -84,23 +98,24 @@ const TgPackage = () => {
 
   const renderPackage = useMemo(() => {
     return (
-      <div className="border-b border-b-tgBorder pb-2">
+      <div className="border-b border-b-tgBorder pb-2" ref={packageRef}>
         <Texts className="mt-4" size={TextSize.XL} alignCenter uppercase>
           Выберите упаковку
         </Texts>
         <div className="flex flex-wrap gap-3 justify-center mt-4 transition-all">
           {packageArr.map((item) => {
-            const active = item.id === orderPackage?.value;
+            const active = item.id === itemPackage?.value;
             return (
               <div className="flex-1" key={item.id}>
                 <TgBtn
                   key={item.id}
-                  onClick={() =>
-                    dispatch(
-                      tgAddItem({
-                        orderPackage: { name: item.name, value: item.id },
-                      })
-                    )
+                  onClick={
+                    () => $itemPackage({ name: item.name, value: item.id })
+                    // dispatch(
+                    //   tgAddItem({
+                    //     orderPackage: { name: item.name, value: item.id },
+                    //   })
+                    // )
                   }
                   className={cl("px-3 !h-[35px]", {
                     ["shadow-selected !bg-tgSelected"]: active,
@@ -118,15 +133,24 @@ const TgPackage = () => {
                   className={cl("!opacity-0 !delay-0", {
                     ["!opacity-100"]: active,
                   })}
-                  active={!!orderPackage?.value}
-                >{`Стоимость: ${orderPackage?.value} сум`}</Selected>
+                  active={!!itemPackage?.value}
+                >{`Стоимость: ${itemPackage?.value} сум`}</Selected>
               </div>
             );
           })}
+          {!itemPackage && (
+            <Typography
+              className="text-red-600 w-full"
+              size={TextSize.M}
+              alignCenter
+            >
+              {error?.package}
+            </Typography>
+          )}
         </div>
       </div>
     );
-  }, [orderPackage]);
+  }, [itemPackage, error?.package]);
 
   const prenderAdditions = useMemo(() => {
     return (
@@ -210,6 +234,10 @@ const TgPackage = () => {
       </div>
     );
   }, [cart, products]);
+
+  useEffect(() => {
+    if (orderPackage) $itemPackage(orderPackage);
+  }, []);
 
   if (isLoading) return <Loading absolute />;
 

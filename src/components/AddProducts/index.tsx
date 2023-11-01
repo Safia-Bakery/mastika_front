@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useMemo } from "react";
-import Typography, { TextSize, Weight } from "../Typography";
+import Typography, { TextSize } from "../Typography";
 import Button from "../Button";
 import Modal from "../Modal";
 import MainInput from "../BaseInputs/MainInput";
@@ -32,39 +32,6 @@ import { useParams } from "react-router-dom";
 import { successToast } from "src/utils/toast";
 import useOrder from "src/hooks/useOrder";
 import ProductRow from "./ProductRow";
-
-// const group = [
-//   { id: "768798", name: "string", code: "string", status: 1 },
-//   { id: "8787", name: "string1", code: "string", status: 1 },
-//   { id: "876572", name: "string2", code: "string", status: 1 },
-// ];
-
-// const product: ProductType[] = [
-//   {
-//     id: "768798",
-//     name: "string",
-//     status: 1,
-//     group_id: "1",
-//     price: 10000,
-//     productType: "swsw",
-//   },
-//   {
-//     id: "8787",
-//     name: "string1",
-//     status: 1,
-//     group_id: "1",
-//     price: 10000,
-//     productType: "swsw",
-//   },
-//   {
-//     id: "876572",
-//     name: "string2",
-//     status: 1,
-//     group_id: "1",
-//     price: 10000,
-//     productType: "swsw",
-//   },
-// ];
 
 const AddProduct = () => {
   const { id } = useParams();
