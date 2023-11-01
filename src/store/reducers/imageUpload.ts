@@ -21,8 +21,6 @@ export const imageUploadReducer = createSlice({
       action: PayloadAction<{ name: string | number; files: FileItem[] }>
     ) => {
       const { name, files } = action.payload;
-      //   state.items[payload.name] = payload.files;
-
       const formData = new FormData();
       files.forEach((item) => {
         formData.append("files", item.file, item.file.name);
