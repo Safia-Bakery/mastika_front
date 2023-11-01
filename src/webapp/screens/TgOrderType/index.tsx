@@ -45,12 +45,28 @@ const TgOrderType = () => {
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
 
-  TelegramApp.confirmClose();
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-web-app.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     if (token) dispatch(loginHandler(token));
-    TelegramApp.expand();
   }, [token]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      TelegramApp.confirmClose();
+      TelegramApp.expand();
+    }, 500);
+  }, []);
 
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
