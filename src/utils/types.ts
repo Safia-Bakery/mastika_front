@@ -57,7 +57,7 @@ export enum OrderingType {
 // }
 
 export enum MainPermissions {
-  fillings = 1,
+  fillings = 16,
   filling = 2,
 
   roles = 2,
@@ -367,6 +367,7 @@ export interface OrderType {
       images: string[];
       packaging: number;
       complexity: number;
+      portion: number;
       color: { [key: number | string]: string };
       color_details: string;
       order_fill: {

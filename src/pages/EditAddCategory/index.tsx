@@ -9,6 +9,8 @@ import Card from "src/components/Card";
 import Typography, { TextSize } from "src/components/Typography";
 import categoryMutation from "src/hooks/mutation/category";
 import useCategories from "src/hooks/useCategories";
+import { baseURL } from "src/main";
+import { imageConverter } from "src/utils/helpers";
 
 const EditAddCategory: FC = () => {
   const { id } = useParams();
@@ -19,6 +21,7 @@ const EditAddCategory: FC = () => {
     handleSubmit,
     reset,
     getValues,
+    watch,
   } = useForm();
 
   const { data, refetch } = useCategories({
@@ -33,8 +36,8 @@ const EditAddCategory: FC = () => {
       {
         name,
         image: image[0],
-        ...(!!id && { id: Number(id) }),
-        ...(!!status && { status }),
+        ...(!!id && { id: String(id) }),
+        ...(!!status.toString() && { status: Number(status) }),
       },
       {
         onSuccess: () => {
@@ -50,6 +53,7 @@ const EditAddCategory: FC = () => {
       reset({
         name: data[0].name,
         status: !!data[0].status,
+        ...(!!data[0].image && { image_name: data[0].image }),
       });
     }
   }, [id, data]);
@@ -57,7 +61,7 @@ const EditAddCategory: FC = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Typography size={TextSize.XXL} className="flex my-4 ml-1">
-        Добавить
+        {!!id ? `Изменить ${data?.[0].name}` : "Добавить"}
       </Typography>
       <Card className="px-8 py-4">
         <div className="flex flex-1 gap-4 flex-col">
@@ -67,20 +71,38 @@ const EditAddCategory: FC = () => {
             />
           </BaseInput>
 
-          <BaseInput label="ЗАГРУЗИТЬ ФОТО" className="relative">
-            <MainInput />
-            <MainInput
-              type="file"
-              register={register("image", { required: "Обязательное поле" })}
-              className="opacity-0 absolute right-0 bottom-0"
-            />
-          </BaseInput>
-
           {!!id && (
             <BaseInput label="СТАТУС">
               <MainCheckBox label="Активный" register={register("status")} />
             </BaseInput>
           )}
+
+          <BaseInput label="ЗАГРУЗИТЬ ФОТО" className="relative">
+            <MainInput
+              value={
+                !!watch("image")?.length ? `${watch("image")?.[0].name}` : ""
+              }
+              register={register("image_name")}
+            />
+            <MainInput
+              type="file"
+              register={register("image", {
+                required: !data?.[0].image ? "Обязательное поле" : false,
+              })}
+              className="opacity-0 absolute right-0 bottom-0"
+            />
+          </BaseInput>
+
+          <img
+            src={
+              !!watch("image")
+                ? imageConverter(watch("image")?.[0])
+                : `${baseURL}/${data?.[0].image}`
+            }
+            alt="category-image"
+            height={150}
+            width={150}
+          />
         </div>
         <div className="flex flex-1 justify-end">
           <Button
@@ -88,7 +110,7 @@ const EditAddCategory: FC = () => {
             isLoading={mutateLoading}
             type="submit"
           >
-            Создать
+            {!!id ? "Изменить" : "Создать"}
           </Button>
         </div>
       </Card>

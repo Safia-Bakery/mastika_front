@@ -104,7 +104,7 @@ const TgOrderDirections = () => {
                 <div
                   onClick={handleSelect({ name: item.name, value: item.id })}
                   className={cl(
-                    "h-[150px] w-[150px] rounded-full relative transition-shadow duration-[0.6s]",
+                    "h-[150px] w-[150px] rounded-full overflow-hidden relative transition-shadow duration-[0.6s]",
                     { ["shadow-selected"]: active }
                   )}
                 >

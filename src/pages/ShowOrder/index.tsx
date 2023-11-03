@@ -33,6 +33,7 @@ import { baseURL } from "src/main";
 import {
   FillingArr,
   complexityArr,
+  floorsArr,
   orderStatus,
   packageArr,
   payments,
@@ -55,13 +56,22 @@ const ShowOrder = () => {
   const [phone, $phone] = useState("");
   const [extraPhone, $extraPhone] = useState("");
   const deny_modal = useQueryString("deny_modal");
+  const view = useQueryString("view");
   const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
-  const { register, handleSubmit, getValues, reset, setValue, watch } =
-    useForm();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    reset,
+    setValue,
+    watch,
+    formState: { isSubmitting },
+  } = useForm();
 
   const { data, refetch } = useOrder({ id: Number(id), enabled: !!id });
   const order = data?.order?.[0];
+  const floors = Number(watch("floors"));
 
   const { data: filling } = useFillings({
     ptype: watch("filling_type"),
@@ -87,13 +97,18 @@ const ShowOrder = () => {
     switch (subCateg.contenttype_id) {
       case ContentType.number: {
         return (
-          <MainInput type="number" register={register(`${subCateg.id}`)} />
+          <MainInput
+            type="number"
+            disabled={!!view}
+            register={register(`${subCateg.id}`)}
+          />
         );
       }
       case ContentType.select: {
         return (
           <MainSelect
             inputStyle={InputStyle.primary}
+            disabled={!!view}
             register={register(`${subCateg.id}`)}
           >
             <option value={undefined}></option>
@@ -108,12 +123,21 @@ const ShowOrder = () => {
 
       case ContentType.image: {
         return (
-          <input type="file" multiple={false} {...register(`${subCateg.id}`)} />
+          <input
+            type="file"
+            multiple={false}
+            {...register(`${subCateg.id}`)}
+            disabled={!!view}
+          />
         );
       }
       case ContentType.string: {
         return (
-          <MainInput type="string" register={register(`${subCateg.id}`)} />
+          <MainInput
+            type="string"
+            register={register(`${subCateg.id}`)}
+            disabled={!!view}
+          />
         );
       }
 
@@ -127,8 +151,6 @@ const ShowOrder = () => {
     if (!subCategories?.category_vs_subcategory?.length && !activeCateg)
       return <EmptyList title="Выберите категорию выше" />;
 
-    if (!subCategories?.category_vs_subcategory?.length && !subLoading)
-      return <EmptyList />;
     return subCategories?.category_vs_subcategory?.map((sub) => (
       <BaseInput
         key={sub.id}
@@ -173,12 +195,13 @@ const ShowOrder = () => {
               {categories?.map((item, idx) => {
                 return (
                   <label
-                    onClick={() => $activeCateg(item.id)}
+                    onClick={() => (!view ? $activeCateg(item.id) : null)}
                     key={idx}
                     className="flex gap-2"
                   >
                     <input
                       type="radio"
+                      disabled={!!view}
                       onChange={() => null}
                       checked={item.id === activeCateg}
                     />
@@ -205,6 +228,7 @@ const ShowOrder = () => {
           <PhoneInput
             placeholder={"Введите номер"}
             onChange={$phone}
+            disabled
             value={phone}
           />
         </BaseInput>
@@ -212,12 +236,14 @@ const ShowOrder = () => {
           <PhoneInput
             placeholder={"Введите номер"}
             onChange={$extraPhone}
+            disabled
             value={extraPhone}
           />
         </BaseInput>
         <BaseInput label="Дата оформления" className="mb-2">
           <MainDatePicker
             placeholder={"Не задано"}
+            disabled
             selected={created_at ? dayjs(created_at).toDate() : undefined}
             onChange={$created_at}
           />
@@ -225,6 +251,7 @@ const ShowOrder = () => {
         <BaseInput label="Дата поставки" className="mb-2">
           <MainDatePicker
             placeholder={"Не задано"}
+            disabled
             selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
             onChange={$delivery_date}
           />
@@ -244,7 +271,13 @@ const ShowOrder = () => {
       system,
       complexity,
       packaging,
+      color_details,
+      portion,
     } = getValues();
+    const filler = [...Array(floors)].reduce((acc: any, item, idx) => {
+      acc[idx + 1] = getValues(`filling${idx + 1}`);
+      return acc;
+    }, {});
     const dynamic = subCategories?.category_vs_subcategory.reduce(
       (acc: any, item) => {
         if (!!getValues(`${item.id}`))
@@ -266,9 +299,12 @@ const ShowOrder = () => {
         deliver_date: delivery_date,
         address,
         id: Number(id),
+        portion: Number(portion),
         category_id: activeCateg,
-        complexity,
-        packaging,
+        complexity: Number(complexity),
+        packaging: Number(packaging),
+        color_details,
+        filler,
         ...(extraPhone && { extra_number: extraPhone }),
       },
       {
@@ -320,23 +356,16 @@ const ShowOrder = () => {
   const renderFillings = useMemo(() => {
     return (
       <>
-        <BaseInput label="Тип начинки" className="mb-2">
-          <MainSelect
-            values={FillingArr}
-            inputStyle={InputStyle.primary}
-            register={register("filling_type")}
-          />
-        </BaseInput>
-
-        {order?.order_fill.reverse().map((item) => (
+        {order?.order_fill.map((item) => (
           <BaseInput
             label={`Начинка ${item.floor} этаж`}
-            className="mb-2"
+            className="mb-2 flex flex-col w-60"
             key={item.id}
           >
             <MainSelect
               values={filling}
               inputStyle={InputStyle.primary}
+              disabled={!!view}
               register={register(`filling${item.floor}`)}
             />
           </BaseInput>
@@ -345,22 +374,28 @@ const ShowOrder = () => {
     );
   }, [order?.order_fill, filling, watch("filling_type")]);
 
-  const renedrColors = useMemo(() => {
+  const renderColors = useMemo(() => {
     return (
       <>
         {order?.color &&
           Object.keys(order?.color).map((item) => (
-            <BaseInput label={`Цвет ${item} этаж`} className="mb-2" key={item}>
+            <BaseInput
+              label={`Цвет ${item} этаж`}
+              className="mb-2 flex flex-col w-60"
+              key={item}
+            >
               <MainInput
                 inputStyle={InputStyle.primary}
                 register={register(`color${item}`)}
+                disabled={!!view}
               />
             </BaseInput>
           ))}
-        <BaseInput label={`Цвет деталей`} className="mb-2">
+        <BaseInput label={`Цвет деталей`} className="mb-2 flex flex-col w-60">
           <MainInput
             inputStyle={InputStyle.primary}
             register={register("color_details")}
+            disabled={!!view}
           />
         </BaseInput>
       </>
@@ -374,7 +409,7 @@ const ShowOrder = () => {
           setValue(`filling${item.floor}`, item.filling_id);
         });
       }
-    }, 100);
+    }, 300);
   }, [order?.order_fill]);
 
   const resetColors = useCallback(() => {
@@ -384,7 +419,7 @@ const ShowOrder = () => {
       });
     }
     setValue("color_details", order?.color_details);
-  }, [order?.color]);
+  }, [order?.color, order?.color_details]);
 
   //#reset
   useEffect(() => {
@@ -395,8 +430,8 @@ const ShowOrder = () => {
       $delivery_date(order.deliver_date);
       $updated_at(order.updated_at);
       $created_at(order.created_at);
-      resetFillings();
       resetColors();
+      resetFillings();
       reset({
         order_type: !order.is_delivery ? "Самовывоз" : "Доставка",
         client: order.order_user,
@@ -406,7 +441,8 @@ const ShowOrder = () => {
         comment: order.comment,
         complexity: order.complexity,
         packaging: order.packaging,
-
+        portions: order.portion,
+        floors: order.order_fill.length,
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
@@ -427,7 +463,10 @@ const ShowOrder = () => {
 
           <div className="flex flex-col justify-between h-full">
             <BaseInput label="Комментарии" className="mt-4">
-              <MainTextArea register={register("cancel_reason")} />
+              <MainTextArea
+                register={register("cancel_reason")}
+                disabled={!!view}
+              />
             </BaseInput>
 
             <Button
@@ -446,7 +485,7 @@ const ShowOrder = () => {
     return (
       <div className="flex flex-col">
         <Typography size={TextSize.S}>
-          Статус: {orderStatus(order?.status)}
+          Статус: {orderStatus(order?.status).text}
         </Typography>
       </div>
     );
@@ -472,6 +511,37 @@ const ShowOrder = () => {
     return null;
   }, [order?.images]);
 
+  const renderFloors = useMemo(() => {
+    if (!view) {
+      return (
+        <>
+          <BaseInput label="Этажность" className="mb-2 flex flex-col w-60">
+            <MainSelect
+              values={floorsArr}
+              inputStyle={InputStyle.primary}
+              register={register("floors")}
+              disabled={!!view}
+            />
+          </BaseInput>
+          {!!floors &&
+            [...Array(floors)].map((_, item) => (
+              <BaseInput
+                label={`Начинка ${item + 1} этаж`}
+                className="mb-2 flex flex-col w-60"
+                key={item}
+              >
+                <MainSelect
+                  values={filling}
+                  inputStyle={InputStyle.primary}
+                  register={register(`filling${item + 1}`)}
+                />
+              </BaseInput>
+            ))}
+        </>
+      );
+    }
+  }, [view, watch("floors"), filling]);
+
   useEffect(() => {
     setTimeout(() => {
       if (!!data?.value && !!subCategories?.category_vs_subcategory?.length) {
@@ -494,6 +564,7 @@ const ShowOrder = () => {
               <div className="w-80 pr-10 border-r">
                 <BaseInput label="Тип заказа" className="my-2">
                   <MainInput
+                    disabled
                     placeholder={"Введите имя"}
                     register={register("order_type")}
                   />
@@ -501,17 +572,18 @@ const ShowOrder = () => {
                 <BaseInput label="Клиент" className="mb-2">
                   <MainInput
                     placeholder={"Введите номер"}
+                    disabled
                     register={register("client")}
                   />
                 </BaseInput>
                 {renderStates}
                 {order?.is_delivery ? (
                   <BaseInput label="Адрес доставки" className="mb-2">
-                    <MainInput register={register("address")} />
+                    <MainInput register={register("address")} disabled />
                   </BaseInput>
                 ) : (
                   <BaseInput label="Филиал" className="mb-2">
-                    <MainInput register={register("branch")} />
+                    <MainInput register={register("branch")} disabled />
                   </BaseInput>
                 )}
               </div>
@@ -520,6 +592,7 @@ const ShowOrder = () => {
                 <BaseInput label="Предоплата" className="mb-2">
                   <MainRadioBtns
                     value={prepay}
+                    disabled={!!view}
                     onChange={(e) => $prepay(e)}
                     values={[
                       { id: FirstlyPayment.yes, name: "Да" },
@@ -533,6 +606,7 @@ const ShowOrder = () => {
                     values={payments}
                     inputStyle={InputStyle.primary}
                     register={register("payment_type")}
+                    disabled={!!view}
                   />
                 </BaseInput>
 
@@ -541,14 +615,16 @@ const ShowOrder = () => {
                     values={systems}
                     inputStyle={InputStyle.primary}
                     register={register("system")}
+                    disabled={!!view}
                   />
                 </BaseInput>
                 <BaseInput label="Оператор" className="mb-2">
-                  <MainInput register={register("operator")} />
+                  <MainInput register={register("operator")} disabled />
                 </BaseInput>
                 <BaseInput label="Дата изменения" className="mb-2">
                   <MainDatePicker
                     placeholder={"Не задано"}
+                    disabled
                     selected={
                       updated_at ? dayjs(updated_at).toDate() : undefined
                     }
@@ -557,46 +633,71 @@ const ShowOrder = () => {
                 </BaseInput>
 
                 <BaseInput label="Комментарии" className="mb-2">
-                  <MainTextArea register={register("comment")} />
-                </BaseInput>
-              </div>
-              <div className="flex flex-1 flex-col">
-                <BaseInput label="Сложность" className="mb-2">
-                  <MainSelect
-                    values={complexityArr}
-                    inputStyle={InputStyle.primary}
-                    register={register("complexity")}
+                  <MainTextArea
+                    register={register("comment")}
+                    disabled={!!view}
                   />
                 </BaseInput>
-                {/* color color details etajnost fillings */}
-                <BaseInput label="Упаковка" className="mb-2">
-                  <MainSelect
-                    values={packageArr}
-                    inputStyle={InputStyle.primary}
-                    register={register("packaging")}
-                  />
-                </BaseInput>
-                {renderFillings}
-                {renedrColors}
               </div>
             </div>
           </div>
           <div className="flex flex-1 justify-end">
-            <Button className="bg-darkYellow mt-4 w-64" type="submit">
-              Сохранить
-            </Button>
+            {!view && (
+              <Button className="bg-darkYellow mt-4 w-64" type="submit">
+                Сохранить
+              </Button>
+            )}
           </div>
 
           <div className="border-b w-full mt-4" />
           {renderCategs}
+
           <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
+            <BaseInput label="Сложность" className="mb-2 flex flex-col w-60">
+              <MainSelect
+                values={complexityArr}
+                inputStyle={InputStyle.primary}
+                register={register("complexity")}
+                disabled={!!view}
+              />
+            </BaseInput>
+            <BaseInput
+              label="Количество порции"
+              className="mb-2 flex flex-col w-60"
+            >
+              <MainInput
+                inputStyle={InputStyle.primary}
+                register={register("portions")}
+                disabled={!!view}
+              />
+            </BaseInput>
+            <BaseInput label="Тип начинки" className="mb-2 flex flex-col w-60">
+              <MainSelect
+                values={FillingArr}
+                inputStyle={InputStyle.primary}
+                register={register("filling_type")}
+                disabled={!!view}
+              />
+            </BaseInput>
+            {renderFloors}
+            {/* color color details etajnost fillings */}
+            <BaseInput label="Упаковка" className="mb-2 flex flex-col w-60">
+              <MainSelect
+                values={packageArr}
+                inputStyle={InputStyle.primary}
+                register={register("packaging")}
+                disabled={!!view}
+              />
+            </BaseInput>
+            {renderFillings}
+            {renderColors}
             {renderSubCategs}
           </div>
           {renderImg}
 
           <div className="border-b w-full mt-4" />
         </form>
-        <AddProduct />
+        {!view && <AddProduct />}
 
         {order?.status === OrderStatus.new && (
           <div className="flex gap-[15px] justify-end mt-8 ">

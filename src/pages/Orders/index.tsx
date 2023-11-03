@@ -15,6 +15,7 @@ import { MainPermissions, OrderStatus } from "src/utils/types";
 import { orderStatus } from "src/utils/helpers";
 import useToken from "src/hooks/useToken";
 import useQueryString from "src/hooks/useQueryString";
+import cl from "classnames";
 
 interface Props {
   edit: MainPermissions;
@@ -80,10 +81,16 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
             {/* {(sortData?.length ? sortData : branches.items)?.map( */}
             {!!orders?.items.length &&
               orders?.items?.map((order, idx) => (
-                <tr key={idx} className="bg-blue border-b-mainGray border-b-2">
+                <tr
+                  key={idx}
+                  className={cl(
+                    "border-b-mainGray border-b-2",
+                    orderStatus(order.status)?.color
+                  )}
+                >
                   <td className="text-start">
                     {perms?.[edit] ? (
-                      <Link to={`${order.id}`}>№ {order.id}</Link>
+                      <Link to={`${order.id}?view=1`}>№ {order.id}</Link>
                     ) : (
                       <span>№ {order.id}</span>
                     )}
@@ -126,7 +133,7 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
                         : order?.order_br?.branch_dr?.name}
                     </div>
                   </td>
-                  <td>{orderStatus(order.status)}</td>
+                  <td>{orderStatus(order.status).text}</td>
                 </tr>
               ))}
           </tbody>

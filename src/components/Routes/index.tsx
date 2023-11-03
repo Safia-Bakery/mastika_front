@@ -140,6 +140,11 @@ const Navigation = () => {
       },
       {
         element: <ShowOrder />,
+        path: "/received-orders/:id",
+        screen: MainPermissions.edit_all_orders,
+      },
+      {
+        element: <ShowOrder />,
         path: "/orders/:id",
         screen: MainPermissions.edit_all_orders,
       },

@@ -54,9 +54,7 @@ const TgDetails = () => {
   const { mutate: productMutation } = orderProducts();
   const cart = useAppSelector(tgCartSelector);
 
-  console.log(items, "items");
-
-  const { register, reset, getValues, setValue, handleSubmit } = useForm();
+  const { register, reset, getValues, setValue } = useForm();
   useBranches({ enabled: !is_delivery });
 
   const handleDate = (e: any) => $delivery_date(e);
@@ -93,15 +91,11 @@ const TgDetails = () => {
         is_delivery,
         ...(client_phone && !!is_delivery && { phone_number: client_phone }),
         ...(manager_phone && !!is_delivery && { extra_number: manager_phone }),
-        // ...(address_name && !!is_delivery && { location: address_name }),
         ...(address_name && !!is_delivery && { address: address_name }),
-        // ...(house && !!is_delivery && { apartment: house }),
-        // ...(refAddr && !!is_delivery && { near_to: refAddr }),
         ...(!is_delivery && {
           department_id: branch?.id ? branch.id : items.branch?.value,
         }),
 
-        // ...(home && !!is_delivery && { home }),
         ...(lat && !!is_delivery && { lat }),
         ...(long && !!is_delivery && { long }),
         comment: items.comments,
@@ -109,6 +103,7 @@ const TgDetails = () => {
         category_id: items.direction?.value,
         packaging: items.orderPackage?.value,
         complexity: items.complexity?.value,
+        portion: items.portion,
 
         ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
         ...(!!filler && { filler }),
@@ -123,13 +118,9 @@ const TgDetails = () => {
                 return {
                   order_id: data.id,
                   product_id: cart?.[item].value?.toString()!,
-                  // comment: getValues(`${item.id}`),
                   amount: cart?.[item].count!,
                 };
               });
-              // if (!Object.values(items.dynamic!).length) {
-              //   dispatch(tgClearItems());
-              // }
               productMutation(products, {
                 onSuccess: () => {
                   dispatch(tgClearCart());
@@ -137,7 +128,6 @@ const TgDetails = () => {
                 },
               });
             }
-            // if (items.dynamic && !!Object.keys(items.dynamic).length)
             dynamicVals(
               { ...items.dynamic, ...{ order_id: Number(data.id) } },
               {

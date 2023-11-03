@@ -13,6 +13,8 @@ module.exports = {
         darkBlue: "#5266F7",
         hoverGray: "#C2C2C2",
         danger: "#FA444F",
+        success: "#C9E7A3",
+        rejected: "#FFBEBE",
         tgPrimary: "#DCC38B",
         tgSelected: "#AAC57F",
         tgBorder: "#F1F1F1",

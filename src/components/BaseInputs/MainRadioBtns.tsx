@@ -21,6 +21,7 @@ const MainRadioBtns: FC<Props> = ({
   value,
   onChange,
   inputStyle = InputStyle.primary,
+  disabled,
 }) => {
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newActive = event.target.value == "1";
@@ -42,6 +43,7 @@ const MainRadioBtns: FC<Props> = ({
             <input
               type="radio"
               value={item.id}
+              disabled={disabled}
               name="radioGroup"
               checked={value === !!item.id}
               onChange={handleCheckboxChange}

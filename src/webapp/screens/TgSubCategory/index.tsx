@@ -410,7 +410,7 @@ const TgSubCategory = () => {
             {error?.portion}
           </Typography>
         ) : (
-          <Selected active={!!portion}>{`Выбрано: ${portion}`}</Selected>
+          <Selected active={!!portion}>{`Выбрано: ${portion} порции`}</Selected>
         )}
       </div>
     );

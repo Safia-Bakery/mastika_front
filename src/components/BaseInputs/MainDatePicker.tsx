@@ -19,6 +19,7 @@ interface Props {
   inputStyle?: InputStyle;
   placeholder?: string;
   shouldCloseOnSelect?: boolean;
+  isClearable?: boolean;
 }
 
 const MainDatePicker: FC<Props> = ({
@@ -33,11 +34,14 @@ const MainDatePicker: FC<Props> = ({
   placeholder,
   showTimeInput,
   shouldCloseOnSelect,
+  isClearable,
+  disabled,
 }) => {
   return (
     <DatePicker
       selected={selected}
       onChange={onChange}
+      disabled={disabled}
       className={cl(
         styles.inputBox,
         "w-full rounded-lg",
@@ -50,7 +54,7 @@ const MainDatePicker: FC<Props> = ({
       endDate={endDate}
       timeFormat="p"
       dateFormat="Pp"
-      isClearable
+      isClearable={isClearable}
       showTimeSelect={showTimeInput}
       shouldCloseOnSelect={shouldCloseOnSelect}
       selectsRange={selectsRange}

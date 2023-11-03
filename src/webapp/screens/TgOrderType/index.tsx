@@ -65,7 +65,7 @@ const TgOrderType = () => {
     setTimeout(() => {
       TelegramApp.confirmClose();
       TelegramApp.expand();
-    }, 500);
+    }, 300);
   }, []);
 
   const branchJson = useQueryString("branch");
@@ -127,7 +127,7 @@ const TgOrderType = () => {
 
   const renderType = useMemo(() => {
     return (
-      <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline">
+      <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline mb-4">
         {typeArr.map((item) => {
           const active = item.id === orderType;
           return (

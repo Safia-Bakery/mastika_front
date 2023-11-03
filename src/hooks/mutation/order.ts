@@ -34,6 +34,7 @@ interface Body {
     [key: number | string]: string;
   };
   color_details?: string;
+  portion?: number;
 }
 
 const orderMutation = () => {

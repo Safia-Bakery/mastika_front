@@ -23,14 +23,24 @@ export const StatusArr = [
 export const orderStatus = (status: OrderStatus | undefined) => {
   switch (status) {
     case OrderStatus.new:
-      return "Новый";
+      return { text: "Новый", color: "" };
     case OrderStatus.accepted:
-      return "Принят";
+      return { text: "Принят", color: "bg-success" };
     case OrderStatus.rejected:
-      return "Отклонён";
+      return { text: "Отклонён", color: "bg-rejected" };
 
     default:
-      return "";
+      return {};
+  }
+};
+
+export const rowColor = (status: OrderStatus) => {
+  switch (status) {
+    case OrderStatus.accepted:
+      break;
+
+    default:
+      break;
   }
 };
 
@@ -95,6 +105,12 @@ export const complexityArr = [
   { id: 1, name: "Средний" },
   { id: 2, name: "Сложный" },
   { id: 3, name: "Гравитационный Свадебдный" },
+];
+
+export const floorsArr = [
+  { id: 1, name: "1 этажный" },
+  { id: 2, name: "2 этажный" },
+  { id: 3, name: "3 этажный" },
 ];
 export const packageArr = [
   { id: 1, name: "Премиум" },

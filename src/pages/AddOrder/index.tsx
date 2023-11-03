@@ -8,7 +8,6 @@ import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import BranchSelect from "src/components/BranchSelect";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
-import Header from "src/components/Header";
 import Loading from "src/components/Loader";
 import Typography, { TextSize } from "src/components/Typography";
 import YandexMap from "src/components/YandexMap";
@@ -91,9 +90,9 @@ const AddOrder = () => {
         ...(long && !!is_delivery && { long }),
       },
       {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           ordersRefetch();
-          navigate("/orders");
+          navigate(`/orders/${data.id}`);
           successToast("created");
         },
         onError: (e: any) => errorToast(e.message),
@@ -201,8 +200,6 @@ const AddOrder = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Header title="Детали заказа" />
-
       <Card className="p-8" title="Новый заказ">
         <div className="flex flex-1">
           <div className="w-80 pr-10 border-r">

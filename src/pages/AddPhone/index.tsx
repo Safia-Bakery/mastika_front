@@ -13,26 +13,20 @@ const AddPhone = () => {
   const [phone, $phone] = useState("");
   const [error, $error] = useState("");
 
-  const {
-    data: user,
-    refetch,
-    isSuccess,
-  } = useUser({ phone_number: phone, enabled: false });
+  const { refetch, isSuccess } = useUser({
+    phone_number: phone,
+    enabled: false,
+  });
 
-  const { register, handleSubmit } = useForm();
+  const { handleSubmit } = useForm();
 
   const onSubmit = () => {
-    // e.preventDefault();
     if (phone.split("").length < 7) $error("input valid number");
     else {
       $error("");
       refetch();
     }
   };
-
-  useEffect(() => {
-    $phone("998909520009");
-  }, []);
 
   useEffect(() => {
     if (isSuccess) navigate(`/orders/add?phone=${phone}`);
