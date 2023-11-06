@@ -23,6 +23,7 @@ import useProducts from "src/hooks/useProducts";
 import tgUploadImage from "src/hooks/mutation/tgUploadImage";
 import { packageArr } from "src/utils/helpers";
 import Loading from "src/components/Loader";
+import { TelegramApp } from "src/webapp/tgHelpers";
 
 const TgPackage = () => {
   const navigate = useNavigate();
@@ -73,6 +74,18 @@ const TgPackage = () => {
 
   const renderImageUpload = useMemo(() => {
     const imageLength = watch("image")?.length;
+
+    document
+      ?.getElementById("regular_field")
+      ?.addEventListener("input", function (e) {
+        //@ts-ignore
+        const val = this.value.toLowerCase();
+        if (val.indexOf("progress") >= 0) {
+          TelegramApp.showProgress();
+        } else {
+          TelegramApp.hideProgress();
+        }
+      });
     return (
       <TgBtn
         onClick={() => null}
@@ -237,6 +250,7 @@ const TgPackage = () => {
 
   useEffect(() => {
     if (orderPackage) $itemPackage(orderPackage);
+    TelegramApp.confirmClose();
   }, []);
 
   if (isLoading) return <Loading absolute />;
@@ -254,6 +268,13 @@ const TgPackage = () => {
           </Texts>
 
           {renderImageUpload}
+          {/* todo */}
+          <input
+            type="file"
+            multiple
+            className="h-full w-full absolute opacity-0"
+            {...register("image2")}
+          />
         </div>
 
         <Texts size={TextSize.L} alignCenter>

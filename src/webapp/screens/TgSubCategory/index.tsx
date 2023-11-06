@@ -26,6 +26,7 @@ import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
 import Selected from "src/webapp/componets/TgSelectedLabel";
+import { TelegramApp } from "src/webapp/tgHelpers";
 
 interface Errortypes {
   complexity?: string;
@@ -417,6 +418,10 @@ const TgSubCategory = () => {
   }, [portion, error?.portion, floors]);
 
   const closeModal = () => removeParam(["modal"]);
+
+  useEffect(() => {
+    TelegramApp.confirmClose();
+  }, []);
 
   useEffect(() => {
     if (items.complexity) $complexity(items.complexity);

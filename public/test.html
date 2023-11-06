@@ -585,7 +585,7 @@
     <div class="viewport-border"></div>
     <div class="viewport-stable_border"></div>
 
-    <script type="application/javascript">
+    <!-- <script type="application/javascript">
       /*
        * This is a demo code for Telegram WebApp for Bots
        * It contains basic examples of how to use the API
@@ -1033,7 +1033,7 @@
         const k = Math.pow(10, d || 0);
         return Math.round(val * k) / k;
       }
-    </script>
+    </script> -->
 
     <script type="application/javascript">
       /*
@@ -1074,16 +1074,16 @@
             location.hash
         );
       document.getElementById("text_field").focus();
-      document
-        .getElementById("regular_field")
-        .addEventListener("input", function (e) {
-          const val = this.value.toLowerCase();
-          if (val.indexOf("progress") >= 0) {
-            Telegram.WebApp.MainButton.showProgress();
-          } else {
-            Telegram.WebApp.MainButton.hideProgress();
-          }
-        });
+      // document
+      //   .getElementById("regular_field")
+      //   .addEventListener("input", function (e) {
+      //     const val = this.value.toLowerCase();
+      //     if (val.indexOf("progress") >= 0) {
+      //       Telegram.WebApp.MainButton.showProgress();
+      //     } else {
+      //       Telegram.WebApp.MainButton.hideProgress();
+      //     }
+      //   });
 
       document.getElementById("ver").innerHTML = Telegram.WebApp.version;
       document.getElementById("platform").innerHTML = Telegram.WebApp.platform;

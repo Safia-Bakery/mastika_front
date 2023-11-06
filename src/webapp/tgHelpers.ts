@@ -24,4 +24,10 @@ export const TelegramApp = {
   closeWindow() {
     window.Telegram.WebApp.close();
   },
+  showProgress() {
+    window.Telegram.WebApp.MainButton.showProgress();
+  },
+  hideProgress() {
+    window.Telegram.WebApp.MainButton.hideProgress();
+  },
 };
