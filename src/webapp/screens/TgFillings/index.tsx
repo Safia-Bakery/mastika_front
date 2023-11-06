@@ -44,7 +44,7 @@ const TgFillings = () => {
 
   const { data: fillings, isFetching } = useFillings({
     ptype: Number(selectFilling?.value),
-    enabled: !!selectFilling?.value,
+    enabled: !!String(selectFilling?.value),
   });
 
   const [colorModal, $colorModal] = useState(false);
@@ -160,7 +160,9 @@ const TgFillings = () => {
         )}
       </div>
     );
-  }, [selectFilling, error?.filling_type]);
+  }, [selectFilling?.value, error?.filling_type]);
+
+  console.log(selectFilling?.value, "selectFilling?.value");
 
   const renderFillingFloors = useMemo(() => {
     return (
