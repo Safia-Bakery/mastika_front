@@ -1,7 +1,9 @@
+import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
+import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput from "src/components/BaseInputs/MainInput";
 import MainSelectBtn from "src/components/BaseInputs/MainSelectBtn";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
@@ -45,6 +47,26 @@ const AddOrder = () => {
 
   const [phone, $phone] = useState(phoneStr || "");
   const [phone2, $phone2] = useState("");
+  const [delivery_date, $delivery_date] = useState<Date>();
+
+  const handleDate = (e: Date) => $delivery_date(e);
+
+  const renderDate = useMemo(() => {
+    return (
+      <BaseInput
+        labelClassName="!text-base"
+        className="mt-4"
+        label="Дата поставки"
+      >
+        <MainDatePicker
+          showTimeInput
+          placeholder={"Введите адрес доставки"}
+          selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
+          onChange={handleDate}
+        />
+      </BaseInput>
+    );
+  }, [delivery_date]);
 
   const {
     data: user,
@@ -52,14 +74,7 @@ const AddOrder = () => {
     isLoading: userLoading,
   } = useUser({ phone_number: phoneStr!, enabled: !!phoneStr });
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    getValues,
-    reset,
-    setValue,
-  } = useForm();
+  const { register, handleSubmit, getValues, reset, setValue } = useForm();
 
   const handlePhone = (val: string) => $phone(val);
   const handlePhone2 = (val: string) => $phone2(val);
@@ -75,9 +90,9 @@ const AddOrder = () => {
       {
         order_user: name,
         phone_number: phone,
-        firstly_payment: 1,
         is_delivery,
-        deliver_date: new Date(),
+        is_bot: 0,
+        deliver_date: delivery_date,
         ...(phone2 && { extra_number: phone2 }),
         ...(address_name && !!is_delivery && { location: address_name }),
         ...(address_name && !!is_delivery && { address: address_name }),
@@ -210,6 +225,7 @@ const AddOrder = () => {
               />
             </BaseInput>
             {renderPhones}
+            {renderDate}
             {renderOrderType}
           </div>
           {renderMap}

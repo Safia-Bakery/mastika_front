@@ -57,7 +57,7 @@ const TgDetails = () => {
   const { register, reset, getValues, setValue } = useForm();
   useBranches({ enabled: !is_delivery });
 
-  const handleDate = (e: any) => $delivery_date(e);
+  const handleDate = (e: Date) => $delivery_date(e);
   const handleNavigateParams = (value: object) => () => navigateParams(value);
 
   useEffect(() => {
@@ -104,6 +104,7 @@ const TgDetails = () => {
         packaging: items.orderPackage?.value,
         complexity: items.complexity?.value,
         portion: items.portion,
+        is_bot: 1,
 
         ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
         ...(!!filler && { filler }),

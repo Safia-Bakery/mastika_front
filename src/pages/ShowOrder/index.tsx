@@ -160,7 +160,7 @@ const ShowOrder = () => {
         {contentTypes(sub)}
       </BaseInput>
     ));
-  }, [activeCateg, subLoading, subCategories]);
+  }, [activeCateg, subLoading, subCategories, view]);
 
   const resetVals = (item: OrderValueType) => {
     switch (item.value_vs_subcat.contenttype_id) {
@@ -219,7 +219,7 @@ const ShowOrder = () => {
         </div>
       </div>
     );
-  }, [activeCateg, categories, categoryLoading]);
+  }, [activeCateg, categories, categoryLoading, view]);
 
   const renderStates = useMemo(() => {
     return (
@@ -274,8 +274,12 @@ const ShowOrder = () => {
       color_details,
       portion,
     } = getValues();
-    const filler = [...Array(floors)].reduce((acc: any, item, idx) => {
+    const filler = [...Array(floors)].reduce((acc: any, _, idx) => {
       acc[idx + 1] = getValues(`filling${idx + 1}`);
+      return acc;
+    }, {});
+    const color = [...Array(floors)].reduce((acc: any, _, idx) => {
+      acc[idx + 1] = getValues(`color${idx + 1}`);
       return acc;
     }, {});
     const dynamic = subCategories?.category_vs_subcategory.reduce(
@@ -303,13 +307,16 @@ const ShowOrder = () => {
         category_id: activeCateg,
         complexity: Number(complexity),
         packaging: Number(packaging),
+        color,
         color_details,
+        is_bot: 0,
         filler,
         ...(extraPhone && { extra_number: extraPhone }),
       },
       {
         onSuccess: () => {
           refetch();
+          navigateParams({ view: 1 });
           successToast("Изменено");
         },
         onError: (e: any) => errorToast(e.message),
@@ -327,7 +334,7 @@ const ShowOrder = () => {
 
   const handleStatus = (status: OrderStatus) => {
     mutate(
-      { status, id: Number(id), deny_reason: getValues("cancel_reason") },
+      { status, id: Number(id), reject_reason: getValues("cancel_reason") },
       {
         onSuccess: () => {
           successToast("status changed");
@@ -353,31 +360,33 @@ const ShowOrder = () => {
       );
   }, [uploadedImg?.url]);
 
-  const renderFillings = useMemo(() => {
+  const renderViewFillings = useMemo(() => {
     return (
       <>
-        {order?.order_fill.map((item) => (
-          <BaseInput
-            label={`Начинка ${item.floor} этаж`}
-            className="mb-2 flex flex-col w-60"
-            key={item.id}
-          >
-            <MainSelect
-              values={filling}
-              inputStyle={InputStyle.primary}
-              disabled={!!view}
-              register={register(`filling${item.floor}`)}
-            />
-          </BaseInput>
-        ))}
+        {!!view &&
+          order?.order_fill.map((item) => (
+            <BaseInput
+              label={`Начинка ${item.floor} этаж`}
+              className="mb-2 flex flex-col w-60"
+              key={item.id}
+            >
+              <MainSelect
+                values={filling}
+                inputStyle={InputStyle.primary}
+                disabled={!!view}
+                register={register(`filling${item.floor}`)}
+              />
+            </BaseInput>
+          ))}
       </>
     );
-  }, [order?.order_fill, filling, watch("filling_type")]);
+  }, [order?.order_fill, filling, watch("filling_type"), view]);
 
-  const renderColors = useMemo(() => {
+  const renderViewColors = useMemo(() => {
     return (
       <>
         {order?.color &&
+          !!view &&
           Object.keys(order?.color).map((item) => (
             <BaseInput
               label={`Цвет ${item} этаж`}
@@ -391,13 +400,6 @@ const ShowOrder = () => {
               />
             </BaseInput>
           ))}
-        <BaseInput label={`Цвет деталей`} className="mb-2 flex flex-col w-60">
-          <MainInput
-            inputStyle={InputStyle.primary}
-            register={register("color_details")}
-            disabled={!!view}
-          />
-        </BaseInput>
       </>
     );
   }, [order?.color]);
@@ -430,6 +432,7 @@ const ShowOrder = () => {
       $delivery_date(order.deliver_date);
       $updated_at(order.updated_at);
       $created_at(order.created_at);
+      $prepay(!!order.firstly_payment);
       resetColors();
       resetFillings();
       reset({
@@ -439,10 +442,16 @@ const ShowOrder = () => {
         payment_type: order.payment_type,
         operator: order.order_vs_user?.username,
         comment: order.comment,
+        system: !order.is_bot ? 2 : 1,
         complexity: order.complexity,
         packaging: order.packaging,
-        portions: order.portion,
+        portion: order.portion,
+        house: order.apartment,
+        home: order.home,
+        refAddr: order.near_to,
+
         floors: order.order_fill.length,
+        reject_reason: order.reject_reason,
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
@@ -463,14 +472,11 @@ const ShowOrder = () => {
 
           <div className="flex flex-col justify-between h-full">
             <BaseInput label="Комментарии" className="mt-4">
-              <MainTextArea
-                register={register("cancel_reason")}
-                disabled={!!view}
-              />
+              <MainTextArea register={register("cancel_reason")} />
             </BaseInput>
 
             <Button
-              className="bg-primary text-white absolute bottom-2 right-2 left-2 w-[initial]"
+              className="bg-primary text-white absolute bottom-2 w-[initial]"
               onClick={() => handleStatus(OrderStatus.rejected)}
             >
               Отправить
@@ -494,7 +500,7 @@ const ShowOrder = () => {
   const renderSampleImage = useMemo(() => {
     if (!!order?.images?.length)
       return (
-        <div className="">
+        <div className="mt-6">
           <Typography size={TextSize.XXL}>Примерный вариант торта</Typography>
           <div className="max-w-md w-full flex flex-wrap gap-4 mt-4">
             {order?.images.map((item) => (
@@ -523,6 +529,16 @@ const ShowOrder = () => {
               disabled={!!view}
             />
           </BaseInput>
+          <BaseInput
+            label="Количество порции"
+            className="mb-2 flex flex-col w-60"
+          >
+            <MainInput
+              inputStyle={InputStyle.primary}
+              register={register("portion")}
+              disabled={!!view}
+            />
+          </BaseInput>
           {!!floors &&
             [...Array(floors)].map((_, item) => (
               <BaseInput
@@ -537,10 +553,52 @@ const ShowOrder = () => {
                 />
               </BaseInput>
             ))}
+          {!!floors &&
+            [...Array(floors)].map((_, item) => (
+              <BaseInput
+                label={`Палитра ${item + 1} этаж`}
+                className="mb-2 flex flex-col w-60"
+                key={item}
+              >
+                <MainInput
+                  register={register(`color${item + 1}`)}
+                  type="color"
+                />
+              </BaseInput>
+            ))}
         </>
       );
     }
   }, [view, watch("floors"), filling]);
+
+  const renderPrepay = useMemo(() => {
+    return (
+      <BaseInput label="Предоплата" className="mb-2">
+        <MainRadioBtns
+          value={prepay}
+          disabled={!!view}
+          onChange={(e) => $prepay(e)}
+          values={[
+            { id: FirstlyPayment.yes, name: "Да" },
+            { id: FirstlyPayment.no, name: "Полностью" },
+          ]}
+        />
+      </BaseInput>
+    );
+  }, [prepay, view]);
+
+  const renderChangedDate = useMemo(() => {
+    return (
+      <BaseInput label="Дата изменения" className="mb-2">
+        <MainDatePicker
+          placeholder={"Не задано"}
+          disabled
+          selected={updated_at ? dayjs(updated_at).toDate() : undefined}
+          onChange={$updated_at}
+        />
+      </BaseInput>
+    );
+  }, [updated_at]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -578,9 +636,35 @@ const ShowOrder = () => {
                 </BaseInput>
                 {renderStates}
                 {order?.is_delivery ? (
-                  <BaseInput label="Адрес доставки" className="mb-2">
-                    <MainInput register={register("address")} disabled />
-                  </BaseInput>
+                  <>
+                    <BaseInput label="Адрес доставки" className="mb-2">
+                      <MainInput register={register("address")} disabled />
+                    </BaseInput>
+
+                    <div className="flex gap-3">
+                      <BaseInput label="Дом" className="mb-2 flex-1">
+                        <MainInput
+                          register={register("house", {
+                            required: "Обязательное поле",
+                          })}
+                        />
+                      </BaseInput>
+                      <BaseInput label="Квартира" className="mb-2 flex-1">
+                        <MainInput
+                          register={register("home", {
+                            required: "Обязательное поле",
+                          })}
+                        />
+                      </BaseInput>
+                    </div>
+                    <BaseInput label="Ориентир" className="mb-2">
+                      <MainInput
+                        register={register("refAddr", {
+                          required: "Обязательное поле",
+                        })}
+                      />
+                    </BaseInput>
+                  </>
                 ) : (
                   <BaseInput label="Филиал" className="mb-2">
                     <MainInput register={register("branch")} disabled />
@@ -589,17 +673,7 @@ const ShowOrder = () => {
               </div>
 
               <div className="flex flex-1 flex-col">
-                <BaseInput label="Предоплата" className="mb-2">
-                  <MainRadioBtns
-                    value={prepay}
-                    disabled={!!view}
-                    onChange={(e) => $prepay(e)}
-                    values={[
-                      { id: FirstlyPayment.yes, name: "Да" },
-                      { id: FirstlyPayment.no, name: "Полностью" },
-                    ]}
-                  />
-                </BaseInput>
+                {renderPrepay}
 
                 <BaseInput label="Способ оплаты" className="mb-2">
                   <MainSelect
@@ -615,22 +689,18 @@ const ShowOrder = () => {
                     values={systems}
                     inputStyle={InputStyle.primary}
                     register={register("system")}
-                    disabled={!!view}
+                    disabled
                   />
                 </BaseInput>
                 <BaseInput label="Оператор" className="mb-2">
                   <MainInput register={register("operator")} disabled />
                 </BaseInput>
-                <BaseInput label="Дата изменения" className="mb-2">
-                  <MainDatePicker
-                    placeholder={"Не задано"}
-                    disabled
-                    selected={
-                      updated_at ? dayjs(updated_at).toDate() : undefined
-                    }
-                    onChange={$updated_at}
-                  />
-                </BaseInput>
+                {renderChangedDate}
+                {order?.reject_reason && (
+                  <BaseInput label="Причина отклонении" className="mb-2">
+                    <MainInput register={register("reject_reason")} disabled />
+                  </BaseInput>
+                )}
 
                 <BaseInput label="Комментарии" className="mb-2">
                   <MainTextArea
@@ -661,16 +731,7 @@ const ShowOrder = () => {
                 disabled={!!view}
               />
             </BaseInput>
-            <BaseInput
-              label="Количество порции"
-              className="mb-2 flex flex-col w-60"
-            >
-              <MainInput
-                inputStyle={InputStyle.primary}
-                register={register("portions")}
-                disabled={!!view}
-              />
-            </BaseInput>
+
             <BaseInput label="Тип начинки" className="mb-2 flex flex-col w-60">
               <MainSelect
                 values={FillingArr}
@@ -680,7 +741,32 @@ const ShowOrder = () => {
               />
             </BaseInput>
             {renderFloors}
-            {/* color color details etajnost fillings */}
+            {!!view && (
+              <BaseInput
+                label="Количество порции"
+                className="mb-2 flex flex-col w-60"
+              >
+                <MainInput
+                  inputStyle={InputStyle.primary}
+                  register={register("portion")}
+                  disabled={!!view}
+                />
+              </BaseInput>
+            )}
+            {renderViewFillings}
+            {renderViewColors}
+
+            <BaseInput
+              label={`Цвет деталей`}
+              className="mb-2 flex flex-col w-60"
+            >
+              <MainInput
+                inputStyle={InputStyle.primary}
+                register={register("color_details")}
+                disabled={!!view}
+              />
+            </BaseInput>
+            {renderSubCategs}
             <BaseInput label="Упаковка" className="mb-2 flex flex-col w-60">
               <MainSelect
                 values={packageArr}
@@ -689,9 +775,6 @@ const ShowOrder = () => {
                 disabled={!!view}
               />
             </BaseInput>
-            {renderFillings}
-            {renderColors}
-            {renderSubCategs}
           </div>
           {renderImg}
 
@@ -699,7 +782,7 @@ const ShowOrder = () => {
         </form>
         {!view && <AddProduct />}
 
-        {order?.status === OrderStatus.new && (
+        {order?.status === OrderStatus.new && !!view && (
           <div className="flex gap-[15px] justify-end mt-8 ">
             <Button
               onClick={() => navigateParams({ deny_modal: 1 })}

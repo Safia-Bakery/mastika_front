@@ -22,7 +22,7 @@ interface Body {
   status?: number;
   id?: number;
 
-  deny_reason?: string;
+  reject_reason?: string;
 
   complexity?: number;
   packaging?: number;
@@ -35,6 +35,7 @@ interface Body {
   };
   color_details?: string;
   portion?: number;
+  is_bot?: 1 | 0;
 }
 
 const orderMutation = () => {

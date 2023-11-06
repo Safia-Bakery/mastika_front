@@ -78,7 +78,6 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
           />
 
           <tbody className={styles.tableBody}>
-            {/* {(sortData?.length ? sortData : branches.items)?.map( */}
             {!!orders?.items.length &&
               orders?.items?.map((order, idx) => (
                 <tr
@@ -96,10 +95,26 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
                     )}
                     <div className="flex gap-2 mt-2">
                       <div className="flex items-center">
-                        <img src="/assets/icons/tg.svg" alt="order-image" />
-                        <Typography className="ml-1" size={TextSize.XS}>
-                          Telegram Bot
-                        </Typography>
+                        {!!order.is_bot ? (
+                          <>
+                            <img src="/assets/icons/tg.svg" alt="bot-img" />
+                            <Typography className="ml-1" size={TextSize.XS}>
+                              Телеграм-бот
+                            </Typography>
+                          </>
+                        ) : (
+                          <>
+                            <img
+                              src="/assets/icons/web.svg"
+                              width={14}
+                              height={14}
+                              alt="web-img"
+                            />
+                            <Typography className="ml-1" size={TextSize.XS}>
+                              Веб-сайт
+                            </Typography>
+                          </>
+                        )}
                       </div>
                       <div className="flex items-center">
                         <img src="/assets/icons/users.svg" alt="users" />

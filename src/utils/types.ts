@@ -234,6 +234,7 @@ export interface OrdersType {
   deliver_date: string;
   status: number;
   address: string;
+  is_bot: 1 | 0;
   apartment: string;
   home: string;
   near_to: string;
@@ -368,6 +369,7 @@ export interface OrderType {
       packaging: number;
       complexity: number;
       portion: number;
+      is_bot?: 1 | 0;
       color: { [key: number | string]: string };
       color_details: string;
       order_fill: {
