@@ -75,17 +75,18 @@ const TgPackage = () => {
   const renderImageUpload = useMemo(() => {
     const imageLength = watch("image")?.length;
 
-    document
-      ?.getElementById("regular_field")
-      ?.addEventListener("input", function (e) {
-        //@ts-ignore
-        const val = this.value.toLowerCase();
-        if (val.indexOf("progress") >= 0) {
-          TelegramApp.showProgress();
-        } else {
-          TelegramApp.hideProgress();
-        }
-      });
+    // document
+    //   ?.getElementById("regular_field")
+    //   ?.addEventListener("input", function (e) {
+    //     //@ts-ignore
+    //     const val = this.value.toLowerCase();
+    //     if (val.indexOf("progress") >= 0) {
+    //       TelegramApp.showProgress();
+    //     } else {
+    //       TelegramApp.hideProgress();
+    //     }
+    //   });
+
     return (
       <TgBtn
         onClick={() => null}
@@ -122,13 +123,8 @@ const TgPackage = () => {
               <div className="flex-1" key={item.id}>
                 <TgBtn
                   key={item.id}
-                  onClick={
-                    () => $itemPackage({ name: item.name, value: item.id })
-                    // dispatch(
-                    //   tgAddItem({
-                    //     orderPackage: { name: item.name, value: item.id },
-                    //   })
-                    // )
+                  onClick={() =>
+                    $itemPackage({ name: item.name, value: item.id })
                   }
                   className={cl("px-3 !h-[35px]", {
                     ["shadow-selected !bg-tgSelected"]: active,
@@ -268,13 +264,6 @@ const TgPackage = () => {
           </Texts>
 
           {renderImageUpload}
-          {/* todo */}
-          <input
-            type="file"
-            multiple
-            className="h-full w-full absolute opacity-0"
-            {...register("image2")}
-          />
         </div>
 
         <Texts size={TextSize.L} alignCenter>
