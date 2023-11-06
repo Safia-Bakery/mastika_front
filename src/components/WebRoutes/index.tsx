@@ -6,6 +6,9 @@ import { Outlet, useNavigate } from "react-router-dom";
 import useToken from "src/hooks/useToken";
 import Loading from "../Loader";
 
+const normalizeURL = (path: string) =>
+  path.replace(/\/+/g, "/").replace(/\/$/, "");
+
 const WebRooutes = () => {
   const token = useAppSelector(tokenSelector);
   const { data: me, isLoading, error } = useToken({});
@@ -23,6 +26,13 @@ const WebRooutes = () => {
       return <Sidebar />;
     }
   }, [permission, token]);
+
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    const normalizedPath = normalizeURL(currentPath);
+    if (currentPath !== normalizedPath)
+      navigate(normalizedPath, { replace: true });
+  }, []);
 
   if (isLoading && token) return <Loading absolute />;
 
