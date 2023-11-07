@@ -35,7 +35,7 @@ const BranchSelect: FC<Props> = ({ label, inputStyle, enabled }) => {
   const { data, isFetching, refetch, isLoading } = useBranches({
     enabled,
     page,
-    ...(!!query && { body: { name: query } }),
+    ...(!!query && { name: query }),
   });
 
   const [items, $items] = useState<BranchesType["items"]>([]);
@@ -75,7 +75,7 @@ const BranchSelect: FC<Props> = ({ label, inputStyle, enabled }) => {
   };
 
   const handleFocus = () => {
-    if (!enabled) refetch();
+    // if (!enabled) refetch();
     $focused(true);
   };
 

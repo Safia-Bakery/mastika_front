@@ -69,7 +69,10 @@ const ShowOrder = () => {
     formState: { isSubmitting },
   } = useForm();
 
-  const { data, refetch } = useOrder({ id: Number(id), enabled: !!id });
+  const { data, refetch, isLoading } = useOrder({
+    id: Number(id),
+    enabled: !!id,
+  });
   const order = data?.order?.[0];
   const floors = Number(watch("floors"));
 
@@ -265,10 +268,7 @@ const ShowOrder = () => {
       address,
       client,
       comment,
-      order_type,
-      operator,
       payment_type,
-      system,
       complexity,
       packaging,
       color_details,
@@ -588,16 +588,18 @@ const ShowOrder = () => {
   }, [prepay, view]);
 
   const renderChangedDate = useMemo(() => {
-    return (
-      <BaseInput label="Дата изменения" className="mb-2">
-        <MainDatePicker
-          placeholder={"Не задано"}
-          disabled
-          selected={updated_at ? dayjs(updated_at).toDate() : undefined}
-          onChange={$updated_at}
-        />
-      </BaseInput>
-    );
+    if (updated_at)
+      return (
+        <BaseInput label="Дата изменения" className="mb-2">
+          <MainDatePicker
+            placeholder={"Не задано"}
+            disabled
+            selected={dayjs(updated_at).toDate()}
+            onChange={$updated_at}
+          />
+        </BaseInput>
+      );
+    return null;
   }, [updated_at]);
 
   useEffect(() => {
@@ -609,6 +611,8 @@ const ShowOrder = () => {
       }
     }, 100);
   }, [subCategories?.category_vs_subcategory, data?.value]);
+
+  if (isLoading) return <Loading absolute />;
 
   return (
     <>
@@ -647,10 +651,12 @@ const ShowOrder = () => {
                           register={register("house", {
                             required: "Обязательное поле",
                           })}
+                          disabled={!!view}
                         />
                       </BaseInput>
                       <BaseInput label="Квартира" className="mb-2 flex-1">
                         <MainInput
+                          disabled={!!view}
                           register={register("home", {
                             required: "Обязательное поле",
                           })}
@@ -662,6 +668,7 @@ const ShowOrder = () => {
                         register={register("refAddr", {
                           required: "Обязательное поле",
                         })}
+                        disabled={!!view}
                       />
                     </BaseInput>
                   </>

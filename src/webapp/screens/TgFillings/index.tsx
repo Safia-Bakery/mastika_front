@@ -162,8 +162,6 @@ const TgFillings = () => {
     );
   }, [selectFilling?.value, error?.filling_type]);
 
-  console.log(selectFilling?.value, "selectFilling?.value");
-
   const renderFillingFloors = useMemo(() => {
     return (
       <div>

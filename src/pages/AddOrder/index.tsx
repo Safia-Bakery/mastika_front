@@ -53,14 +53,10 @@ const AddOrder = () => {
 
   const renderDate = useMemo(() => {
     return (
-      <BaseInput
-        labelClassName="!text-base"
-        className="mt-4"
-        label="Дата поставки"
-      >
+      <BaseInput className="mt-4" label="Дата поставки">
         <MainDatePicker
           showTimeInput
-          placeholder={"Введите адрес доставки"}
+          placeholder={"Введите дату поставки"}
           selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
           onChange={handleDate}
         />
