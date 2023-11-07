@@ -32,6 +32,7 @@ import useQueryString from "src/hooks/useQueryString";
 import { baseURL } from "src/main";
 import {
   FillingArr,
+  PortonNumbers,
   complexityArr,
   floorsArr,
   orderStatus,
@@ -56,7 +57,6 @@ const ShowOrder = () => {
   const [phone, $phone] = useState("");
   const [extraPhone, $extraPhone] = useState("");
   const deny_modal = useQueryString("deny_modal");
-  const view = useQueryString("view");
   const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
   const {
@@ -78,9 +78,8 @@ const ShowOrder = () => {
 
   const { data: filling } = useFillings({
     ptype: watch("filling_type"),
-    enabled: !!watch("filling_type"),
+    enabled: !!watch("filling_type")?.toString(),
   });
-
   const [uploadedImg, $uploadedImg] = useState<{ name: string; url: string }>();
 
   const { data: categories, isFetching: categoryLoading } = useCategories({});
@@ -100,18 +99,13 @@ const ShowOrder = () => {
     switch (subCateg.contenttype_id) {
       case ContentType.number: {
         return (
-          <MainInput
-            type="number"
-            disabled={!!view}
-            register={register(`${subCateg.id}`)}
-          />
+          <MainInput type="number" register={register(`${subCateg.id}`)} />
         );
       }
       case ContentType.select: {
         return (
           <MainSelect
             inputStyle={InputStyle.primary}
-            disabled={!!view}
             register={register(`${subCateg.id}`)}
           >
             <option value={undefined}></option>
@@ -125,22 +119,11 @@ const ShowOrder = () => {
       }
 
       case ContentType.image: {
-        return (
-          <input
-            type="file"
-            multiple={false}
-            {...register(`${subCateg.id}`)}
-            disabled={!!view}
-          />
-        );
+        return <input type="file" {...register(`${subCateg.id}`)} />;
       }
       case ContentType.string: {
         return (
-          <MainInput
-            type="string"
-            register={register(`${subCateg.id}`)}
-            disabled={!!view}
-          />
+          <MainInput type="string" register={register(`${subCateg.id}`)} />
         );
       }
 
@@ -163,7 +146,7 @@ const ShowOrder = () => {
         {contentTypes(sub)}
       </BaseInput>
     ));
-  }, [activeCateg, subLoading, subCategories, view]);
+  }, [activeCateg, subLoading, subCategories]);
 
   const resetVals = (item: OrderValueType) => {
     switch (item.value_vs_subcat.contenttype_id) {
@@ -198,13 +181,12 @@ const ShowOrder = () => {
               {categories?.map((item, idx) => {
                 return (
                   <label
-                    onClick={() => (!view ? $activeCateg(item.id) : null)}
+                    onClick={() => $activeCateg(item.id)}
                     key={idx}
                     className="flex gap-2"
                   >
                     <input
                       type="radio"
-                      disabled={!!view}
                       onChange={() => null}
                       checked={item.id === activeCateg}
                     />
@@ -222,7 +204,7 @@ const ShowOrder = () => {
         </div>
       </div>
     );
-  }, [activeCateg, categories, categoryLoading, view]);
+  }, [activeCateg, categories, categoryLoading]);
 
   const renderStates = useMemo(() => {
     return (
@@ -254,7 +236,6 @@ const ShowOrder = () => {
         <BaseInput label="Дата поставки" className="mb-2">
           <MainDatePicker
             placeholder={"Не задано"}
-            disabled
             selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
             onChange={$delivery_date}
           />
@@ -275,7 +256,7 @@ const ShowOrder = () => {
       portion,
     } = getValues();
     const filler = [...Array(floors)].reduce((acc: any, _, idx) => {
-      acc[idx + 1] = getValues(`filling${idx + 1}`);
+      acc[idx + 1] = getValues(`filling${idx + 1}`)?.toString();
       return acc;
     }, {});
     const color = [...Array(floors)].reduce((acc: any, _, idx) => {
@@ -316,7 +297,6 @@ const ShowOrder = () => {
       {
         onSuccess: () => {
           refetch();
-          navigateParams({ view: 1 });
           successToast("Изменено");
         },
         onError: (e: any) => errorToast(e.message),
@@ -360,50 +340,6 @@ const ShowOrder = () => {
       );
   }, [uploadedImg?.url]);
 
-  const renderViewFillings = useMemo(() => {
-    return (
-      <>
-        {!!view &&
-          order?.order_fill.map((item) => (
-            <BaseInput
-              label={`Начинка ${item.floor} этаж`}
-              className="mb-2 flex flex-col w-60"
-              key={item.id}
-            >
-              <MainSelect
-                values={filling}
-                inputStyle={InputStyle.primary}
-                disabled={!!view}
-                register={register(`filling${item.floor}`)}
-              />
-            </BaseInput>
-          ))}
-      </>
-    );
-  }, [order?.order_fill, filling, watch("filling_type"), view]);
-
-  const renderViewColors = useMemo(() => {
-    return (
-      <>
-        {order?.color &&
-          !!view &&
-          Object.keys(order?.color).map((item) => (
-            <BaseInput
-              label={`Цвет ${item} этаж`}
-              className="mb-2 flex flex-col w-60"
-              key={item}
-            >
-              <MainInput
-                inputStyle={InputStyle.primary}
-                register={register(`color${item}`)}
-                disabled={!!view}
-              />
-            </BaseInput>
-          ))}
-      </>
-    );
-  }, [order?.color]);
-
   const resetFillings = useCallback(() => {
     setTimeout(() => {
       if (!!order?.order_fill?.length) {
@@ -416,11 +352,13 @@ const ShowOrder = () => {
 
   const resetColors = useCallback(() => {
     if (!!order?.color) {
-      Object.keys(order?.color).map((item) => {
-        setValue(`color${item}`, order?.color?.[item]);
-      });
+      setTimeout(() => {
+        Object.keys(order?.color).map((item) => {
+          setValue(`color${item}`, order?.color?.[item]);
+        });
+      }, 300);
     }
-    setValue("color_details", order?.color_details);
+    // setValue("color_details", order?.color_details);
   }, [order?.color, order?.color_details]);
 
   //#reset
@@ -449,7 +387,7 @@ const ShowOrder = () => {
         house: order.apartment,
         home: order.home,
         refAddr: order.near_to,
-
+        color_details: order.color_details,
         floors: order.order_fill.length,
         reject_reason: order.reject_reason,
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
@@ -518,65 +456,62 @@ const ShowOrder = () => {
   }, [order?.images]);
 
   const renderFloors = useMemo(() => {
-    if (!view) {
-      return (
-        <>
-          <BaseInput label="Этажность" className="mb-2 flex flex-col w-60">
-            <MainSelect
-              values={floorsArr}
-              inputStyle={InputStyle.primary}
-              register={register("floors")}
-              disabled={!!view}
-            />
-          </BaseInput>
-          <BaseInput
-            label="Количество порции"
-            className="mb-2 flex flex-col w-60"
-          >
-            <MainInput
-              inputStyle={InputStyle.primary}
-              register={register("portion")}
-              disabled={!!view}
-            />
-          </BaseInput>
-          {!!floors &&
-            [...Array(floors)].map((_, item) => (
-              <BaseInput
-                label={`Начинка ${item + 1} этаж`}
-                className="mb-2 flex flex-col w-60"
-                key={item}
-              >
-                <MainSelect
-                  values={filling}
-                  inputStyle={InputStyle.primary}
-                  register={register(`filling${item + 1}`)}
-                />
-              </BaseInput>
-            ))}
-          {!!floors &&
-            [...Array(floors)].map((_, item) => (
-              <BaseInput
-                label={`Палитра ${item + 1} этаж`}
-                className="mb-2 flex flex-col w-60"
-                key={item}
-              >
-                <MainInput
-                  register={register(`color${item + 1}`)}
-                  type="color"
-                />
-              </BaseInput>
-            ))}
-        </>
-      );
-    }
-  }, [view, watch("floors"), filling]);
+    return (
+      <>
+        <BaseInput label="Этажность" className="mb-2 flex flex-col w-60">
+          <MainSelect
+            values={floorsArr}
+            inputStyle={InputStyle.primary}
+            register={register("floors")}
+          />
+        </BaseInput>
+        <BaseInput
+          label="Количество порции"
+          className="mb-2 flex flex-col w-60"
+        >
+          <MainSelect register={register("portion")}>
+            <option value={undefined} />
+            {!!floors &&
+              PortonNumbers[floors].map((item) => (
+                <option value={item} key={item}>
+                  {item}
+                </option>
+              ))}
+          </MainSelect>
+        </BaseInput>
+        {!!floors &&
+          [...Array(floors)].map((_, item) => (
+            <BaseInput
+              label={`Начинка ${item + 1} этаж`}
+              className="mb-2 flex flex-col w-60"
+              key={item}
+            >
+              <MainSelect
+                values={filling}
+                inputStyle={InputStyle.primary}
+                register={register(`filling${item + 1}`)}
+              />
+            </BaseInput>
+          ))}
+        {!!floors &&
+          [...Array(floors)].map((_, item) => (
+            <BaseInput
+              label={`Палитра ${item + 1} этаж`}
+              className="mb-2 flex flex-col w-60"
+              key={item}
+            >
+              <MainInput register={register(`color${item + 1}`)} type="color" />
+            </BaseInput>
+          ))}
+      </>
+    );
+  }, [watch("floors"), filling, order?.order_fill, order?.portion]);
 
   const renderPrepay = useMemo(() => {
     return (
       <BaseInput label="Предоплата" className="mb-2">
         <MainRadioBtns
           value={prepay}
-          disabled={!!view}
           onChange={(e) => $prepay(e)}
           values={[
             { id: FirstlyPayment.yes, name: "Да" },
@@ -585,7 +520,7 @@ const ShowOrder = () => {
         />
       </BaseInput>
     );
-  }, [prepay, view]);
+  }, [prepay]);
 
   const renderChangedDate = useMemo(() => {
     if (updated_at)
@@ -651,12 +586,10 @@ const ShowOrder = () => {
                           register={register("house", {
                             required: "Обязательное поле",
                           })}
-                          disabled={!!view}
                         />
                       </BaseInput>
                       <BaseInput label="Квартира" className="mb-2 flex-1">
                         <MainInput
-                          disabled={!!view}
                           register={register("home", {
                             required: "Обязательное поле",
                           })}
@@ -668,7 +601,6 @@ const ShowOrder = () => {
                         register={register("refAddr", {
                           required: "Обязательное поле",
                         })}
-                        disabled={!!view}
                       />
                     </BaseInput>
                   </>
@@ -687,7 +619,6 @@ const ShowOrder = () => {
                     values={payments}
                     inputStyle={InputStyle.primary}
                     register={register("payment_type")}
-                    disabled={!!view}
                   />
                 </BaseInput>
 
@@ -710,86 +641,87 @@ const ShowOrder = () => {
                 )}
 
                 <BaseInput label="Комментарии" className="mb-2">
-                  <MainTextArea
-                    register={register("comment")}
-                    disabled={!!view}
-                  />
+                  <MainTextArea register={register("comment")} />
                 </BaseInput>
               </div>
             </div>
           </div>
           <div className="flex flex-1 justify-end">
-            {!view && (
-              <Button className="bg-darkYellow mt-4 w-64" type="submit">
-                Сохранить
-              </Button>
-            )}
+            {/* {!view && ( */}
+            <Button className="bg-darkYellow mt-4 w-64" type="submit">
+              Сохранить
+            </Button>
+            {/* )} */}
           </div>
 
           <div className="border-b w-full mt-4" />
           {renderCategs}
+          {!!activeCateg && (
+            <>
+              <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
+                <BaseInput
+                  label="Сложность"
+                  className="mb-2 flex flex-col w-60"
+                >
+                  <MainSelect
+                    values={complexityArr}
+                    inputStyle={InputStyle.primary}
+                    register={register("complexity")}
+                  />
+                </BaseInput>
 
-          <div className="mt-6 flex flex-wrap gap-4 min-h-[150px] h-full">
-            <BaseInput label="Сложность" className="mb-2 flex flex-col w-60">
-              <MainSelect
-                values={complexityArr}
-                inputStyle={InputStyle.primary}
-                register={register("complexity")}
-                disabled={!!view}
-              />
-            </BaseInput>
+                <BaseInput
+                  label="Тип начинки"
+                  className="mb-2 flex flex-col w-60"
+                >
+                  <MainSelect
+                    values={FillingArr}
+                    inputStyle={InputStyle.primary}
+                    register={register("filling_type")}
+                  />
+                </BaseInput>
+                {renderFloors}
 
-            <BaseInput label="Тип начинки" className="mb-2 flex flex-col w-60">
-              <MainSelect
-                values={FillingArr}
-                inputStyle={InputStyle.primary}
-                register={register("filling_type")}
-                disabled={!!view}
-              />
-            </BaseInput>
-            {renderFloors}
-            {!!view && (
-              <BaseInput
-                label="Количество порции"
-                className="mb-2 flex flex-col w-60"
-              >
-                <MainInput
-                  inputStyle={InputStyle.primary}
-                  register={register("portion")}
-                  disabled={!!view}
-                />
-              </BaseInput>
-            )}
-            {renderViewFillings}
-            {renderViewColors}
+                {/* <BaseInput
+                  label="Количество порции"
+                  className="mb-2 flex flex-col w-60"
+                >
+                  <MainInput
+                    inputStyle={InputStyle.primary}
+                    register={register("portion")}
+                  />
+                </BaseInput> */}
 
-            <BaseInput
-              label={`Цвет деталей`}
-              className="mb-2 flex flex-col w-60"
-            >
-              <MainInput
-                inputStyle={InputStyle.primary}
-                register={register("color_details")}
-                disabled={!!view}
-              />
-            </BaseInput>
-            {renderSubCategs}
-            <BaseInput label="Упаковка" className="mb-2 flex flex-col w-60">
-              <MainSelect
-                values={packageArr}
-                inputStyle={InputStyle.primary}
-                register={register("packaging")}
-                disabled={!!view}
-              />
-            </BaseInput>
-          </div>
-          {renderImg}
+                {/* {renderViewFillings} */}
+                {/* {renderViewColors} */}
 
+                <BaseInput
+                  label={`Цвет деталей`}
+                  className="mb-2 flex flex-col w-60"
+                >
+                  <MainInput
+                    inputStyle={InputStyle.primary}
+                    register={register("color_details")}
+                  />
+                </BaseInput>
+
+                <BaseInput label="Упаковка" className="mb-2 flex flex-col w-60">
+                  <MainSelect
+                    values={packageArr}
+                    inputStyle={InputStyle.primary}
+                    register={register("packaging")}
+                  />
+                </BaseInput>
+              </div>
+              {renderImg}
+            </>
+          )}
+          {renderSubCategs}
           <div className="border-b w-full mt-4" />
         </form>
-        {!view && <AddProduct />}
+        <AddProduct />
 
-        {order?.status === OrderStatus.new && !!view && (
+        {order?.status === OrderStatus.new && (
           <div className="flex gap-[15px] justify-end mt-8 ">
             <Button
               onClick={() => navigateParams({ deny_modal: 1 })}

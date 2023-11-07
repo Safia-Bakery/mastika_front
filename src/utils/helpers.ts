@@ -122,3 +122,10 @@ export const FillingArr = [
   { name: "Премиум", id: fillingType.premium },
   { name: "Стандартная", id: fillingType.standart },
 ];
+
+export const PortonNumbers: { [key: number]: number[] } = {
+  1: [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27],
+  2: [17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37],
+  3: [37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57],
+  4: [72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92],
+};

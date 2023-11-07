@@ -13,7 +13,11 @@ import {
 import useQueryString from "src/hooks/useQueryString";
 import { tgAddItem, tgItemsSelector } from "src/store/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/store/utils/types";
-import { complexityArr, imageConverter } from "src/utils/helpers";
+import {
+  PortonNumbers,
+  complexityArr,
+  imageConverter,
+} from "src/utils/helpers";
 import {
   ContentType,
   CustomObj,
@@ -33,13 +37,6 @@ interface Errortypes {
   floors?: string;
   portion?: string;
 }
-
-const numberArr: { [key: number]: number[] } = {
-  1: [7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27],
-  2: [17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37],
-  3: [37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57],
-  4: [72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92],
-};
 
 const TgSubCategory = () => {
   const navigate = useNavigate();
@@ -371,7 +368,7 @@ const TgSubCategory = () => {
 
         <div className="flex max-w-[300px] gap-3 flex-wrap mx-auto mt-4 justify-center">
           {floors &&
-            numberArr[floors].map((item) => {
+            PortonNumbers[floors].map((item) => {
               const active = item === portion;
               return (
                 <div

@@ -23,19 +23,19 @@ import {
 } from "src/store/reducers/cart";
 import cl from "classnames";
 import { useForm } from "react-hook-form";
-import EmptyList from "../EmptyList";
 import CloseIcon from "../CloseIcon";
 import useProductGroup from "src/hooks/useProductGroup";
 import useProducts from "src/hooks/useProducts";
 import orderProducts from "src/hooks/mutation/orderProducts";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { successToast } from "src/utils/toast";
 import useOrder from "src/hooks/useOrder";
 import ProductRow from "./ProductRow";
 
 const AddProduct = () => {
   const { id } = useParams();
-  const navigate = useNavigateParams();
+  const navigateParams = useNavigateParams();
+  const navigate = useNavigate();
   const group_id = useQueryString("group_id");
   const [name, $name] = useDebounce("");
   const removeParam = useRemoveParams();
@@ -72,54 +72,68 @@ const AddProduct = () => {
 
   const closeModal = () =>
     removeParam(["productModal", "group_id", "product_id"]);
-  const handleNavigate = (url: object) => navigate(url);
+  const handleNavigate = (url: object) => navigateParams(url);
   const handleName = (e: ChangeEvent<HTMLInputElement>) =>
     $name(e.target.value);
 
   const renderModal = useMemo(() => {
     if (group_id && !!items.length)
       return (
-        <div className="mt-4 max-h-96 h-full overflow-y-auto flex flex-wrap w-full">
-          {items?.map((item, idx) => (
-            <div
-              key={item.id}
-              className="flex-col bg-mainGray p-4 border rounded w-[50%] relative"
-            >
+        <>
+          <Button
+            className="bg-darkBlue !w-24 text-white text-sm mt-2"
+            onClick={() => navigate(-1)}
+            mainIcon="/assets/icons/backArrow.svg"
+          >
+            Назад
+          </Button>
+          <div className="mt-4 max-h-96 h-full overflow-y-auto flex flex-wrap w-full">
+            {items?.map((item, idx) => (
               <div
-                className={cl(
-                  { ["opacity-[0.5]"]: selected[item.id] },
-                  "absolute top-0 bottom-0 z-0 left-0 right-0 rounded bg-darkGray opacity-0 transition"
-                )}
-              />
-              <Typography>{item.name}</Typography>
+                key={item.id}
+                className="flex-col bg-mainGray p-4 border rounded w-full max-w-[385px] relative"
+              >
+                <div
+                  className={cl(
+                    { ["opacity-[0.5]"]: selected[item.id] },
+                    "absolute top-0 bottom-0 z-0 left-0 right-0 rounded bg-darkGray opacity-0 transition"
+                  )}
+                />
+                <Typography>{item.name}</Typography>
 
-              <div className="flex w-full justify-between items-center">
-                <div className="flex items-center gap-3 z-10">
-                  <div
-                    className="cursor-pointer w-8 text-center"
-                    onClick={() => dispatch(decrement(idx))}
-                  >
-                    -
+                <div className="flex w-full justify-between items-center">
+                  <div className="">
+                    <div className="flex items-center gap-3 z-10">
+                      <div
+                        className="cursor-pointer w-8 text-center"
+                        onClick={() => dispatch(decrement(idx))}
+                      >
+                        -
+                      </div>
+                      <div className="w-8 text-center">{item.count}</div>
+                      <div
+                        className="cursor-pointer w-8 text-center"
+                        onClick={() => dispatch(increment(idx))}
+                      >
+                        +
+                      </div>
+                    </div>
+                    <div className="mt-2 text-center w-full">
+                      {item.price} UZS
+                    </div>
                   </div>
-                  <div className="w-8 text-center">{item.count}</div>
-                  <div
-                    className="cursor-pointer w-8 text-center"
-                    onClick={() => dispatch(increment(idx))}
+                  <Button
+                    className="bg-darkBlue !w-24 text-white text-sm"
+                    type="button"
+                    onClick={() => dispatch(selectItem(item))}
                   >
-                    +
-                  </div>
+                    Добавить
+                  </Button>
                 </div>
-                <Button
-                  className="bg-darkBlue !w-24 text-white text-sm"
-                  type="button"
-                  onClick={() => dispatch(selectItem(item))}
-                >
-                  Добавить
-                </Button>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       );
     else
       return (
@@ -158,50 +172,57 @@ const AddProduct = () => {
   }, [selected]);
 
   const renderTable = useMemo(() => {
-    return (
-      <tbody>
-        {Object.values(selected).map((item, idx) => (
-          <tr key={item?.id} className=" hover:bg-hoverGray transition-colors">
-            <td width={50}>{idx + 1}</td>
-            <td>{item?.name}</td>
-            <td>
-              <MainInput
-                placeholder={"(не задано)"}
-                register={register(`${item.id}`)}
-              />
-            </td>
-            <td>
-              <div className="flex justify-center gap-3 z-10">
-                <div
-                  className="cursor-pointer w-8 text-center"
-                  onClick={() => dispatch(decrementSelected(item.id))}
-                >
-                  -
-                </div>
-                <div className="w-8 text-center">{item.count}</div>
-                <div
-                  className="cursor-pointer w-8 text-center"
-                  onClick={() => dispatch(incrementSelected(item.id))}
-                >
-                  +
-                </div>
-              </div>
-            </td>
-            <td>{item.price}</td>
-            <td>{item.count * item.price}</td>
-          </tr>
-        ))}
+    if (!!Object.values(selected).length)
+      return (
+        <table className="mt-8">
+          <ProductRow />
+          <tbody>
+            {Object.values(selected).map((item, idx) => (
+              <tr
+                key={item?.id}
+                className=" hover:bg-hoverGray transition-colors"
+              >
+                <td width={50}>{idx + 1}</td>
+                <td>{item?.name}</td>
+                <td>
+                  <MainInput
+                    placeholder={"(не задано)"}
+                    register={register(`${item.id}`)}
+                  />
+                </td>
+                <td>
+                  <div className="flex justify-center gap-3 z-10">
+                    <div
+                      className="cursor-pointer w-8 text-center"
+                      onClick={() => dispatch(decrementSelected(item.id))}
+                    >
+                      -
+                    </div>
+                    <div className="w-8 text-center">{item.count}</div>
+                    <div
+                      className="cursor-pointer w-8 text-center"
+                      onClick={() => dispatch(incrementSelected(item.id))}
+                    >
+                      +
+                    </div>
+                  </div>
+                </td>
+                <td>{item.price}</td>
+                <td>{item.count * item.price}</td>
+              </tr>
+            ))}
 
-        <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td>Итого:</td>
-          <td>{reduceVal}</td>
-        </tr>
-      </tbody>
-    );
+            <tr>
+              <td />
+              <td />
+              <td />
+              <td />
+              <td>Итого:</td>
+              <td>{reduceVal}</td>
+            </tr>
+          </tbody>
+        </table>
+      );
   }, [selected]);
 
   const handleSave = () => {
@@ -222,8 +243,6 @@ const AddProduct = () => {
       },
     });
   };
-
-  // if (!items.length) return;
 
   return (
     <form>
@@ -250,51 +269,48 @@ const AddProduct = () => {
         </div>
       </div>
 
-      {!emptySelected ? (
-        <table>
-          <ProductRow />
-          {renderTable}
-        </table>
-      ) : (
-        <EmptyList />
+      {renderTable}
+
+      {!!order?.product_order.length && (
+        <>
+          <div className="w-full bg-yellow">
+            <Typography size={TextSize.XXL} className="my-6" alignCenter>
+              Добавленные продукты
+            </Typography>
+          </div>
+
+          <table>
+            <ProductRow />
+
+            <tbody>
+              {order?.product_order.map((item, idx) => (
+                <tr
+                  key={item?.id}
+                  className=" hover:bg-hoverGray transition-colors"
+                >
+                  <td width={50}>{idx + 1}</td>
+                  <td>{item?.order_vs_product.name}</td>
+                  <td>
+                    <MainInput
+                      placeholder={"(не задано)"}
+                      // onChange={() => null}
+                      disabled
+                      value={item?.comment}
+                    />
+                  </td>
+                  <td>
+                    <div className="flex justify-center gap-3 z-10">
+                      <div className="w-8 text-center">{item.amount}</div>
+                    </div>
+                  </td>
+                  <td>{item?.order_vs_product?.price}</td>
+                  <td>{item.amount * item?.order_vs_product?.price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
-      <div className="w-full bg-yellow">
-        <Typography size={TextSize.XXL} alignCenter>
-          Добавленные продукты
-        </Typography>
-      </div>
-
-      <table>
-        <ProductRow />
-
-        <tbody>
-          {!!order?.product_order.length &&
-            order?.product_order.map((item, idx) => (
-              <tr
-                key={item?.id}
-                className=" hover:bg-hoverGray transition-colors"
-              >
-                <td width={50}>{idx + 1}</td>
-                <td>{item?.order_vs_product.name}</td>
-                <td>
-                  <MainInput
-                    placeholder={"(не задано)"}
-                    // onChange={() => null}
-                    disabled
-                    value={item?.comment}
-                  />
-                </td>
-                <td>
-                  <div className="flex justify-center gap-3 z-10">
-                    <div className="w-8 text-center">{item.amount}</div>
-                  </div>
-                </td>
-                <td>{item?.order_vs_product?.price}</td>
-                <td>{item.amount * item?.order_vs_product?.price}</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
 
       <Modal
         isOpen={!!modal}
