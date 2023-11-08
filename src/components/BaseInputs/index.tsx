@@ -2,6 +2,7 @@ import { FC, ReactNode } from "react";
 import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form";
 import styles from "./index.module.scss";
 import cl from "classnames";
+import Typography, { TextSize } from "../Typography";
 
 interface BaseProps {
   label?: string;
@@ -25,9 +26,9 @@ const BaseInput: FC<BaseProps> = ({
       )}
       {children}
       {error && (
-        <div className="alert alert-danger p-2" role="alert">
+        <Typography size={TextSize.XS} className="text-danger">
           {error?.message?.toString()}
-        </div>
+        </Typography>
       )}
     </div>
   );

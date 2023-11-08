@@ -66,7 +66,7 @@ const ShowOrder = () => {
     reset,
     setValue,
     watch,
-    formState: { isSubmitting },
+    formState: { errors },
   } = useForm();
 
   const { data, refetch, isLoading } = useOrder({
@@ -255,6 +255,7 @@ const ShowOrder = () => {
       color_details,
       portion,
     } = getValues();
+
     const filler = [...Array(floors)].reduce((acc: any, _, idx) => {
       acc[idx + 1] = getValues(`filling${idx + 1}`)?.toString();
       return acc;
@@ -313,15 +314,19 @@ const ShowOrder = () => {
   };
 
   const handleStatus = (status: OrderStatus) => {
-    mutate(
-      { status, id: Number(id), reject_reason: getValues("cancel_reason") },
-      {
-        onSuccess: () => {
-          successToast("status changed");
-          refetch();
-        },
-      }
-    );
+    if (!order?.order_vs_category?.id) {
+      return alert("Выберите направление");
+    } else {
+      mutate(
+        { status, id: Number(id), reject_reason: getValues("cancel_reason") },
+        {
+          onSuccess: () => {
+            successToast("status changed");
+            refetch();
+          },
+        }
+      );
+    }
   };
 
   const renderImg = useMemo(() => {
@@ -358,7 +363,6 @@ const ShowOrder = () => {
         });
       }, 300);
     }
-    // setValue("color_details", order?.color_details);
   }, [order?.color, order?.color_details]);
 
   //#reset
@@ -551,7 +555,7 @@ const ShowOrder = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <Card title={`Заказ №${id}`} className="px-8 pt-4">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -582,26 +586,14 @@ const ShowOrder = () => {
 
                     <div className="flex gap-3">
                       <BaseInput label="Дом" className="mb-2 flex-1">
-                        <MainInput
-                          register={register("house", {
-                            required: "Обязательное поле",
-                          })}
-                        />
+                        <MainInput register={register("house")} />
                       </BaseInput>
                       <BaseInput label="Квартира" className="mb-2 flex-1">
-                        <MainInput
-                          register={register("home", {
-                            required: "Обязательное поле",
-                          })}
-                        />
+                        <MainInput register={register("home")} />
                       </BaseInput>
                     </div>
                     <BaseInput label="Ориентир" className="mb-2">
-                      <MainInput
-                        register={register("refAddr", {
-                          required: "Обязательное поле",
-                        })}
-                      />
+                      <MainInput register={register("refAddr")} />
                     </BaseInput>
                   </>
                 ) : (
@@ -647,11 +639,9 @@ const ShowOrder = () => {
             </div>
           </div>
           <div className="flex flex-1 justify-end">
-            {/* {!view && ( */}
             <Button className="bg-darkYellow mt-4 w-64" type="submit">
               Сохранить
             </Button>
-            {/* )} */}
           </div>
 
           <div className="border-b w-full mt-4" />
@@ -681,19 +671,6 @@ const ShowOrder = () => {
                   />
                 </BaseInput>
                 {renderFloors}
-
-                {/* <BaseInput
-                  label="Количество порции"
-                  className="mb-2 flex flex-col w-60"
-                >
-                  <MainInput
-                    inputStyle={InputStyle.primary}
-                    register={register("portion")}
-                  />
-                </BaseInput> */}
-
-                {/* {renderViewFillings} */}
-                {/* {renderViewColors} */}
 
                 <BaseInput
                   label={`Цвет деталей`}

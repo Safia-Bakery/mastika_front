@@ -82,33 +82,37 @@ const AddOrder = () => {
   const onSubmit = () => {
     const { house, home, refAddr, name } = getValues();
     const is_delivery = Number(deliveryType === OrderingType.delivery);
-    mutate(
-      {
-        order_user: name,
-        phone_number: phone,
-        is_delivery,
-        is_bot: 0,
-        deliver_date: delivery_date,
-        ...(phone2 && { extra_number: phone2 }),
-        ...(address_name && !!is_delivery && { location: address_name }),
-        ...(address_name && !!is_delivery && { address: address_name }),
-        ...(house && !!is_delivery && { apartment: house }),
-        ...(refAddr && !!is_delivery && { near_to: refAddr }),
-        ...(branch &&
-          deliveryType === OrderingType.pickup && { department_id: branch.id }),
-        ...(home && !!is_delivery && { home }),
-        ...(lat && !!is_delivery && { lat }),
-        ...(long && !!is_delivery && { long }),
-      },
-      {
-        onSuccess: (data: any) => {
-          ordersRefetch();
-          navigate(`/orders/${data.id}`);
-          successToast("created");
+    if (!delivery_date) return alert("Выберите дату поставки");
+    else
+      mutate(
+        {
+          order_user: name,
+          phone_number: phone,
+          is_delivery,
+          is_bot: 0,
+          deliver_date: delivery_date,
+          ...(phone2 && { extra_number: phone2 }),
+          ...(address_name && !!is_delivery && { location: address_name }),
+          ...(address_name && !!is_delivery && { address: address_name }),
+          ...(house && !!is_delivery && { apartment: house }),
+          ...(refAddr && !!is_delivery && { near_to: refAddr }),
+          ...(branch &&
+            deliveryType === OrderingType.pickup && {
+              department_id: branch.id,
+            }),
+          ...(home && !!is_delivery && { home }),
+          ...(lat && !!is_delivery && { lat }),
+          ...(long && !!is_delivery && { long }),
         },
-        onError: (e: any) => errorToast(e.message),
-      }
-    );
+        {
+          onSuccess: (data: any) => {
+            ordersRefetch();
+            navigate(`/orders/${data.id}`);
+            successToast("created");
+          },
+          onError: (e: any) => errorToast(e.message),
+        }
+      );
   };
 
   const renderPhones = useMemo(() => {
