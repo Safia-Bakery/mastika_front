@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import AddProduct from "src/components/AddProducts";
+import AddSampleImages from "src/components/AddSampleImages";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
@@ -20,6 +21,7 @@ import Modal from "src/components/Modal";
 import Typography, { TextSize } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
 import orderDynamic from "src/hooks/mutation/orderDynamic";
+import tgUploadImage from "src/hooks/mutation/tgUploadImage";
 import useCategories from "src/hooks/useCategories";
 import useCategoriesFull from "src/hooks/useCategoryFull";
 import {
@@ -55,6 +57,7 @@ const ShowOrder = () => {
   const [prepay, $prepay] = useState(true);
   const [activeCateg, $activeCateg] = useState<number>();
   const [phone, $phone] = useState("");
+  const [images, $images] = useState<string[]>();
   const [extraPhone, $extraPhone] = useState("");
   const deny_modal = useQueryString("deny_modal");
   const removeParams = useRemoveParams();
@@ -75,6 +78,7 @@ const ShowOrder = () => {
   });
   const order = data?.order?.[0];
   const floors = Number(watch("floors"));
+  const { mutate: uploadImage } = tgUploadImage();
 
   const { data: filling } = useFillings({
     ptype: watch("filling_type"),
@@ -254,6 +258,7 @@ const ShowOrder = () => {
       packaging,
       color_details,
       portion,
+      sample_img,
     } = getValues();
 
     const filler = [...Array(floors)].reduce((acc: any, _, idx) => {
@@ -294,6 +299,7 @@ const ShowOrder = () => {
         is_bot: 0,
         filler,
         ...(extraPhone && { extra_number: extraPhone }),
+        ...(images && { images }),
       },
       {
         onSuccess: () => {
@@ -303,6 +309,18 @@ const ShowOrder = () => {
         onError: (e: any) => errorToast(e.message),
       }
     );
+    if (sample_img?.length) {
+      const filesArray = Array.from(sample_img);
+      const formData = new FormData();
+      filesArray.forEach((file: any, index) => {
+        formData.append("image", file);
+      });
+      uploadImage(formData, {
+        onSuccess: () => {
+          successToast("image uploaded");
+        },
+      });
+    }
 
     dynamicVals(
       { ...dynamic, ...{ order_id: Number(id) } },
@@ -394,6 +412,7 @@ const ShowOrder = () => {
         color_details: order.color_details,
         floors: order.order_fill.length,
         reject_reason: order.reject_reason,
+
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
@@ -673,20 +692,12 @@ const ShowOrder = () => {
                 {renderFloors}
 
                 <BaseInput
-                  label={`Цвет деталей`}
+                  label={"Цвет деталей"}
                   className="mb-2 flex flex-col w-60"
                 >
                   <MainInput
                     inputStyle={InputStyle.primary}
                     register={register("color_details")}
-                  />
-                </BaseInput>
-
-                <BaseInput label="Упаковка" className="mb-2 flex flex-col w-60">
-                  <MainSelect
-                    values={packageArr}
-                    inputStyle={InputStyle.primary}
-                    register={register("packaging")}
                   />
                 </BaseInput>
               </div>
@@ -695,7 +706,10 @@ const ShowOrder = () => {
           )}
           {renderSubCategs}
           <div className="border-b w-full mt-4" />
+
+          {!order?.images.length && <AddSampleImages setImages={$images} />}
         </form>
+
         <AddProduct />
 
         {order?.status === OrderStatus.new && (

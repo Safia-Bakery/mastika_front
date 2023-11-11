@@ -20,6 +20,7 @@ interface Props {
   onFocus?: () => void;
   ref?: any;
   inputStyle?: InputStyle;
+  multiple?: boolean;
 }
 
 const MainInput: FC<Props> = ({
@@ -27,6 +28,7 @@ const MainInput: FC<Props> = ({
   placeholder = "",
   register,
   ref,
+  multiple,
   inputStyle = InputStyle.primary,
   ...others
 }) => {
@@ -40,6 +42,7 @@ const MainInput: FC<Props> = ({
       )}
       placeholder={placeholder || ""}
       ref={ref}
+      multiple={multiple}
       {...register}
       {...others}
     />
