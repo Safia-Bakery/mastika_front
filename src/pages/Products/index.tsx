@@ -10,6 +10,7 @@ import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
 import Loading from "src/components/Loader";
 import useProducts from "src/hooks/useProducts";
+import categorySyncMutation from "src/hooks/mutation/categorySync";
 
 const column = [
   { name: "№", key: "" },
@@ -24,6 +25,9 @@ const Products = () => {
   const [sortKey, setSortKey] = useState();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const update = useQueryString("update");
+  const { mutate: syncIIco, isLoading: synLoading } = categorySyncMutation();
+
+  const handleSync = () => syncIIco();
 
   const { data: products, refetch, isLoading } = useProducts({});
 
@@ -55,11 +59,19 @@ const Products = () => {
 
   return (
     <>
-      {/* <CategoriesFilter /> */}
-
       <Card className="mt-8">
         <Header title="Товары">
-          <div className="flex gap-3">
+          <Button
+            className="bg-blue-400 ml-2 w-24"
+            textClassName="text-white"
+            textSize={TextSize.L}
+            mainIcon="/assets/icons/sync.svg"
+            isLoading={synLoading}
+            onClick={handleSync}
+          >
+            Обновить
+          </Button>
+          {/* <div className="flex gap-3">
             <Button
               className="bg-yellow ml-2 w-24"
               textClassName="text-black"
@@ -68,11 +80,10 @@ const Products = () => {
             >
               Создать
             </Button>
-          </div>
+          </div> */}
         </Header>
         <div className="content">
           <div className="table-responsive grid-view">
-            {/* <ItemsCount data={categories} /> */}
             <table className="table table-hover">
               <TableHead
                 column={column}
@@ -95,7 +106,13 @@ const Products = () => {
                           {!!product?.status ? "Активный" : "Неактивный"}
                         </td>
                         <td className="text-center" width={40}>
-                          <TableViewBtn onClick={() => null} />
+                          <TableViewBtn
+                            onClick={() =>
+                              handleNavigate(
+                                `${product.id}?name=${product.name}&price=${product.price}&status=${product.status}`
+                              )
+                            }
+                          />
                         </td>
                       </tr>
                     )

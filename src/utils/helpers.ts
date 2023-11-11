@@ -47,11 +47,14 @@ export const rowColor = (status: OrderStatus) => {
 export const getFillingType = (val: fillingType) => {
   switch (val) {
     case fillingType.pp:
-      return "ПП";
+      return { name: "ПП", val: "bc3e7b6e-7bf7-4a1d-b2f4-95dc8b929371" };
     case fillingType.premium:
-      return "Премиум";
+      return { name: "Премиум", val: "bc3e7b6e-7bf7-4a1d-b2f4-95dc8b929371" };
     case fillingType.standart:
-      return "Стандартная";
+      return {
+        name: "Стандартная",
+        val: "c514deb0-e2a2-4f19-987d-b204f544a0c9",
+      };
 
     default:
       break;
@@ -62,12 +65,12 @@ export const imageConverter = (img: File) => {
   if (img?.size) return URL.createObjectURL(img);
   return "";
 };
-// export const numberWithCommas = (val: number) => {
-//   return val
-//     ?.toFixed(2)
-//     ?.toString()
-//     ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-// };
+export const numberWithCommas = (val: number) => {
+  return val
+    ?.toFixed(2)
+    ?.toString()
+    ?.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+};
 
 // export const fixedString = (value: string) => {
 //   return value
@@ -113,8 +116,8 @@ export const floorsArr = [
   { id: 3, name: "3 этажный" },
 ];
 export const packageArr = [
-  { id: 1, name: "Премиум" },
   { id: 2, name: "Бесплатная" },
+  { id: 1, name: "Премиум" },
 ];
 
 export const FillingArr = [
@@ -129,3 +132,6 @@ export const PortonNumbers: { [key: number]: number[] } = {
   3: [37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57],
   4: [72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92],
 };
+export const productsID = "4b35d02b-af33-4175-ab84-c8beb646083b";
+export const packagesID = "bce298d5-e3aa-4b4c-b53f-322bdae63f59";
+export const deliveryPrice = 100000;

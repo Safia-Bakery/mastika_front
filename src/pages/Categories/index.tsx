@@ -55,8 +55,6 @@ const Categories = () => {
     // }
   };
 
-  const handleSync = () => syncIIco();
-
   useEffect(() => {
     if (update) refetch();
   }, [update]);
@@ -68,16 +66,6 @@ const Categories = () => {
       <Card className="mt-8">
         <Header title="Категории">
           <div className="flex gap-3">
-            <Button
-              className="bg-blue-400 ml-2 w-24"
-              textClassName="text-white"
-              textSize={TextSize.L}
-              mainIcon="/assets/icons/sync.svg"
-              isLoading={synLoading}
-              onClick={handleSync}
-            >
-              Update
-            </Button>
             {perms?.[MainPermissions.add_categories] && (
               <Button
                 className="bg-yellow ml-2 w-24"

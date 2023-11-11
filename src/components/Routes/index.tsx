@@ -34,6 +34,7 @@ import { lazy, useEffect, useMemo } from "react";
 // import Login from "src/pages/Login";
 import Suspend from "../Suspend";
 import WebRooutes from "../WebRoutes";
+import EditProduct from "src/pages/EditProduct";
 
 const TgMap = lazy(() => import("src/webapp/screens/TgMap"));
 const TgSuccessOrder = lazy(() => import("src/webapp/screens/TgSuccessOrder"));
@@ -81,7 +82,7 @@ const Navigation = () => {
   const token = useAppSelector(tokenSelector);
   const navigate = useNavigate();
 
-  const { isLoading, data } = useToken({});
+  const { data } = useToken({ enabled: false });
 
   const permission = data?.permissions;
 
@@ -253,6 +254,11 @@ const Navigation = () => {
         path: "/products",
         screen: MainPermissions.products,
       },
+      {
+        element: <EditProduct />,
+        path: "/products/:id",
+        screen: MainPermissions.products,
+      },
     ];
   }, []);
 
@@ -277,7 +283,6 @@ const Navigation = () => {
     if (window.location.pathname === "/") navigate("/home");
   }, []);
 
-  if (isLoading && token) return <Loading absolute />;
   return (
     <Routes>
       <Route path="/" element={<WebRooutes />}>
@@ -306,68 +311,6 @@ const Navigation = () => {
           }
           path={"login"}
         />
-        {/* <Route element={<Login />} path={"login"} />
-        <Route element={<Home />} index path={"home"} />
-        <Route element={<Home />} path={"*"} />
-        <Route
-          element={
-            <Orders
-              edit={MainPermissions.edit_all_orders}
-              add={MainPermissions.add_all_orders}
-            />
-          }
-          path={"/orders"}
-        />
-
-        <Route
-          element={
-            <Orders
-              edit={MainPermissions.edit_rec_orders}
-              add={MainPermissions.add_rec_orders}
-            />
-          }
-          path={"/received-orders"}
-        />
-
-        <Route
-          element={
-            <Users
-              client
-              edit={MainPermissions.edit_clients}
-              add={MainPermissions.add_clients}
-            />
-          }
-          path={"/clients"}
-        />
-        <Route element={<EditAddUser />} path={"/clients/add"} />
-        <Route element={<EditAddUser />} path={"/clients/:clientid"} />
-        <Route element={<AddPhone />} path={"/orders/add-phone"} />
-        <Route element={<AddOrder />} path={"/orders/add"} />
-        <Route element={<ShowOrder />} path={"/orders/:id"} />
-        <Route element={<Comments />} path={"/comments"} />
-
-        <Route element={<Roles />} path={"/roles"} />
-        <Route element={<EditAddRole />} path={"/roles/add"} />
-        <Route element={<EditAddRole />} path={"/roles/edit/:id"} />
-        <Route element={<ShowRole />} path={"/roles/:id"} />
-
-        <Route element={<Branches />} path={"/branches"} />
-        <Route element={<EditAddBranch />} path={"/branches/add"} />
-        <Route element={<EditAddBranch />} path={"/branches/:id"} />
-
-        <Route
-          element={
-            <Users
-              edit={MainPermissions.edit_users}
-              add={MainPermissions.add_users}
-            />
-          }
-          path={"/users"}
-        />
-        <Route element={<EditAddUser />} path={"/users/add"} />
-        <Route element={<EditAddUser />} path={"/users/:id"} />
-
-        <Route element={<Products />} path={"/products"} /> */}
 
         {renderScreen}
 
@@ -451,61 +394,7 @@ const Navigation = () => {
             }
             path={":id/:subid/:child/edit"}
           />
-          {/* <Route element={<Suspend><ShowSubCategChild /></Suspend>} path={":id/:subid/show"} /> */}
         </Route>
-
-        {/* <Route path={"/fillings"}>
-          <Route
-            element={
-              <Suspend>
-                <FillingsComplexity />
-              </Suspend>
-            }
-            path={":id"}
-          />
-
-          <Route
-            element={
-              <Suspend>
-                <EditAddFillings />
-              </Suspend>
-            }
-            path={":id/add"}
-          />
-          <Route
-            element={
-              <Suspend>
-                <EditAddFillings />
-              </Suspend>
-            }
-            path={":id/:complexity/edit"}
-          />
-          <Route
-            element={
-              <Suspend>
-                <FillingInfo />
-              </Suspend>
-            }
-            path={":id/:complexity"}
-          />
-
-          <Route
-            element={
-              <Suspend>
-                <EditAddFillingInfo />
-              </Suspend>
-            }
-            path={":id/:complexity/add"}
-          />
-          <Route
-            element={
-              <Suspend>
-                <EditAddFillingInfo />
-              </Suspend>
-            }
-            path={":id/:complexity/:filling/edit"}
-          />
-        </Route> */}
       </Route>
 
       {/* <WebNavigations /> */}

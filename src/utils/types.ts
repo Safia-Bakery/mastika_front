@@ -89,7 +89,8 @@ export enum MainPermissions {
   add_clients = 21,
   edit_clients = 22,
 
-  products = 23,
+  products = 26,
+  edit_products = 27,
 }
 export interface MeTypes {
   user: {
@@ -578,6 +579,12 @@ export enum fillingType {
   premium = 1,
   pp = 2,
 }
+
+// export enum fillingType {
+//   standart = "c514deb0-e2a2-4f19-987d-b204f544a0c9",
+//   premium = "bc3e7b6e-7bf7-4a1d-b2f4-95dc8b929371",
+//   pp = "bc3e7b6e-7bf7-4a1d-b2f4-95dc8b929371",
+// }
 export interface CustomObj {
   [key: number | string]: { value?: number | string; name?: string };
 }

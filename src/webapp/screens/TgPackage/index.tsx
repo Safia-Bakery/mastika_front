@@ -21,76 +21,84 @@ import { HandleCount } from "src/utils/types";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useProducts from "src/hooks/useProducts";
 import tgUploadImage from "src/hooks/mutation/tgUploadImage";
-import { packageArr } from "src/utils/helpers";
+import {
+  getFillingType,
+  packageArr,
+  packagesID,
+  productsID,
+} from "src/utils/helpers";
 import Loading from "src/components/Loader";
 import { TelegramApp } from "src/webapp/tgHelpers";
+interface ValueType {
+  value?: string | number;
+  name?: string;
+  price?: number;
+}
 
 const TgPackage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { mutate: uploadImage } = tgUploadImage();
-  const { orderPackage } = useAppSelector(tgItemsSelector);
-  const { data: products, isLoading } = useProducts({
-    group_id: "4b35d02b-af33-4175-ab84-c8beb646083b",
+  const { orderPackage, examplePhoto, filling_type } =
+    useAppSelector(tgItemsSelector);
+  const { data: products, isLoading: productLoading } = useProducts({
+    group_id: productsID,
+  });
+  const { data: packages, isLoading: packLoading } = useProducts({
+    group_id: packagesID,
   });
   const packageRef = useRef<any>();
-  const [error, $error] = useState<{ package: string }>();
-  const [itemPackage, $itemPackage] = useState<typeof orderPackage>();
+  const [itemPackage, $itemPackage] = useState<ValueType>();
 
+  const { refetch } = useProducts({
+    id: getFillingType(+filling_type?.value!)?.val,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (!!packages) {
+      const { id: value, name, price } = packages[1];
+      $itemPackage({ value, name, price });
+    }
+  }, [packages]);
   const cart = useAppSelector(tgCartSelector);
 
   const { register, watch, getValues, handleSubmit } = useForm();
 
   const onSubmit = () => {
     const { image, comments } = getValues();
-    if (!itemPackage) {
-      $error({ package: "Выберите упаковку" });
-      packageRef?.current.scrollIntoView();
+    refetch();
+    if (!!image.length) {
+      const filesArray = Array.from(image);
+      const formData = new FormData();
+      filesArray.forEach((file: any, index) => {
+        formData.append("image", file);
+      });
+      uploadImage(formData, {
+        onSuccess: (data: any) => {
+          dispatch(
+            tgAddItem({
+              examplePhoto: data.images,
+              comments,
+              orderPackage: itemPackage,
+            })
+          );
+
+          navigate("/tg/details");
+        },
+      });
     } else {
-      if (!!image.length) {
-        const filesArray = Array.from(image);
-        const formData = new FormData();
-        filesArray.forEach((file: any, index) => {
-          formData.append("image", file);
-        });
-        uploadImage(formData, {
-          onSuccess: (data: any) => {
-            dispatch(
-              tgAddItem({
-                examplePhoto: data.images,
-                comments,
-                orderPackage: itemPackage,
-              })
-            );
-            navigate("/tg/details");
-          },
-        });
-      } else {
-        dispatch(tgAddItem({ comments, orderPackage: itemPackage }));
-        navigate("/tg/details");
-      }
+      dispatch(tgAddItem({ comments, orderPackage: itemPackage }));
+      navigate("/tg/details");
     }
   };
 
   const renderImageUpload = useMemo(() => {
-    const imageLength = watch("image")?.length;
-
-    // document
-    //   ?.getElementById("regular_field")
-    //   ?.addEventListener("input", function (e) {
-    //     //@ts-ignore
-    //     const val = this.value.toLowerCase();
-    //     if (val.indexOf("progress") >= 0) {
-    //       TelegramApp.showProgress();
-    //     } else {
-    //       TelegramApp.hideProgress();
-    //     }
-    //   });
-
+    const imageLength = !!examplePhoto?.length || watch("image")?.length;
     return (
       <TgBtn
         onClick={() => null}
-        className={cl("!bg-tgGray mt-3 !rounded-2xl relative !w-40", {
+        className={cl("!bg-tgGray mt-3 !rounded-2xl relative !w-48", {
           ["!bg-tgPrimary"]: !!imageLength,
         })}
       >
@@ -117,49 +125,38 @@ const TgPackage = () => {
           Выберите упаковку
         </Texts>
         <div className="flex flex-wrap gap-3 justify-center mt-4 transition-all">
-          {packageArr.map((item) => {
-            const active = item.id === itemPackage?.value;
-            return (
-              <div className="flex-1" key={item.id}>
-                <TgBtn
-                  key={item.id}
-                  onClick={() =>
-                    $itemPackage({ name: item.name, value: item.id })
-                  }
-                  className={cl("px-3 !h-[35px]", {
-                    ["shadow-selected !bg-tgSelected"]: active,
-                  })}
-                >
-                  <Texts
-                    size={TextSize.L}
-                    weight={active ? Weight.bold : Weight.regular}
-                    className="inline-block !w-min whitespace-nowrap"
+          {packages &&
+            packages?.map(({ price, id: value, name }) => {
+              const active = value === itemPackage?.value;
+              return (
+                <div className="flex-1" key={value}>
+                  <TgBtn
+                    onClick={() => $itemPackage({ name, value, price })}
+                    className={cl("px-3 !h-[35px]", {
+                      ["shadow-selected !bg-tgSelected"]: active,
+                    })}
                   >
-                    {item.name}
-                  </Texts>
-                </TgBtn>
-                <Selected
-                  className={cl("!opacity-0 !delay-0", {
-                    ["!opacity-100"]: active,
-                  })}
-                  active={!!itemPackage?.value}
-                >{`Стоимость: ${itemPackage?.value} сум`}</Selected>
-              </div>
-            );
-          })}
-          {!itemPackage && (
-            <Typography
-              className="text-red-600 w-full"
-              size={TextSize.M}
-              alignCenter
-            >
-              {error?.package}
-            </Typography>
-          )}
+                    <Texts
+                      size={TextSize.L}
+                      weight={active ? Weight.bold : Weight.regular}
+                      className="inline-block !w-min whitespace-nowrap"
+                    >
+                      {name}
+                    </Texts>
+                  </TgBtn>
+                  <Selected
+                    className={cl("!opacity-0 !delay-0", {
+                      ["!opacity-100"]: active,
+                    })}
+                    active={!!itemPackage?.price?.toString()}
+                  >{`Стоимость: ${itemPackage?.price} сум`}</Selected>
+                </div>
+              );
+            })}
         </div>
       </div>
     );
-  }, [itemPackage, error?.package]);
+  }, [itemPackage, packages]);
 
   const prenderAdditions = useMemo(() => {
     return (
@@ -177,68 +174,70 @@ const TgPackage = () => {
           Не обязательный пункт
         </Selected>
         <div className="mt-3 flex flex-col gap-2">
-          {products?.map((item, idx) => (
-            <div className="flex justify-between" key={item.id}>
-              <Texts className="flex flex-1" alignCenter size={TextSize.L}>
-                {item.name}
-              </Texts>
-              <Texts className="!flex flex-1 items-center" size={TextSize.L}>
-                {item.price} сум
-              </Texts>
+          {products
+            ?.filter((st) => !!st.status)
+            .map((item, idx) => (
+              <div className="flex justify-between" key={item.id}>
+                <Texts className="flex flex-1" alignCenter size={TextSize.L}>
+                  {item.name}
+                </Texts>
+                <Texts className="!flex flex-1 items-center" size={TextSize.L}>
+                  {item.price} сум
+                </Texts>
 
-              {!cart?.[item.id] ? (
-                <TgBtn
-                  className="!bg-tgGray !h-5 !w-20 flex my-auto"
-                  onClick={() =>
-                    dispatch(
-                      tgAddToCart({
-                        value: item.id,
-                        name: item.name,
-                        count: 1,
-                        price: item.price,
-                      })
-                    )
-                  }
-                >
-                  <Texts size={TextSize.XS}>Добавить</Texts>
-                </TgBtn>
-              ) : (
-                <div className="flex items-center justify-center gap-4 w-20 bg-tgGray rounded-2xl text-white !h-5 my-auto">
-                  <div
+                {!cart?.[item.id] ? (
+                  <TgBtn
+                    className="!bg-tgGray !h-5 !w-20 flex my-auto"
                     onClick={() =>
                       dispatch(
-                        tgHandleCount({
-                          operation: HandleCount.decrement,
-                          id: item.id,
-                        })
-                      )
-                    }
-                    className="font-bold"
-                  >
-                    -
-                  </div>
-                  <div>
-                    <Texts weight={Weight.bold} size={TextSize.XS}>
-                      {cart[item.id].count}
-                    </Texts>
-                  </div>
-                  <div
-                    className="font-bold"
-                    onClick={() =>
-                      dispatch(
-                        tgHandleCount({
-                          operation: HandleCount.increment,
-                          id: item.id,
+                        tgAddToCart({
+                          value: item.id,
+                          name: item.name,
+                          count: 1,
+                          price: item.price,
                         })
                       )
                     }
                   >
-                    +
+                    <Texts size={TextSize.XS}>Добавить</Texts>
+                  </TgBtn>
+                ) : (
+                  <div className="flex items-center justify-center gap-4 w-20 bg-tgGray rounded-2xl text-white !h-5 my-auto">
+                    <div
+                      onClick={() =>
+                        dispatch(
+                          tgHandleCount({
+                            operation: HandleCount.decrement,
+                            id: item.id,
+                          })
+                        )
+                      }
+                      className="font-bold"
+                    >
+                      -
+                    </div>
+                    <div>
+                      <Texts weight={Weight.bold} size={TextSize.XS}>
+                        {cart[item.id].count}
+                      </Texts>
+                    </div>
+                    <div
+                      className="font-bold"
+                      onClick={() =>
+                        dispatch(
+                          tgHandleCount({
+                            operation: HandleCount.increment,
+                            id: item.id,
+                          })
+                        )
+                      }
+                    >
+                      +
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
         </div>
       </div>
     );
@@ -249,7 +248,7 @@ const TgPackage = () => {
     TelegramApp.confirmClose();
   }, []);
 
-  if (isLoading) return <Loading absolute />;
+  if (productLoading || packLoading) return <Loading absolute />;
 
   return (
     <TgContainer>

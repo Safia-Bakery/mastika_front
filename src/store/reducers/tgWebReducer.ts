@@ -35,7 +35,7 @@ interface State {
     addrerss?: string;
 
     branch?: ValueType;
-
+    managerPhone?: number | string;
     date?: Date;
   };
   cart: { [key: string]: DetailsType };
@@ -56,6 +56,7 @@ const initialState: State = {
     // additions: undefined,
     examplePhoto: undefined,
     comments: undefined,
+    manager: undefined,
   },
   cart: {},
 };

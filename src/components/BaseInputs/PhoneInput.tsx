@@ -37,10 +37,10 @@ const PhoneInput: FC<Props> = ({
         autoFocus: autoFocus,
         className: cl(
           className,
-          "form-control mb-2 !bg-mainGray ",
+          "form-control mb-2",
+          styles[inputStyle],
           styles.inputBox,
-          styles.phoneInput,
-          styles[inputStyle]
+          styles.phoneInput
         ),
       }}
       country={"uz"}

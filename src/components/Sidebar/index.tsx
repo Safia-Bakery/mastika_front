@@ -1,121 +1,68 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import cl from "classnames";
-import { Fragment, useMemo } from "react";
-import { useAppDispatch, useAppSelector } from "src/store/utils/types";
-import { logoutHandler, tokenSelector } from "src/store/reducers/auth";
+import { Fragment } from "react";
+import { useAppDispatch } from "src/store/utils/types";
+import { logoutHandler } from "src/store/reducers/auth";
 import { MainPermissions } from "src/utils/types";
 import useToken from "src/hooks/useToken";
 
-// const routes = [
-//   { name: "Главная страница", url: "/home", param: "?" },
-//   {
-//     name: "Поиск",
-//     url: "/search",
-//     hasline: true,
-//     screen: MainPermissions.fillings,
-//   },
-//   { name: "Все заявки", url: "/orders", screen: MainPermissions.all_orders },
-//   {
-//     name: "Принятые заказы",
-//     url: "/received-orders",
-//     screen: MainPermissions.rec_orders,
-//   },
-//   {
-//     name: "Товары",
-//     url: "/products",
-//     screen: MainPermissions.products,
-//   },
-//   {
-//     name: "Категории",
-//     url: "/categories",
-//     screen: MainPermissions.categories,
-//   },
-//   {
-//     name: "Начинки",
-//     url: "/fillings",
-//     screen: MainPermissions.fillings,
-//   },
-//   { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
-//   {
-//     name: "Отзывы",
-//     url: "/comments",
-//     hasline: true,
-//     screen: MainPermissions.comments,
-//   },
-//   { name: "Пользователи", url: "/users", screen: MainPermissions.users },
-//   { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
-//   {
-//     name: "Роли",
-//     url: "/roles",
-//     screen: MainPermissions.roles,
-//   },
-//   {
-//     name: "Test: View Web App",
-//     url: "/tg/order-type?key",
-//     screen: MainPermissions.roles,
-//   },
-// ];
+const routes = [
+  { name: "Главная страница", url: "/home", param: "?" },
+  {
+    name: "Поиск",
+    url: "/search",
+    hasline: true,
+    screen: MainPermissions.fillings,
+  },
+  {
+    name: "Все заявки",
+    url: "/orders",
+    screen: MainPermissions.all_orders,
+  },
+  {
+    name: "Принятые заказы",
+    url: "/received-orders",
+    screen: MainPermissions.rec_orders,
+  },
+  {
+    name: "Товары",
+    url: "/products",
+    screen: MainPermissions.products,
+  },
+  {
+    name: "Категории",
+    url: "/categories",
+    screen: MainPermissions.categories,
+  },
+  {
+    name: "Начинки",
+    url: "/fillings",
+    screen: MainPermissions.fillings,
+  },
+  { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
+  {
+    name: "Отзывы",
+    url: "/comments",
+    hasline: true,
+    screen: MainPermissions.comments,
+  },
+  { name: "Пользователи", url: "/users", screen: MainPermissions.users },
+  { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
+  {
+    name: "Роли",
+    url: "/roles",
+    screen: MainPermissions.roles,
+  },
+  // {
+  //   name: "Test: View Web App",
+  //   url: `/tg/order-type?key=${token}`,
+  //   screen: MainPermissions.roles,
+  // },
+];
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const token = useAppSelector(tokenSelector);
-
-  const routes = useMemo(() => {
-    return [
-      { name: "Главная страница", url: "/home", param: "?" },
-      {
-        name: "Поиск",
-        url: "/search",
-        hasline: true,
-        screen: MainPermissions.fillings,
-      },
-      {
-        name: "Все заявки",
-        url: "/orders",
-        screen: MainPermissions.all_orders,
-      },
-      {
-        name: "Принятые заказы",
-        url: "/received-orders",
-        screen: MainPermissions.rec_orders,
-      },
-      {
-        name: "Товары",
-        url: "/products",
-        screen: MainPermissions.products,
-      },
-      {
-        name: "Категории",
-        url: "/categories",
-        screen: MainPermissions.categories,
-      },
-      {
-        name: "Начинки",
-        url: "/fillings",
-        screen: MainPermissions.fillings,
-      },
-      { name: "Клиенты", url: "/clients", screen: MainPermissions.clients },
-      {
-        name: "Отзывы",
-        url: "/comments",
-        hasline: true,
-        screen: MainPermissions.comments,
-      },
-      { name: "Пользователи", url: "/users", screen: MainPermissions.users },
-      { name: "Филиалы", url: "/branches", screen: MainPermissions.branches },
-      {
-        name: "Роли",
-        url: "/roles",
-        screen: MainPermissions.roles,
-      },
-      {
-        name: "Test: View Web App",
-        url: `/tg/order-type?key=${token}`,
-        screen: MainPermissions.roles,
-      },
-    ];
-  }, []);
 
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();

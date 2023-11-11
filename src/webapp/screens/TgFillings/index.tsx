@@ -16,6 +16,43 @@ import useFillings from "src/hooks/useFillings";
 import { FillingArr } from "src/utils/helpers";
 import { CustomObj } from "src/utils/types";
 import Loading from "src/components/Loader";
+import {
+  useNavigateParams,
+  useRemoveParams,
+} from "src/hooks/useCustomNavigate";
+import useQueryString from "src/hooks/useQueryString";
+import useProducts from "src/hooks/useProducts";
+
+const paletteColors = [
+  { palette: "white", color: "#FFFFFF" },
+  { palette: 454, color: "#E8E7D5" },
+  { palette: 453, color: "#DCD8BD" },
+  { palette: 452, color: "#C5C19C" },
+  { palette: 451, color: "#B2AA7C" },
+  { palette: 4675, color: "#F1D9BF" },
+  { palette: 466, color: "#DFC298" },
+  { palette: 465, color: "#CFAB79" },
+  { palette: 7500, color: "#F8F2D8" },
+  { palette: 7501, color: "#F1E6C8" },
+  { palette: 7502, color: "#E8D4A2" },
+  { palette: 7503, color: "#C9B18B" },
+  { palette: 7504, color: "#A78562" },
+  { palette: 7505, color: "#A78562" },
+  { palette: 871, color: "#A29060" },
+  { palette: 872, color: "#B6985A" },
+  { palette: 876, color: "#BA8748" },
+  { palette: "Warm Grey 2", color: "#EAE5DF" },
+  { palette: "Warm Grey 3", color: "#D9D2C8" },
+  { palette: "Warm Grey 4", color: "#CAC3B9" },
+  { palette: "Warm Grey 5", color: "#BEB7AD" },
+  { palette: "Warm Grey 6", color: "#BBB1A5" },
+  { palette: "Warm Grey 7", color: "#ABA197" },
+  { palette: "Warm Grey 8", color: "#A3958A" },
+  { palette: "Warm Grey 10", color: "#877C6A" },
+  { palette: "Warm Grey 11", color: "#7B6B56" },
+  { palette: 7530, color: "#B7AC96" },
+  { palette: 7531, color: "#988670" },
+];
 
 interface Errortypes {
   1?: string;
@@ -28,6 +65,8 @@ interface Errortypes {
 
 const TgFillings = () => {
   const navigate = useNavigate();
+  const modal = useQueryString("modal");
+  const { register, getValues, setValue } = useForm();
   const [selectFilling, $selectFilling] = useState<{
     name?: string;
     value?: number | string;
@@ -35,6 +74,8 @@ const TgFillings = () => {
   const [filling, $filling] = useState<CustomObj>();
   const [error, $error] = useState<Errortypes>();
   const items = useAppSelector(tgItemsSelector);
+  const navigateParams = useNavigateParams();
+  const removeParams = useRemoveParams();
 
   useEffect(() => {
     if (items.filling) {
@@ -44,15 +85,17 @@ const TgFillings = () => {
 
   const { data: fillings, isFetching } = useFillings({
     ptype: Number(selectFilling?.value),
-    enabled: !!String(selectFilling?.value),
+    enabled: String(selectFilling?.value) !== "undefined",
   });
 
-  const [colorModal, $colorModal] = useState(false);
   const dispatch = useAppDispatch();
 
-  const { register, getValues } = useForm();
-
   const { filling_type, floors, palette } = useAppSelector(tgItemsSelector);
+
+  const closeModal = () => removeParams(["modal"]);
+
+  const handleModal = (modal: string | number) => () =>
+    navigateParams({ modal });
 
   const handleFilling = (val: CustomObj) => () =>
     $filling((prev) => ({ ...prev, ...val }));
@@ -65,13 +108,14 @@ const TgFillings = () => {
       if (!selectFilling) $error({ filling_type: "filling type is required" });
     } else {
       const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
-        acc[`${idx + 1}`] = getValues(`${idx + 1}`);
+        acc[`${idx + 1}`] = getValues(`${idx + 1}`).toString();
         return acc;
       }, {});
+
       dispatch(
         tgAddItem({
           palette: paletteVals,
-          palette_details: getValues("details"),
+          palette_details: getValues("details").toString(),
           filling_type: selectFilling,
           filling,
         })
@@ -80,18 +124,21 @@ const TgFillings = () => {
     }
   };
 
-  const toggleModal = () => $colorModal((prev) => !prev);
+  const handlePalette = (num: number | string) => () => {
+    setValue(`${modal}`, num);
+    closeModal();
+  };
 
   const renderModal = useMemo(() => {
     return (
       <TgModal
-        isOpen={colorModal}
-        onClose={toggleModal}
-        className="overflow-auto"
+        isOpen={!!modal}
+        onClose={closeModal}
+        className="overflow-y-auto"
       >
         <div className="relative">
           <div
-            onClick={toggleModal}
+            onClick={closeModal}
             className="rounded-full h-5 w-5 bg-tgGray flex items-center justify-center absolute top-[50%] -translate-y-[50%]"
           >
             <img
@@ -106,14 +153,20 @@ const TgFillings = () => {
             Таблица цветов
           </Texts>
         </div>
-        <img
-          src="/assets/images/colors.png"
-          className="max-h-[580px] h-full w-full"
-          alt="color-palette"
-        />
+
+        <div className="flex flex-wrap gap-4">
+          {paletteColors.map((item) => (
+            <div
+              key={item.palette}
+              onClick={handlePalette(item.palette)}
+              className={cl("w-[90px] h-7 rounded-md")}
+              style={{ background: item.color }}
+            />
+          ))}
+        </div>
       </TgModal>
     );
-  }, [colorModal]);
+  }, [modal]);
 
   const renderFillingType = useMemo(() => {
     return (
@@ -165,6 +218,7 @@ const TgFillings = () => {
   const renderFillingFloors = useMemo(() => {
     return (
       <div>
+        {<Selected active={!selectFilling}>{"Выберите тип начинки"}</Selected>}
         {[...Array(floors)].map((_, idx) => {
           if (!!fillings?.length)
             return (
@@ -187,7 +241,7 @@ const TgFillings = () => {
                           [idx + 1]: { name: item.name, value: item.id },
                         })}
                         className={cl(
-                          "px-3 max-w-[85px] !h-[30px] overflow-hidden",
+                          "px-3 max-w-min min-w-[80px] !h-[30px] overflow-hidden",
                           {
                             ["shadow-selected !bg-tgSelected"]: active,
                           }
@@ -220,12 +274,12 @@ const TgFillings = () => {
             {error?.filling}
           </Typography>
         )}
-        {!isFetching && (
+        {!isFetching && selectFilling && (
           <Selected active={!fillings?.length}>{"Начинки не найдены"}</Selected>
         )}
       </div>
     );
-  }, [filling, fillings, error?.filling, isFetching]);
+  }, [filling, fillings, error?.filling, selectFilling, isFetching]);
 
   const renderPaletteFloors = useMemo(() => {
     return (
@@ -233,36 +287,44 @@ const TgFillings = () => {
         {[...Array(floors)].map((_, idx) => {
           return (
             <Fragment key={idx}>
-              {/* <div className="flex justify-between "> */}
-              <Texts size={TextSize.XL} className="mt-4" uppercase>
-                Введите номер палитры для:{" "}
-                <Texts weight={Weight.bold} size={TextSize.XL} uppercase>
-                  этаж {idx + 1}
+              <div className="flex justify-between items-center">
+                {/* <div className="flex justify-between "> */}
+                <Texts size={TextSize.XL} className="mt-4" uppercase>
+                  Введите номер палитры для:{" "}
+                  <Texts weight={Weight.bold} size={TextSize.XL} uppercase>
+                    этаж {idx + 1}
+                  </Texts>
                 </Texts>
-              </Texts>
+                <div onClick={handleModal(idx + 1)}>
+                  <img src="/assets/icons/info.svg" alt="info" />
+                </div>
+              </div>
               <div className="relative">
                 <MainInput
                   inputStyle={InputStyle.white}
+                  placeholder="№"
                   className="border rounded-xl border-tgBorder mt-3 !h-12"
-                  type="color"
                   register={register(`${idx + 1}`)}
                 />
               </div>
             </Fragment>
           );
         })}
-
-        <Texts size={TextSize.XL} className="mt-4" uppercase>
-          Введите номер палитры для:{" "}
-          <Texts weight={Weight.bold} size={TextSize.XL} uppercase>
-            Деталей
+        <div className="flex justify-between items-center">
+          <Texts size={TextSize.XL} className="mt-4" uppercase>
+            Введите номер палитры для:{" "}
+            <Texts weight={Weight.bold} size={TextSize.XL} uppercase>
+              Деталей
+            </Texts>
           </Texts>
-        </Texts>
+          <div onClick={handleModal("details")}>
+            <img src="/assets/icons/info.svg" alt="info" />
+          </div>
+        </div>
         <div className="relative">
           <MainInput
             inputStyle={InputStyle.white}
             className="border rounded-xl border-tgBorder mt-3 !h-12"
-            type="color"
             placeholder="№"
             register={register("details")}
           />

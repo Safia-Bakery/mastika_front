@@ -6,6 +6,7 @@ import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
+import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Suspend from "src/components/Suspend";
 import { TextSize, Weight } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
@@ -16,6 +17,7 @@ import {
   useNavigateParams,
   useRemoveParams,
 } from "src/hooks/useCustomNavigate";
+import useProducts from "src/hooks/useProducts";
 import useQueryString from "src/hooks/useQueryString";
 import { orderArray } from "src/pages/AddOrder";
 import {
@@ -26,6 +28,11 @@ import {
   tgItemsSelector,
 } from "src/store/reducers/tgWebReducer";
 import { useAppDispatch, useAppSelector } from "src/store/utils/types";
+import {
+  deliveryPrice,
+  getFillingType,
+  numberWithCommas,
+} from "src/utils/helpers";
 import { errorToast, successToast } from "src/utils/toast";
 import { ModalType, OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
@@ -53,9 +60,16 @@ const TgDetails = () => {
   const { mutate: dynamicVals } = orderDynamic();
   const { mutate: productMutation } = orderProducts();
   const cart = useAppSelector(tgCartSelector);
+  const [phone, $phone] = useState("");
+  const [extraPhone, $extraPhone] = useState("" || items.manager);
+
+  const { data: product } = useProducts({
+    id: getFillingType(+items.filling_type?.value!)?.val,
+    enabled: !!items.filling_type?.value,
+  });
 
   const { register, reset, getValues, setValue } = useForm();
-  useBranches({ enabled: !is_delivery });
+  useBranches({ enabled: items.delivery_type?.value === OrderingType.pickup });
 
   const handleDate = (e: Date) => $delivery_date(e);
   const handleNavigateParams = (value: object) => () => navigateParams(value);
@@ -74,7 +88,7 @@ const TgDetails = () => {
   const onClose = () => removeParams(["modal", "branch"]);
 
   const onSubmit = () => {
-    const { client_phone, manager_phone, address_name } = getValues();
+    const { address_name } = getValues();
     dispatch(tgClearCart());
     const filler = items.filling
       ? Object.keys(items.filling!)?.reduce((acc: any, item) => {
@@ -89,8 +103,8 @@ const TgDetails = () => {
       {
         order_user: "name",
         is_delivery,
-        ...(client_phone && !!is_delivery && { phone_number: client_phone }),
-        ...(manager_phone && !!is_delivery && { extra_number: manager_phone }),
+        ...(phone && !!is_delivery && { phone_number: phone }),
+        ...(extraPhone && !!is_delivery && { extra_number: extraPhone }),
         ...(address_name && !!is_delivery && { address: address_name }),
         ...(!is_delivery && {
           department_id: branch?.id ? branch.id : items.branch?.value,
@@ -101,7 +115,6 @@ const TgDetails = () => {
         comment: items.comments,
         deliver_date: delivery_date,
         category_id: items.direction?.value,
-        packaging: items.orderPackage?.value,
         complexity: items.complexity?.value,
         portion: items.portion,
         is_bot: 1,
@@ -114,21 +127,31 @@ const TgDetails = () => {
       {
         onSuccess: (data: any) => {
           if (data.id) {
-            if (!!Object.keys(cart)?.length) {
-              const products = Object.keys(cart)?.map((item) => {
-                return {
+            const products = Object.keys(cart)?.map((item) => {
+              return {
+                order_id: data.id,
+                product_id: cart?.[item].value?.toString()!,
+                amount: cart?.[item].count!,
+              };
+            });
+            productMutation(
+              [
+                ...products,
+                {
                   order_id: data.id,
-                  product_id: cart?.[item].value?.toString()!,
-                  amount: cart?.[item].count!,
-                };
-              });
-              productMutation(products, {
+                  product_id: String(items.orderPackage?.value),
+                  amount: 1,
+                },
+              ],
+
+              {
                 onSuccess: () => {
                   dispatch(tgClearCart());
                   successToast("products submitted");
                 },
-              });
-            }
+              }
+            );
+
             dynamicVals(
               { ...items.dynamic, ...{ order_id: Number(data.id) } },
               {
@@ -150,8 +173,26 @@ const TgDetails = () => {
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
 
+  const calculateVals = useMemo(() => {
+    const addedProds = Object.values(cart).reduce(
+      (acc, item) => acc + item.count! * item.price!,
+      0
+    );
+
+    const productsPrice = product
+      ? items?.portion! * product?.[0].price! + items.orderPackage?.price!
+      : 0;
+
+    const cakePrice = productsPrice + addedProds;
+
+    return {
+      cakePrice,
+      total: is_delivery ? cakePrice + deliveryPrice : cakePrice,
+    };
+  }, [product]);
+
   const renderType = useMemo(() => {
-    if (items?.delivery_type?.value === OrderingType.delivery)
+    if (is_delivery)
       return (
         <>
           <BaseInput
@@ -159,11 +200,12 @@ const TgDetails = () => {
             label="Гость / Клиент"
             className="mb-2"
           >
-            <MainInput
-              inputStyle={InputStyle.white}
+            <PhoneInput
               className="!h-12"
-              register={register("client_phone")}
               placeholder={"Введите номер телефона"}
+              inputStyle={InputStyle.white}
+              onChange={$phone}
+              value={phone}
             />
           </BaseInput>
           <BaseInput
@@ -171,11 +213,12 @@ const TgDetails = () => {
             className="mb-2"
             label="Менеджер / Управляющий магазина"
           >
-            <MainInput
-              inputStyle={InputStyle.white}
+            <PhoneInput
               className="!h-12"
               placeholder={"Введите номер телефона"}
-              register={register("manager_phone")}
+              inputStyle={InputStyle.white}
+              onChange={$extraPhone}
+              value={extraPhone}
             />
           </BaseInput>
           <BaseInput labelClassName="!text-base" label="Адрес">
@@ -210,10 +253,10 @@ const TgDetails = () => {
           </TgBtn>
         </>
       );
-  }, [items?.delivery_type, items.branch?.name]);
+  }, [items?.delivery_type, items.branch?.name, phone, extraPhone]);
 
   const renderOrderType = useMemo(() => {
-    if (items.delivery_type?.value)
+    if (is_delivery)
       return (
         <MainSelect
           values={orderArray}
@@ -378,18 +421,26 @@ const TgDetails = () => {
         <div className="flex justify-between items-center">
           <Texts size={TextSize.L}>Стоимость торта</Texts>
 
-          <Texts size={TextSize.L}>371 000 сум</Texts>
+          <Texts size={TextSize.L}>
+            {numberWithCommas(calculateVals.cakePrice)} сум
+          </Texts>
         </div>
-        <div className="flex justify-between items-center mt-1">
-          <Texts size={TextSize.L}>Доставка</Texts>
+        {is_delivery && (
+          <div className="flex justify-between items-center mt-1">
+            <Texts size={TextSize.L}>Доставка</Texts>
 
-          <Texts size={TextSize.L}>100 000 сум</Texts>
-        </div>
+            <Texts size={TextSize.L}>
+              {numberWithCommas(deliveryPrice)} сум
+            </Texts>
+          </div>
+        )}
 
         <div className="flex justify-between items-center mt-5">
           <Texts size={TextSize.L}>Общее</Texts>
 
-          <Texts size={TextSize.L}>471 000 сум</Texts>
+          <Texts size={TextSize.L}>
+            {numberWithCommas(calculateVals.total)} сум
+          </Texts>
         </div>
 
         <TgBtn

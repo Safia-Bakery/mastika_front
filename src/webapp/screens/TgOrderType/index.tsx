@@ -11,6 +11,7 @@ import useQueryString from "src/hooks/useQueryString";
 import { loginHandler } from "src/store/reducers/auth";
 import { tgAddItem } from "src/store/reducers/tgWebReducer";
 import { useAppDispatch } from "src/store/utils/types";
+import { deliveryPrice, numberWithCommas } from "src/utils/helpers";
 import { OrderingType } from "src/utils/types";
 import Texts from "src/webapp/componets/Texts";
 import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
@@ -42,6 +43,7 @@ const TgOrderType = () => {
   const dispatch = useAppDispatch();
   const modal = Number(useQueryString("modal"));
   const token = useQueryString("token");
+  const manager = useQueryString("manager_phone");
   const removeParams = useRemoveParams();
   useBranches({ enabled: orderType === OrderingType.pickup });
 
@@ -59,7 +61,8 @@ const TgOrderType = () => {
 
   useEffect(() => {
     if (token) dispatch(loginHandler(token));
-  }, [token]);
+    if (manager) dispatch(tgAddItem({ manager }));
+  }, [token, manager]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -111,7 +114,7 @@ const TgOrderType = () => {
                 className="inline"
               >
                 {" "}
-                100.000 сум.
+                {numberWithCommas(deliveryPrice)} сум.
               </Texts>{" "}
               Доставка будет осуществляться с фабрики🚘 Доставка за пределы
               города не осуществляется. Спасибо за ваш выбор❤️

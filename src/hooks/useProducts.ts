@@ -11,7 +11,7 @@ export const useProducts = ({
   price,
 }: {
   enabled?: boolean;
-  id?: number;
+  id?: string;
   name?: string;
   status?: number;
   group_id?: string;

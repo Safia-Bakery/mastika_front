@@ -209,7 +209,7 @@ const ShowOrder = () => {
   const renderStates = useMemo(() => {
     return (
       <>
-        <BaseInput label="Номер телефона" className="mb-2">
+        <BaseInput label="Гость / Клиент" className="mb-2">
           <PhoneInput
             placeholder={"Введите номер"}
             onChange={$phone}
@@ -217,7 +217,7 @@ const ShowOrder = () => {
             value={phone}
           />
         </BaseInput>
-        <BaseInput label="Доп. Номер" className="mb-2">
+        <BaseInput label="Менеджер / Управляющий магазина" className="mb-2">
           <PhoneInput
             placeholder={"Введите номер"}
             onChange={$extraPhone}
@@ -504,7 +504,7 @@ const ShowOrder = () => {
               className="mb-2 flex flex-col w-60"
               key={item}
             >
-              <MainInput register={register(`color${item + 1}`)} type="color" />
+              <MainInput register={register(`color${item + 1}`)} />
             </BaseInput>
           ))}
       </>
@@ -699,7 +699,7 @@ const ShowOrder = () => {
         <AddProduct />
 
         {order?.status === OrderStatus.new && (
-          <div className="flex gap-[15px] justify-end mt-8 ">
+          <div className="flex gap-[15px] justify-end mt-8">
             <Button
               onClick={() => navigateParams({ deny_modal: 1 })}
               className="bg-danger mt-4 w-40 text-white"

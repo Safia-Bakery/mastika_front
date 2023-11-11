@@ -341,7 +341,7 @@ const TgSubCategory = () => {
         return (
           <>
             <Texts className="my-4" size={TextSize.XL} uppercase>
-              Введите этажность
+              ВВЕДИТЕ НУЖНОЕ КОЛИЧЕСТВО ПОРЦИЙ
             </Texts>
             <MainInput
               type="number"

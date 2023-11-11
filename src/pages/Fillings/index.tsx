@@ -84,7 +84,7 @@ const Fillings = () => {
                       </td>
                       <td className="text-center">{filling?.name}</td>
                       <td className="text-center">
-                        {getFillingType(filling.ptype)}
+                        {getFillingType(filling.ptype)?.name}
                       </td>
                       <td className="text-center" width={40}>
                         {perms?.[MainPermissions.filling] && (
