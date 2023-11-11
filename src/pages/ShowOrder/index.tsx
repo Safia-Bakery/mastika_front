@@ -707,7 +707,7 @@ const ShowOrder = () => {
           {renderSubCategs}
           <div className="border-b w-full mt-4" />
 
-          {!order?.images.length && <AddSampleImages setImages={$images} />}
+          {!order?.images?.length && <AddSampleImages setImages={$images} />}
         </form>
 
         <AddProduct />
