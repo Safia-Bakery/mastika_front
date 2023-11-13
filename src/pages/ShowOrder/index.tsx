@@ -255,7 +255,6 @@ const ShowOrder = () => {
       packaging,
       color_details,
       portion,
-      sample_img,
     } = getValues();
 
     const filler = [...Array(floors)].reduce((acc: any, _, idx) => {
@@ -305,18 +304,6 @@ const ShowOrder = () => {
         onError: (e: any) => errorToast(e.message),
       }
     );
-    if (sample_img?.length) {
-      const filesArray = Array.from(sample_img);
-      const formData = new FormData();
-      filesArray.forEach((file: any, index) => {
-        formData.append("image", file);
-      });
-      uploadImage(formData, {
-        onSuccess: () => {
-          successToast("image uploaded");
-        },
-      });
-    }
 
     dynamicVals(
       { ...dynamic, ...{ order_id: Number(id) } },
@@ -408,7 +395,6 @@ const ShowOrder = () => {
         color_details: order.color_details,
         floors: order.order_fill.length,
         reject_reason: order.reject_reason,
-
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
         ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
       });
@@ -426,7 +412,6 @@ const ShowOrder = () => {
   }, [order?.status]);
 
   const renderSampleImage = useMemo(() => {
-    // if (!!order?.images?.length)
     return (
       <div className="mt-6">
         <div className="flex justify-between items-center">
@@ -441,11 +426,11 @@ const ShowOrder = () => {
           </Button>
         </div>
 
-        <div className="max-w-md w-full flex flex-wrap gap-4 mt-4">
+        <div className=" w-full flex flex-wrap gap-4 mt-8">
           {order?.images?.map((item) => (
             <img
               src={`${baseURL}/${item}`}
-              className="object-contain max-w-sm w-full"
+              className="object-contain max-w-xs w-full"
               alt="uploaded-image"
               key={item}
             />
@@ -455,7 +440,6 @@ const ShowOrder = () => {
         <div className="border-b w-full mt-4" />
       </div>
     );
-    return null;
   }, [order?.images]);
 
   const renderFloors = useMemo(() => {
