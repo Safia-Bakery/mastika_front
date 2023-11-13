@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import AddProduct from "src/components/AddProducts";
-import AddSampleImages from "src/components/AddSampleImages";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
@@ -13,24 +12,17 @@ import MainTextArea from "src/components/BaseInputs/MainTextArea";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
-import CloseIcon from "src/components/CloseIcon";
 import EmptyList from "src/components/EmptyList";
-import Header from "src/components/Header";
 import Loading from "src/components/Loader";
-import Modal from "src/components/Modal";
 import Typography, { TextSize } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
 import orderDynamic from "src/hooks/mutation/orderDynamic";
 import tgUploadImage from "src/hooks/mutation/tgUploadImage";
 import useCategories from "src/hooks/useCategories";
 import useCategoriesFull from "src/hooks/useCategoryFull";
-import {
-  useNavigateParams,
-  useRemoveParams,
-} from "src/hooks/useCustomNavigate";
+import { useNavigateParams } from "src/hooks/useCustomNavigate";
 import useFillings from "src/hooks/useFillings";
 import useOrder from "src/hooks/useOrder";
-import useQueryString from "src/hooks/useQueryString";
 import { baseURL } from "src/main";
 import {
   FillingArr,
@@ -38,7 +30,6 @@ import {
   complexityArr,
   floorsArr,
   orderStatus,
-  packageArr,
   payments,
   systems,
 } from "src/utils/helpers";
@@ -51,26 +42,22 @@ import {
   OrderValueType,
   SubCategType,
 } from "src/utils/types";
+import Modals from "src/components/OrderModals";
+
+export enum OrderModal {
+  deny = 1,
+  image = 2,
+}
 
 const ShowOrder = () => {
   const { id } = useParams();
   const [prepay, $prepay] = useState(true);
   const [activeCateg, $activeCateg] = useState<number>();
   const [phone, $phone] = useState("");
-  const [images, $images] = useState<string[]>();
   const [extraPhone, $extraPhone] = useState("");
-  const deny_modal = useQueryString("deny_modal");
-  const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    reset,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, getValues, reset, setValue, watch } =
+    useForm();
 
   const { data, refetch, isLoading } = useOrder({
     id: Number(id),
@@ -210,25 +197,35 @@ const ShowOrder = () => {
     );
   }, [activeCateg, categories, categoryLoading]);
 
-  const renderStates = useMemo(() => {
+  const renderPhone = useMemo(() => {
+    return (
+      <BaseInput label="Гость / Клиент" className="mb-2">
+        <PhoneInput
+          placeholder={"Введите номер"}
+          onChange={$phone}
+          disabled
+          value={phone}
+        />
+      </BaseInput>
+    );
+  }, [phone]);
+
+  const renderExtraPhone = useMemo(() => {
+    return (
+      <BaseInput label="Менеджер / Управляющий магазина" className="mb-2">
+        <PhoneInput
+          placeholder={"Введите номер"}
+          onChange={$extraPhone}
+          disabled
+          value={extraPhone}
+        />
+      </BaseInput>
+    );
+  }, [extraPhone]);
+
+  const renderDates = useMemo(() => {
     return (
       <>
-        <BaseInput label="Гость / Клиент" className="mb-2">
-          <PhoneInput
-            placeholder={"Введите номер"}
-            onChange={$phone}
-            disabled
-            value={phone}
-          />
-        </BaseInput>
-        <BaseInput label="Менеджер / Управляющий магазина" className="mb-2">
-          <PhoneInput
-            placeholder={"Введите номер"}
-            onChange={$extraPhone}
-            disabled
-            value={extraPhone}
-          />
-        </BaseInput>
         <BaseInput label="Дата оформления" className="mb-2">
           <MainDatePicker
             placeholder={"Не задано"}
@@ -246,7 +243,7 @@ const ShowOrder = () => {
         </BaseInput>
       </>
     );
-  }, [phone, extraPhone, created_at, delivery_date]);
+  }, [created_at, delivery_date]);
 
   const onSubmit = () => {
     const {
@@ -299,7 +296,6 @@ const ShowOrder = () => {
         is_bot: 0,
         filler,
         ...(extraPhone && { extra_number: extraPhone }),
-        ...(images && { images }),
       },
       {
         onSuccess: () => {
@@ -419,35 +415,6 @@ const ShowOrder = () => {
     }
   }, [order]);
 
-  const renderModal = useMemo(() => {
-    return (
-      <Modal
-        isOpen={!!deny_modal && order?.status === OrderStatus.new}
-        onClose={() => removeParams(["deny_modal"])}
-      >
-        <form className="p-3 h-full">
-          <div className="flex w-full justify-between items-center">
-            <Typography size={TextSize.XXL}>Причина отклонении</Typography>
-            <CloseIcon onClick={() => removeParams(["deny_modal"])} />
-          </div>
-
-          <div className="flex flex-col justify-between h-full">
-            <BaseInput label="Комментарии" className="mt-4">
-              <MainTextArea register={register("cancel_reason")} />
-            </BaseInput>
-
-            <Button
-              className="bg-primary text-white absolute bottom-2 w-[initial]"
-              onClick={() => handleStatus(OrderStatus.rejected)}
-            >
-              Отправить
-            </Button>
-          </div>
-        </form>
-      </Modal>
-    );
-  }, [deny_modal, order?.status]);
-
   const renderStatus = useMemo(() => {
     return (
       <div className="flex flex-col">
@@ -459,22 +426,35 @@ const ShowOrder = () => {
   }, [order?.status]);
 
   const renderSampleImage = useMemo(() => {
-    if (!!order?.images?.length)
-      return (
-        <div className="mt-6">
+    // if (!!order?.images?.length)
+    return (
+      <div className="mt-6">
+        <div className="flex justify-between items-center">
           <Typography size={TextSize.XXL}>Примерный вариант торта</Typography>
-          <div className="max-w-md w-full flex flex-wrap gap-4 mt-4">
-            {order?.images.map((item) => (
-              <img
-                src={`${baseURL}/${item}`}
-                className="object-contain"
-                alt="uploaded-image"
-                key={item}
-              />
-            ))}
-          </div>
+
+          <Button
+            className="bg-darkBlue mt-4 w-64 text-white"
+            type="button"
+            onClick={() => navigateParams({ modal: OrderModal.image })}
+          >
+            Добавить
+          </Button>
         </div>
-      );
+
+        <div className="max-w-md w-full flex flex-wrap gap-4 mt-4">
+          {order?.images?.map((item) => (
+            <img
+              src={`${baseURL}/${item}`}
+              className="object-contain max-w-sm w-full"
+              alt="uploaded-image"
+              key={item}
+            />
+          ))}
+        </div>
+
+        <div className="border-b w-full mt-4" />
+      </div>
+    );
     return null;
   }, [order?.images]);
 
@@ -574,8 +554,6 @@ const ShowOrder = () => {
 
   return (
     <>
-      {/* <Header /> */}
-
       <Card title={`Заказ №${id}`} className="px-8 pt-4">
         <form onSubmit={handleSubmit(onSubmit)}>
           {renderStatus}
@@ -596,7 +574,9 @@ const ShowOrder = () => {
                     register={register("client")}
                   />
                 </BaseInput>
-                {renderStates}
+                {renderPhone}
+                {renderExtraPhone}
+                {renderDates}
                 {order?.is_delivery ? (
                   <>
                     <BaseInput label="Адрес доставки" className="mb-2">
@@ -706,16 +686,15 @@ const ShowOrder = () => {
           )}
           {renderSubCategs}
           <div className="border-b w-full mt-4" />
-
-          {!order?.images?.length && <AddSampleImages setImages={$images} />}
         </form>
 
         <AddProduct />
 
+        {renderSampleImage}
         {order?.status === OrderStatus.new && (
           <div className="flex gap-[15px] justify-end mt-8">
             <Button
-              onClick={() => navigateParams({ deny_modal: 1 })}
+              onClick={() => navigateParams({ modal: OrderModal.deny })}
               className="bg-danger mt-4 w-40 text-white"
               type="submit"
             >
@@ -730,10 +709,8 @@ const ShowOrder = () => {
             </Button>
           </div>
         )}
-        {renderSampleImage}
       </Card>
-
-      {renderModal}
+      <Modals />
     </>
   );
 };

@@ -250,7 +250,7 @@ const AddProduct = () => {
         <Typography size={TextSize.XXL}>Товары</Typography>
         <div>
           <Button
-            className="bg-darkBlue mt-4 w-64 text-white mr-2"
+            className="bg-darkBlue mt-4 w-64 text-white"
             type="button"
             onClick={() => handleNavigate({ productModal: 1 })}
           >
@@ -311,6 +311,8 @@ const AddProduct = () => {
           </table>
         </>
       )}
+
+      <div className="border-b w-full mt-4" />
 
       <Modal
         isOpen={!!modal}
