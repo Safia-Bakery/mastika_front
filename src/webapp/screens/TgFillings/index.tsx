@@ -302,7 +302,7 @@ const TgFillings = () => {
           </Texts>
         </div>
 
-        <div className="flex flex-wrap gap-4 max-h-[70vh] h-full overflow-y-auto">
+        <div className="flex flex-wrap gap-4 max-h-[70vh] h-full overflow-y-auto justify-center">
           {paletteColors.map((item) => (
             <div onClick={handlePalette(item.palette)} key={item.palette}>
               <div
