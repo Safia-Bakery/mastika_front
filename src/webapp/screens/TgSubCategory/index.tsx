@@ -71,15 +71,15 @@ const TgSubCategory = () => {
     if (!floors || !portion || !complexity?.value) {
       if (!portion) {
         portionRef?.current.scrollIntoView();
-        $error({ portion: "portions are required" });
+        $error({ portion: "Обязательное поле" });
       }
       if (!floors) {
         floorsRef?.current.scrollIntoView();
-        $error({ floors: "floors are required" });
+        $error({ floors: "Обязательное поле" });
       }
       if (!complexity?.value) {
         complexityRef?.current.scrollIntoView();
-        $error({ complexity: "complexity is required" });
+        $error({ complexity: "Обязательное поле" });
       }
     } else {
       const dynamic = data?.category_vs_subcategory.reduce((acc: any, item) => {
@@ -234,7 +234,7 @@ const TgSubCategory = () => {
                 key={item.id}
                 onClick={() => $complexity({ name: item.name, value: item.id })}
                 className={cl("px-3 !min-w-[140px] max-w-[250px] !w-min", {
-                  ["shadow-selected"]: active,
+                  ["shadow-selected !bg-tgSelected"]: active,
                 })}
               >
                 <Texts

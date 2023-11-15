@@ -251,9 +251,9 @@ const TgFillings = () => {
   const handleSubmit = () => {
     if (!filling || Object.keys(filling).length !== floors || !selectFilling) {
       if (!filling || Object.keys(filling).length !== floors)
-        $error({ filling: "fillings are required" });
+        $error({ filling: "Обязательное поле" });
 
-      if (!selectFilling) $error({ filling_type: "filling type is required" });
+      if (!selectFilling) $error({ filling_type: "Обязательное поле" });
     } else {
       const paletteVals = [...Array(floors)].reduce((acc, _, idx) => {
         acc[`${idx + 1}`] = getValues(`${idx + 1}`).toString();

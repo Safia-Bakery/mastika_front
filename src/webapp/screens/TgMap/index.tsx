@@ -10,7 +10,10 @@ import {
 } from "react-yandex-maps";
 // import styles from "./index.module.scss";
 // import "./index.scss";
-import { useNavigateParams } from "src/hooks/useCustomNavigate";
+import {
+  useNavigateParams,
+  useRemoveParams,
+} from "src/hooks/useCustomNavigate";
 import TgBtn from "src/webapp/componets/TgBtn";
 
 interface GeocodeResult {
@@ -21,10 +24,13 @@ const TgMap = () => {
   const ymaps = useRef<any>();
   const map = useRef<any>();
   const navigateParams = useNavigateParams();
+  const removeParams = useRemoveParams();
   const navigate = useNavigate();
   const [markerCoords, setMarkerCoords] = useState<number[]>([
     41.30524669891599, 69.24100608330389,
   ]);
+
+  const closeModal = () => removeParams(["modal"]);
 
   // Your Yandex Geocoding API key
   const apiKey = "51697f82-c9b3-463e-8305-c7ed2bfe3ad3";
@@ -123,7 +129,7 @@ const TgMap = () => {
       </div>
 
       <TgBtn
-        onClick={() => navigate("/tg/details" + window?.location?.search)}
+        onClick={closeModal}
         className="font-bold absolute bottom-2 right-2 !w-40"
       >
         Готово

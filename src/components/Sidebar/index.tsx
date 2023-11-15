@@ -7,6 +7,9 @@ import { logoutHandler } from "src/store/reducers/auth";
 import { MainPermissions } from "src/utils/types";
 import useToken from "src/hooks/useToken";
 
+// const token =
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDA0NTk5NjcsInN1YiI6InRlc3QifQ.kzPjvDJgqNh0JSnEZCQy7imVve4-f4CGq_Mh74qEsSg";
+
 const routes = [
   { name: "Главная страница", url: "/home", param: "?" },
   {
@@ -56,7 +59,7 @@ const routes = [
   },
   // {
   //   name: "Test: View Web App",
-  //   url: `/tg/order-type?key=${token}`,
+  //   url: `/tg/order-type?token=${token}`,
   //   screen: MainPermissions.roles,
   // },
 ];

@@ -3,7 +3,7 @@ import Selected from "src/webapp/componets/TgSelectedLabel";
 import cl from "classnames";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Typography, { TextSize, Weight } from "src/components/Typography";
+import { TextSize, Weight } from "src/components/Typography";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import MainTextArea from "src/components/BaseInputs/MainTextArea";
@@ -21,12 +21,7 @@ import { HandleCount } from "src/utils/types";
 import TgBackBtn from "src/webapp/componets/TgBackBtn";
 import useProducts from "src/hooks/useProducts";
 import tgUploadImage from "src/hooks/mutation/tgUploadImage";
-import {
-  getFillingType,
-  packageArr,
-  packagesID,
-  productsID,
-} from "src/utils/helpers";
+import { getFillingType, packagesID, productsID } from "src/utils/helpers";
 import Loading from "src/components/Loader";
 import { TelegramApp } from "src/webapp/tgHelpers";
 interface ValueType {

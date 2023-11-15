@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { lazy, useEffect, useMemo, useState } from "react";
+import { lazy, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
@@ -8,7 +8,7 @@ import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
 import MainSelect from "src/components/BaseInputs/MainSelect";
 import PhoneInput from "src/components/BaseInputs/PhoneInput";
 import Suspend from "src/components/Suspend";
-import { TextSize, Weight } from "src/components/Typography";
+import Typography, { TextSize, Weight } from "src/components/Typography";
 import orderMutation from "src/hooks/mutation/order";
 import orderDynamic from "src/hooks/mutation/orderDynamic";
 import orderProducts from "src/hooks/mutation/orderProducts";
@@ -41,14 +41,21 @@ import TgBranchSelect from "src/webapp/componets/TgBranchSelect";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgModal from "src/webapp/componets/TgConfirmModal";
 import TgContainer from "src/webapp/componets/TgContainer";
+import TgMap from "../TgMap";
+import CloseIcon from "src/components/CloseIcon";
 
 const TgSwiper = lazy(() => import("src/webapp/componets/TgSwiper"));
+
+interface Errortypes {
+  date?: string;
+}
 
 const TgDetails = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const removeParams = useRemoveParams();
   const navigateParams = useNavigateParams();
+  const dateRef = useRef<any>();
   const modal = useQueryString("modal");
   const address_name = useQueryString("address_name");
   const lat = useQueryString("lat");
@@ -56,6 +63,7 @@ const TgDetails = () => {
   const items = useAppSelector(tgItemsSelector);
   const is_delivery = items.delivery_type?.value === OrderingType.delivery;
   const [delivery_date, $delivery_date] = useState<Date>();
+  const [error, $error] = useState<Errortypes>();
   const { mutate } = orderMutation();
   const { mutate: dynamicVals } = orderDynamic();
   const { mutate: productMutation } = orderProducts();
@@ -89,85 +97,90 @@ const TgDetails = () => {
 
   const onSubmit = () => {
     const { address_name } = getValues();
-    dispatch(tgClearCart());
-    const filler = items.filling
-      ? Object.keys(items.filling!)?.reduce((acc: any, item) => {
-          if (!!items.filling?.[item].value?.toString()) {
-            acc[`${item}`] = `${items.filling?.[item].value}`;
-          }
-          return acc;
-        }, {})
-      : null;
+    if (!delivery_date) {
+      dateRef?.current.scrollIntoView();
+      $error({ date: "Обязательное поле" });
+    } else {
+      dispatch(tgClearCart());
+      const filler = items.filling
+        ? Object.keys(items.filling!)?.reduce((acc: any, item) => {
+            if (!!items.filling?.[item].value?.toString()) {
+              acc[`${item}`] = `${items.filling?.[item].value}`;
+            }
+            return acc;
+          }, {})
+        : null;
 
-    mutate(
-      {
-        order_user: "name",
-        is_delivery,
-        ...(phone && !!is_delivery && { phone_number: phone }),
-        ...(extraPhone && !!is_delivery && { extra_number: extraPhone }),
-        ...(address_name && !!is_delivery && { address: address_name }),
-        ...(!is_delivery && {
-          department_id: branch?.id ? branch.id : items.branch?.value,
-        }),
+      mutate(
+        {
+          order_user: "name",
+          is_delivery,
+          ...(phone && { phone_number: phone }),
+          ...(extraPhone && { extra_number: extraPhone }),
+          ...(address_name && !!is_delivery && { address: address_name }),
+          ...(!is_delivery && {
+            department_id: branch?.id ? branch.id : items.branch?.value,
+          }),
 
-        ...(lat && !!is_delivery && { lat }),
-        ...(long && !!is_delivery && { long }),
-        comment: items.comments,
-        deliver_date: delivery_date,
-        category_id: items.direction?.value,
-        complexity: items.complexity?.value,
-        portion: items.portion,
-        is_bot: 1,
+          ...(lat && !!is_delivery && { lat }),
+          ...(long && !!is_delivery && { long }),
+          comment: items.comments,
+          deliver_date: delivery_date,
+          category_id: items.direction?.value,
+          complexity: items.complexity?.value,
+          portion: items.portion,
+          is_bot: 1,
 
-        ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
-        ...(!!filler && { filler }),
-        color_details: items.palette_details,
-        color: items.palette,
-      },
-      {
-        onSuccess: (data: any) => {
-          if (data.id) {
-            const products = Object.keys(cart)?.map((item) => {
-              return {
-                order_id: data.id,
-                product_id: cart?.[item].value?.toString()!,
-                amount: cart?.[item].count!,
-              };
-            });
-            productMutation(
-              [
-                ...products,
-                {
-                  order_id: data.id,
-                  product_id: String(items.orderPackage?.value),
-                  amount: 1,
-                },
-              ],
-
-              {
-                onSuccess: () => {
-                  dispatch(tgClearCart());
-                  successToast("products submitted");
-                },
-              }
-            );
-
-            dynamicVals(
-              { ...items.dynamic, ...{ order_id: Number(data.id) } },
-              {
-                onError: (e: any) => errorToast(e.message),
-                onSuccess: () => {
-                  dispatch(tgClearItems());
-                  successToast("dynamics submitted");
-                  handleNavigate(`/tg/success?id=${data.id}`);
-                },
-              }
-            );
-          }
+          ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
+          ...(!!filler && { filler }),
+          color_details: items.palette_details,
+          color: items.palette,
         },
-        onError: (e: any) => errorToast(e.message),
-      }
-    );
+        {
+          onSuccess: (data: any) => {
+            if (data.id) {
+              const products = Object.keys(cart)?.map((item) => {
+                return {
+                  order_id: data.id,
+                  product_id: cart?.[item].value?.toString()!,
+                  amount: cart?.[item].count!,
+                };
+              });
+              productMutation(
+                [
+                  ...products,
+                  {
+                    order_id: data.id,
+                    product_id: String(items.orderPackage?.value),
+                    amount: 1,
+                  },
+                ],
+
+                {
+                  onSuccess: () => {
+                    dispatch(tgClearCart());
+                    successToast("products submitted");
+                  },
+                }
+              );
+
+              dynamicVals(
+                { ...items.dynamic, ...{ order_id: Number(data.id) } },
+                {
+                  onError: (e: any) => errorToast(e.message),
+                  onSuccess: () => {
+                    dispatch(tgClearItems());
+                    successToast("dynamics submitted");
+                    handleNavigate(`/tg/success?id=${data.id}`);
+                  },
+                }
+              );
+            }
+          },
+          onError: (e: any) => errorToast(e.message),
+        }
+      );
+    }
   };
 
   const branchJson = useQueryString("branch");
@@ -191,36 +204,45 @@ const TgDetails = () => {
     };
   }, [product]);
 
+  const renderPhone = useMemo(() => {
+    return (
+      <BaseInput
+        labelClassName="!text-base"
+        label="Гость / Клиент"
+        className="mb-2"
+      >
+        <PhoneInput
+          className="!h-12"
+          placeholder={"Введите номер телефона"}
+          inputStyle={InputStyle.white}
+          onChange={$phone}
+          value={phone}
+        />
+      </BaseInput>
+    );
+  }, [phone]);
+  const renderExtraPhone = useMemo(() => {
+    return (
+      <BaseInput
+        labelClassName="!text-base"
+        className="mb-2"
+        label="Менеджер / Управляющий магазина"
+      >
+        <PhoneInput
+          className="!h-12"
+          placeholder={"Введите номер телефона"}
+          inputStyle={InputStyle.white}
+          onChange={$extraPhone}
+          value={extraPhone}
+        />
+      </BaseInput>
+    );
+  }, [extraPhone]);
+
   const renderType = useMemo(() => {
     if (is_delivery)
       return (
         <>
-          <BaseInput
-            labelClassName="!text-base"
-            label="Гость / Клиент"
-            className="mb-2"
-          >
-            <PhoneInput
-              className="!h-12"
-              placeholder={"Введите номер телефона"}
-              inputStyle={InputStyle.white}
-              onChange={$phone}
-              value={phone}
-            />
-          </BaseInput>
-          <BaseInput
-            labelClassName="!text-base"
-            className="mb-2"
-            label="Менеджер / Управляющий магазина"
-          >
-            <PhoneInput
-              className="!h-12"
-              placeholder={"Введите номер телефона"}
-              inputStyle={InputStyle.white}
-              onChange={$extraPhone}
-              value={extraPhone}
-            />
-          </BaseInput>
           <BaseInput labelClassName="!text-base" label="Адрес">
             <MainInput
               inputStyle={InputStyle.white}
@@ -232,7 +254,7 @@ const TgDetails = () => {
             />
           </BaseInput>
           <TgBtn
-            onClick={() => handleNavigate("/tg/map")}
+            onClick={handleNavigateParams({ modal: ModalType.map })}
             className="font-bold"
           >
             указать на карте
@@ -253,23 +275,23 @@ const TgDetails = () => {
           </TgBtn>
         </>
       );
-  }, [items?.delivery_type, items.branch?.name, phone, extraPhone]);
+  }, [items?.delivery_type, items.branch?.name]);
 
   const renderOrderType = useMemo(() => {
-    if (is_delivery)
-      return (
-        <MainSelect
-          values={orderArray}
-          value={items.delivery_type?.value}
-          onChange={(e) =>
-            dispatch(
-              tgAddItem({ delivery_type: { value: Number(e.target.value) } })
-            )
-          }
-          inputStyle={InputStyle.white}
-          className="!h-6 border !bg-tgGray rounded-md !max-w-[90px] !p-0 text-xs !mb-0"
-        />
-      );
+    // if (is_delivery)
+    return (
+      <MainSelect
+        values={orderArray}
+        value={items.delivery_type?.value}
+        onChange={(e) =>
+          dispatch(
+            tgAddItem({ delivery_type: { value: Number(e.target.value) } })
+          )
+        }
+        inputStyle={InputStyle.white}
+        className="!h-6 border !bg-tgGray rounded-md !max-w-[90px] !p-0 text-xs !mb-0"
+      />
+    );
   }, [items.delivery_type?.value]);
 
   const renderDetails = useMemo(() => {
@@ -347,22 +369,34 @@ const TgDetails = () => {
 
   const renderDate = useMemo(() => {
     return (
-      <BaseInput
-        labelClassName="!text-base"
-        className="mt-4"
-        label="Дата / Время"
-      >
-        <MainDatePicker
-          inputStyle={InputStyle.white}
-          className="!h-12"
-          showTimeInput
-          placeholder={"Введите адрес доставки"}
-          selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
-          onChange={handleDate}
-        />
-      </BaseInput>
+      <div ref={dateRef}>
+        <BaseInput
+          labelClassName="!text-base"
+          className="mt-4"
+          label="Дата / Время"
+        >
+          <MainDatePicker
+            inputStyle={InputStyle.white}
+            className="!h-12"
+            showTimeInput
+            placeholder={"Введите адрес доставки"}
+            selected={delivery_date ? dayjs(delivery_date).toDate() : undefined}
+            onChange={handleDate}
+          />
+
+          {error?.date && (
+            <Typography
+              className="text-red-600 w-full my-2"
+              size={TextSize.M}
+              alignCenter
+            >
+              {error?.date}
+            </Typography>
+          )}
+        </BaseInput>
+      </div>
     );
-  }, [delivery_date]);
+  }, [delivery_date, error?.date]);
 
   useEffect(() => {
     if (branch?.id)
@@ -381,7 +415,8 @@ const TgDetails = () => {
             <TgSwiper />
           </Suspend>
         );
-
+      case ModalType.map:
+        return <TgMap />;
       default:
         break;
     }
@@ -398,6 +433,8 @@ const TgDetails = () => {
         <Texts className="my-4 " size={TextSize.XL} uppercase>
           Детали заказа
         </Texts>
+        {renderPhone}
+        {renderExtraPhone}
 
         {renderType}
         <div className="border-b border-b-tgBorder mt-4" />
@@ -451,7 +488,14 @@ const TgDetails = () => {
           Подтвердить / Заказать
         </TgBtn>
 
-        <TgModal onClose={onClose} isOpen={!!modal && modal !== "0"}>
+        <TgModal
+          onClose={onClose}
+          isOpen={!!modal && modal !== "0"}
+          className="relative"
+        >
+          <div className="absolute top-4 right-4 z-50">
+            <CloseIcon onClick={onClose} />
+          </div>
           {renderModal}
         </TgModal>
       </form>
