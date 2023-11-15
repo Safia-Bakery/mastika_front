@@ -278,7 +278,6 @@ const TgDetails = () => {
   }, [items?.delivery_type, items.branch?.name]);
 
   const renderOrderType = useMemo(() => {
-    // if (is_delivery)
     return (
       <MainSelect
         values={orderArray}
@@ -480,23 +479,19 @@ const TgDetails = () => {
           </Texts>
         </div>
 
-        <TgBtn
-          // onClick={() => handleNavigate("/tg/success")}
-          onClick={onSubmit}
-          className="font-bold mt-20"
-        >
+        <TgBtn onClick={onSubmit} className="font-bold mt-20">
           Подтвердить / Заказать
         </TgBtn>
 
         <TgModal
           onClose={onClose}
           isOpen={!!modal && modal !== "0"}
-          className="relative"
+          className="relative  pb-2"
         >
           <div className="absolute top-4 right-4 z-50">
             <CloseIcon onClick={onClose} />
           </div>
-          {renderModal}
+          <div className="overflow-hidden max-h-[80vh]">{renderModal}</div>
         </TgModal>
       </form>
     </TgContainer>

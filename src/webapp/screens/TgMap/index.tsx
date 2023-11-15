@@ -87,7 +87,6 @@ const TgMap = () => {
     const coordinates = e.get("coords");
     setMarkerCoords(coordinates);
   };
-
   return (
     <YMaps>
       <div className="w-full h-[100lvh] relative">
@@ -119,6 +118,7 @@ const TgMap = () => {
               position: {
                 top: 30,
                 left: 20,
+                right: 30,
               },
             }}
           />
@@ -130,7 +130,7 @@ const TgMap = () => {
 
       <TgBtn
         onClick={closeModal}
-        className="font-bold absolute bottom-2 right-2 !w-40"
+        className="font-bold absolute bottom-6 right-6 !w-40"
       >
         Готово
       </TgBtn>

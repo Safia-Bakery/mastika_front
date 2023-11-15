@@ -306,7 +306,9 @@ const TgFillings = () => {
           {paletteColors.map((item) => (
             <div onClick={handlePalette(item.palette)} key={item.palette}>
               <div
-                className={cl("w-[90px] h-7 rounded-md")}
+                className={cl(
+                  "h-7 rounded-md  w-full border border-tgBorder min-w-[22vw] max-w-[95px]"
+                )}
                 style={{ background: item.color }}
               />
               <Texts size={TextSize.XS}>{item.palette}</Texts>
