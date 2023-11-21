@@ -45,13 +45,13 @@ const EditAddUser = () => {
         username,
         password,
         phone_number,
-        role_id,
+        role_id: Number(role_id),
         full_name,
-        status,
+        status: Number(status),
         ...(!!id && { id: Number(id) }),
       },
       {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
           if (id) refetch();
           navigate("/users?update=1");
           successToast("success");
@@ -113,6 +113,7 @@ const EditAddUser = () => {
             </BaseInput>
             <BaseInput label="ПАРОЛЬ" className="flex flex-1 flex-col">
               <MainInput
+                type="password"
                 register={register("password", {
                   required: "Обязательное поле",
                 })}
