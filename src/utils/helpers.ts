@@ -34,16 +34,6 @@ export const orderStatus = (status: OrderStatus | undefined) => {
   }
 };
 
-export const rowColor = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.accepted:
-      break;
-
-    default:
-      break;
-  }
-};
-
 export const getFillingType = (val: fillingType) => {
   switch (val) {
     case fillingType.pp:
@@ -65,21 +55,13 @@ export const imageConverter = (img: File) => {
   if (img?.size) return URL.createObjectURL(img);
   return "";
 };
+
 export const numberWithCommas = (val: number) => {
   return val
     ?.toFixed(2)
     ?.toString()
     ?.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 };
-
-// export const fixedString = (value: string) => {
-//   return value
-//     .split("")
-//     .filter((item) => {
-//       return [" ", "-", "(", ")"].indexOf(item) === -1;
-//     })
-//     .join("");
-// };
 
 export const queryClient = new QueryClient({
   defaultOptions: {

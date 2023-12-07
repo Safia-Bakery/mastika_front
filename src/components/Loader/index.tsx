@@ -13,7 +13,7 @@ const Loading: FC<Props> = ({ absolute = false, className }) => {
       className={cl(className, styles.wrap, { [styles.absolute]: absolute })}
     >
       <div className="spinner-border text-primary" role="status">
-        <img src="/assets/icons/loader.gif" alt="loading..." />
+        <img src="/assets/images/loader.gif" alt="loading..." />
       </div>
     </div>
   );
