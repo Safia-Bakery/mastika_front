@@ -33,7 +33,7 @@ interface ValueType {
 const TgPackage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { mutate: uploadImage } = tgUploadImage();
+  const { mutate: uploadImage, isLoading: imageLoading } = tgUploadImage();
   const { orderPackage, examplePhoto, filling_type } =
     useAppSelector(tgItemsSelector);
   const { data: products, isLoading: productLoading } = useProducts({
@@ -56,6 +56,7 @@ const TgPackage = () => {
       $itemPackage({ value, name, price });
     }
   }, [packages]);
+
   const cart = useAppSelector(tgCartSelector);
 
   const { register, watch, getValues, handleSubmit } = useForm();
@@ -66,20 +67,26 @@ const TgPackage = () => {
     if (!!image.length) {
       const filesArray = Array.from(image);
       const formData = new FormData();
-      filesArray.forEach((file: any, index) => {
+      filesArray.forEach((file: any) => {
         formData.append("image", file);
       });
       uploadImage(formData, {
         onSuccess: (data: any) => {
-          dispatch(
-            tgAddItem({
-              examplePhoto: data.images,
-              comments,
-              orderPackage: itemPackage,
-            })
-          );
-
-          navigate("/tg/details");
+          if (!!data?.images?.length) {
+            dispatch(
+              tgAddItem({
+                examplePhoto: data.images,
+                comments,
+                orderPackage: itemPackage,
+              })
+            );
+            navigate("/tg/details");
+          } else {
+            const confirmation = confirm(
+              "Ваши фотографии не были загружены, продолжить?"
+            );
+            if (confirmation) navigate("/tg/details");
+          }
         },
       });
     } else {
@@ -100,7 +107,7 @@ const TgPackage = () => {
         <Texts size={TextSize.M} weight={Weight.bold}>
           {!imageLength
             ? "Загрузить фотографии"
-            : `Загружено ${imageLength} фото`}
+            : `Загружено ${examplePhoto?.length} фото`}
         </Texts>
 
         <input
@@ -240,10 +247,11 @@ const TgPackage = () => {
 
   useEffect(() => {
     if (orderPackage) $itemPackage(orderPackage);
-    TelegramApp.confirmClose();
+    TelegramApp?.confirmClose();
   }, []);
 
-  if (productLoading || packLoading) return <Loading absolute />;
+  if (productLoading || packLoading || imageLoading)
+    return <Loading absolute />;
 
   return (
     <TgContainer>

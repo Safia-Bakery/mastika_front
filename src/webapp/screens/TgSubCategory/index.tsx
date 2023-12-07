@@ -417,7 +417,7 @@ const TgSubCategory = () => {
   const closeModal = () => removeParam(["modal"]);
 
   useEffect(() => {
-    TelegramApp.confirmClose();
+    TelegramApp?.confirmClose();
   }, []);
 
   useEffect(() => {

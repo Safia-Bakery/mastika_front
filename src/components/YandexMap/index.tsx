@@ -24,6 +24,7 @@ const YandexMap = () => {
   ]);
 
   const apiKey = "51697f82-c9b3-463e-8305-c7ed2bfe3ad3";
+  const suggestApiKey = "12e27f67-58c4-4751-9389-e3cdc5a21fe6";
 
   useEffect(() => {
     fetch(
@@ -75,7 +76,23 @@ const YandexMap = () => {
   };
 
   return (
-    <YMaps>
+    <YMaps
+      query={{ load: "package.full", apikey: apiKey }}
+      onLoad={(ymapsInstance: YMapsApi) => {
+        ymaps.current = ymapsInstance;
+        ymapsInstance.suggestView = new ymapsInstance.SuggestView(
+          "suggestInput",
+          {
+            provider: {
+              suggest: (request: any, options: any) => {
+                return ymapsInstance.suggest(request, options, suggestApiKey);
+              },
+            },
+          }
+        );
+        addSearchControlEvents();
+      }}
+    >
       <div className={styles.mapBlock}>
         <Map
           defaultState={{
@@ -86,11 +103,6 @@ const YandexMap = () => {
           className="h-[480px]"
           height={"100%"}
           onClick={handleMapClick}
-          modules={["control.SearchControl"]}
-          onLoad={(ymapsInstance: YMapsApi) => {
-            ymaps.current = ymapsInstance;
-            addSearchControlEvents();
-          }}
         >
           <Placemark
             geometry={markerCoords}
@@ -109,9 +121,6 @@ const YandexMap = () => {
             }}
           />
         </Map>
-        {/* <button className={styles.currentBtn} onClick={handleButtonClick}>
-          Get Current Position
-        </button> */}
       </div>
     </YMaps>
   );

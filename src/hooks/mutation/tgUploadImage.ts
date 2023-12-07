@@ -4,10 +4,11 @@ import { errorToast } from "src/utils/toast";
 
 const tgUploadImage = () => {
   const contentType = "multipart/form-data";
+  const config = { timeout: 1000 };
 
   return useMutation(["tg_upload_image"], (body: any) =>
     apiClient
-      .post({ url: "/v1/image/upload", body, contentType })
+      .post({ url: "/v1/image/upload", body, contentType, config })
       .then(({ data }) => data)
       .catch((e) => errorToast(e.message))
   );

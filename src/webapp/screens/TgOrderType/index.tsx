@@ -66,7 +66,7 @@ const TgOrderType = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      TelegramApp.confirmClose();
+      TelegramApp?.confirmClose();
       TelegramApp.expand();
     }, 300);
   }, []);
