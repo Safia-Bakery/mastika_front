@@ -470,9 +470,9 @@ export enum FirstlyPayment {
 }
 
 export enum OrderStatus {
-  new = 0,
-  accepted = 1,
-  rejected = 2,
+  new,
+  accepted,
+  rejected,
 }
 export enum PaymentTypes {
   cash = 0,

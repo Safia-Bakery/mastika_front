@@ -34,7 +34,7 @@ const TgSuccessOrder = () => {
         </Texts>
 
         <TgBtn
-          onClick={() => TelegramApp.closeWindow()}
+          onClick={() => TelegramApp.toMainScreen()}
           className={"mt-7 font-bold"}
         >
           На главную
