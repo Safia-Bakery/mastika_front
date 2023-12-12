@@ -94,36 +94,38 @@ const TgOrderDirections = () => {
       </div>
       <div className="flex mt-8 border-b border-tgBorder pb-8 items-baseline flex-wrap gap-2">
         {!!data?.length &&
-          data.map((item) => {
-            const active = selected?.value === item.id;
-            return (
-              <div
-                key={item.id}
-                className="flex flex-1 flex-col justify-center items-center"
-              >
+          data
+            .filter((item) => !!item.status)
+            .map((item) => {
+              const active = selected?.value === item.id;
+              return (
                 <div
-                  onClick={handleSelect({ name: item.name, value: item.id })}
-                  className={cl(
-                    "h-[150px] w-[150px] rounded-full overflow-hidden relative transition-shadow duration-[0.6s]",
-                    { ["shadow-selected"]: active }
-                  )}
+                  key={item.id}
+                  className="flex flex-1 flex-col justify-center items-center"
                 >
-                  {item?.image && (
-                    <img src={`${baseURL}/${item?.image}`} alt={item.name} />
-                  )}
-                  <WebSelected className={cl({ ["opacity-100"]: active })} />
+                  <div
+                    onClick={handleSelect({ name: item.name, value: item.id })}
+                    className={cl(
+                      "h-[150px] w-[150px] rounded-full overflow-hidden relative transition-shadow duration-[0.6s]",
+                      { ["shadow-selected"]: active }
+                    )}
+                  >
+                    {item?.image && (
+                      <img src={`${baseURL}/${item?.image}`} alt={item.name} />
+                    )}
+                    <WebSelected className={cl({ ["opacity-100"]: active })} />
+                  </div>
+                  <Texts
+                    className="mt-4"
+                    size={TextSize.L}
+                    weight={active ? Weight.bold : Weight.regular}
+                    alignCenter
+                  >
+                    {item.name}
+                  </Texts>
                 </div>
-                <Texts
-                  className="mt-4"
-                  size={TextSize.L}
-                  weight={active ? Weight.bold : Weight.regular}
-                  alignCenter
-                >
-                  {item.name}
-                </Texts>
-              </div>
-            );
-          })}
+              );
+            })}
         {error && (
           <Texts
             className="text-red-600 w-full my-2"
