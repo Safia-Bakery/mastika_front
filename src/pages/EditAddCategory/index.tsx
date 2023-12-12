@@ -37,11 +37,11 @@ const EditAddCategory: FC = () => {
         name,
         image: image[0],
         ...(!!id && { id: String(id) }),
-        ...(!!status.toString() && { status: Number(status) }),
+        ...(!!status?.toString() && { status: Number(status) }),
       },
       {
         onSuccess: () => {
-          refetch();
+          if (id) refetch();
           navigate("/categories?update=1");
         },
       }
@@ -99,7 +99,11 @@ const EditAddCategory: FC = () => {
             </BaseInput>
           )}
 
-          <BaseInput label="ЗАГРУЗИТЬ ФОТО" className="relative">
+          <BaseInput
+            label="ЗАГРУЗИТЬ ФОТО"
+            className="relative"
+            error={errors.image}
+          >
             <MainInput
               value={
                 !!watch("image")?.length ? `${watch("image")?.[0].name}` : ""
