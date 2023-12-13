@@ -9,8 +9,9 @@ import BranchFilter from "./filter";
 import EmptyList from "src/components/EmptyList";
 import useBranches from "src/hooks/useBranches";
 import useQueryString from "src/hooks/useQueryString";
-import { itemsPerPage } from "src/utils/helpers";
+import { handleIdx } from "src/utils/helpers";
 import Loading from "src/components/Loader";
+import { BranchType } from "src/utils/types";
 
 const column = [
   { name: "№", key: "" },
@@ -24,23 +25,7 @@ const Branches = () => {
   const navigate = useNavigate();
   const currentPage = Number(useQueryString("page")) || 1;
   const { data: branches, isFetching } = useBranches({ page: currentPage });
-
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [sortKey, setSortKey] = useState();
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const handleIdx = (index: number) => {
-    if (currentPage === 1) return index + 1;
-    else return index + 1 + itemsPerPage * (currentPage - 1);
-  };
+  const [sort, $sort] = useState<BranchType[]>();
 
   const handleNavigate = (url: string) => navigate(url);
   return (
@@ -48,31 +33,20 @@ const Branches = () => {
       <BranchFilter />
 
       <Card>
-        <Header title="Филиалы">
-          {/* <Button
-            className="bg-yellow ml-2 w-24"
-            textClassName="text-black"
-            textSize={TextSize.L}
-            onClick={() => handleNavigate("add")}
-          >
-            Создать
-          </Button> */}
-        </Header>
+        <Header title="Филиалы"></Header>
         <div className="content">
           <div className="table-responsive grid-view">
-            {/* <ItemsCount data={categories} /> */}
             <table className="table table-hover">
               <TableHead
                 column={column}
-                sort={handleSort}
-                sortKey={sortKey}
-                sortOrder={sortOrder}
+                onSort={(data) => $sort(data)}
+                data={branches?.items}
               />
 
               <tbody>
                 {!!branches?.items?.length &&
                   !isFetching &&
-                  branches.items.map((branch, idx) => (
+                  (sort?.length ? sort : branches?.items).map((branch, idx) => (
                     <tr key={idx} className="bg-blue">
                       <td className="first:pl-16" width="40">
                         {handleIdx(idx)}
@@ -95,9 +69,7 @@ const Branches = () => {
             {isFetching && <Loading className="py-4" />}
 
             {!branches?.items?.length && !isFetching && <EmptyList />}
-            {!!branches && (
-              <Pagination className="ml-8 mt-4" totalPages={branches.pages} />
-            )}
+            {!!branches && <Pagination totalPages={branches.pages} />}
           </div>
         </div>
       </Card>

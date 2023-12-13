@@ -9,7 +9,7 @@ import TableViewBtn from "src/components/TableViewBtn";
 import Button from "src/components/Button";
 import { TextSize } from "src/components/Typography";
 import useRoles from "src/hooks/useRoles";
-import { MainPermissions } from "src/utils/types";
+import { MainPermissions, RoleTypes } from "src/utils/types";
 import useToken from "src/hooks/useToken";
 
 const column = [
@@ -25,29 +25,7 @@ const Roles = () => {
   const perms = data?.permissions;
 
   const { data: roles, isLoading, refetch } = useRoles({ enabled: false });
-
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortData = () => {
-    if (roles && sortKey) {
-      const sortedData = [...roles].sort((a, b) => {
-        if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-        if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-        else return 0;
-      });
-      return sortedData;
-    }
-  };
+  const [sort, $sort] = useState<RoleTypes[]>();
 
   useEffect(() => {
     refetch();
@@ -73,14 +51,13 @@ const Roles = () => {
         <table className="table table-hover">
           <TableHead
             column={column}
-            sort={handleSort}
-            sortKey={sortKey}
-            sortOrder={sortOrder}
+            onSort={(data) => $sort(data)}
+            data={roles}
           />
 
           {!!roles?.length && (
             <tbody>
-              {(sortData()?.length ? sortData() : roles)?.map((role, idx) => (
+              {(sort?.length ? sort : roles)?.map((role, idx) => (
                 <tr className="bg-blue" key={idx}>
                   <td className="first:pl-16" width="40">
                     {idx + 1}

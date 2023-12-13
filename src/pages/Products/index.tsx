@@ -11,6 +11,7 @@ import EmptyList from "src/components/EmptyList";
 import Loading from "src/components/Loader";
 import useProducts from "src/hooks/useProducts";
 import categorySyncMutation from "src/hooks/mutation/categorySync";
+import { ProductType } from "src/utils/types";
 
 const column = [
   { name: "№", key: "" },
@@ -22,36 +23,15 @@ const column = [
 
 const Products = () => {
   const navigate = useNavigate();
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const update = useQueryString("update");
   const { mutate: syncIIco, isLoading: synLoading } = categorySyncMutation();
+  const [sort, $sort] = useState<ProductType[]>();
 
   const handleSync = () => syncIIco();
 
   const { data: products, refetch, isLoading } = useProducts({});
 
   const handleNavigate = (url: string) => navigate(url);
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortData = useMemo(() => {
-    if (!!products?.length && sortKey) {
-      const sortedData = [...products].sort((a, b) => {
-        if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-        if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-        else return 0;
-      });
-      return sortedData;
-    }
-  }, [sortKey, sortOrder, products]);
 
   useEffect(() => {
     if (update) refetch();
@@ -71,52 +51,39 @@ const Products = () => {
           >
             Обновить
           </Button>
-          {/* <div className="flex gap-3">
-            <Button
-              className="bg-yellow ml-2 w-24"
-              textClassName="text-black"
-              textSize={TextSize.L}
-              onClick={() => handleNavigate("add")}
-            >
-              Создать
-            </Button>
-          </div> */}
         </Header>
         <div className="content">
           <div className="table-responsive grid-view">
             <table className="table table-hover">
               <TableHead
                 column={column}
-                sort={handleSort}
-                sortKey={sortKey}
-                sortOrder={sortOrder}
+                onSort={(data) => $sort(data)}
+                data={products}
               />
 
               {!!products?.length && (
                 <tbody>
-                  {(sortData?.length ? sortData : products)?.map(
-                    (product, idx) => (
-                      <tr key={idx} className="bg-blue">
-                        <td className="first:pl-16" width="40">
-                          {idx + 1}
-                        </td>
-                        <td className="text-center">{product?.name}</td>
-                        <td className="text-center">{product?.price}</td>
-                        <td className="text-center">
-                          {!!product?.status ? "Активный" : "Неактивный"}
-                        </td>
-                        <td className="text-center" width={40}>
-                          <TableViewBtn
-                            onClick={() =>
-                              handleNavigate(
-                                `${product.id}?name=${product.name}&price=${product.price}&status=${product.status}`
-                              )
-                            }
-                          />
-                        </td>
-                      </tr>
-                    )
-                  )}
+                  {(sort?.length ? sort : products)?.map((product, idx) => (
+                    <tr key={idx} className="bg-blue">
+                      <td className="first:pl-16" width="40">
+                        {idx + 1}
+                      </td>
+                      <td className="text-center">{product?.name}</td>
+                      <td className="text-center">{product?.price}</td>
+                      <td className="text-center">
+                        {!!product?.status ? "Активный" : "Неактивный"}
+                      </td>
+                      <td className="text-center" width={40}>
+                        <TableViewBtn
+                          onClick={() =>
+                            handleNavigate(
+                              `${product.id}?name=${product.name}&price=${product.price}&status=${product.status}`
+                            )
+                          }
+                        />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               )}
             </table>

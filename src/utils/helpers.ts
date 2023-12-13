@@ -6,6 +6,7 @@ import {
   SystemTypes,
   fillingType,
 } from "./types";
+import useQueryString from "src/hooks/useQueryString";
 
 export const itemsPerPage = 50;
 
@@ -120,3 +121,9 @@ export const PortonNumbers: { [key: number]: number[] } = {
 export const productsID = "4b35d02b-af33-4175-ab84-c8beb646083b";
 export const packagesID = "bce298d5-e3aa-4b4c-b53f-322bdae63f59";
 export const deliveryPrice = 100000;
+
+export const handleIdx = (index: number) => {
+  const currentPage = Number(useQueryString("page")) || 1;
+  if (currentPage === 1) return index + 1;
+  else return index + 1 + itemsPerPage * (currentPage - 1);
+};

@@ -503,6 +503,7 @@ export interface UserType {
   id: number;
   role_id: number;
   phone_number: string;
+  user_role: { id: number; name: string };
 }
 
 export interface UsersType extends BasePaginatedRes {

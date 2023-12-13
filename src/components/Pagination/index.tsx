@@ -26,7 +26,7 @@ const Pagination: FC<PaginationProps> = ({ totalPages, className }) => {
         breakLinkClassName={styles.pageLink}
         onPageChange={handleChange}
         pageRangeDisplayed={2}
-        className={cl(className, styles.pagination)}
+        className={cl(className, styles.pagination, "ml-8 mt-4")}
         activeClassName={styles.active}
         pageLinkClassName={styles.pageLink}
         pageCount={totalPages!}

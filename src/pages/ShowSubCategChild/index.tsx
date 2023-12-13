@@ -12,6 +12,7 @@ import useSubCategories from "src/hooks/useSubCategories";
 import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
 import useSubCategsChild from "src/hooks/useSubCategsChild";
+import { SubCategoryChildTypes } from "src/utils/types";
 
 const column = [
   { name: "№", key: "" },
@@ -26,7 +27,9 @@ const ShowSubCategChild: FC = () => {
   const update = useQueryString("update");
   const handleNavigate = (route: string) => () => navigate(route);
 
-  const { data } = useSubCategsChild({ selval_id: Number(subid) });
+  const { data, isFetching: childLoading } = useSubCategsChild({
+    selval_id: Number(subid),
+  });
 
   const {
     data: parent,
@@ -38,35 +41,13 @@ const ShowSubCategChild: FC = () => {
   const parentCategry = parent?.[0];
 
   const orderLoading = false;
-
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortData = () => {
-    if (data && sortKey) {
-      const sortedData = [...data].sort((a, b) => {
-        if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-        if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-        else return 0;
-      });
-      return sortedData;
-    }
-  };
+  const [sort, $sort] = useState<SubCategoryChildTypes[]>();
 
   useEffect(() => {
     if (update) refetch();
   }, [update]);
 
-  if (orderLoading) return <Loading />;
+  if (orderLoading || childLoading) return <Loading />;
 
   return (
     // <div className="flex flex-col justify-end mr-4">
@@ -87,13 +68,12 @@ const ShowSubCategChild: FC = () => {
         <table className="table table-hover">
           <TableHead
             column={column}
-            sort={handleSort}
-            sortKey={sortKey}
-            sortOrder={sortOrder}
+            onSort={(data) => $sort(data)}
+            data={data}
           />
 
           <tbody>
-            {data?.map((sub, idx) => (
+            {(sort?.length ? sort : data)?.map((sub, idx) => (
               <tr className="bg-blue" key={idx}>
                 <td className="first:pl-16" width="40">
                   {idx + 1}

@@ -18,28 +18,6 @@ const column = [
 
 const Comments = () => {
   const navigate = useNavigate();
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortData = () => {
-    // if (categories?.items && sortKey) {
-    //   const sortedData = [...categories?.items].sort((a, b) => {
-    //     if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-    //     if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-    //     else return 0;
-    //   });
-    //   return sortedData;
-    // }
-  };
 
   return (
     <>
@@ -51,12 +29,7 @@ const Comments = () => {
           <div className="table-responsive grid-view">
             {/* <ItemsCount data={categories} /> */}
             <table className="table table-hover">
-              <TableHead
-                column={column}
-                sort={handleSort}
-                sortKey={sortKey}
-                sortOrder={sortOrder}
-              />
+              <TableHead column={column} />
 
               {/* {!!categories?.items?.length && ( */}
               <tbody>

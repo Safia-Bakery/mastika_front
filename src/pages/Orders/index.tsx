@@ -11,7 +11,7 @@ import Loading from "src/components/Loader";
 import Pagination from "src/components/Pagination";
 import EmptyList from "src/components/EmptyList";
 import useOrders from "src/hooks/useOrders";
-import { MainPermissions, OrderStatus } from "src/utils/types";
+import { MainPermissions, OrderStatus, OrdersType } from "src/utils/types";
 import { orderStatus } from "src/utils/helpers";
 import useToken from "src/hooks/useToken";
 import useQueryString from "src/hooks/useQueryString";
@@ -26,18 +26,17 @@ interface Props {
 const column = [
   { name: "Все заявки", key: "" },
   { name: "Сфера", key: "id" },
-  { name: "Дата поступления", key: "type" },
-  { name: "Тип", key: "fillial.name" },
+  { name: "Дата поступления", key: "created_at" },
+  { name: "Тип", key: "is_delivery" },
   { name: "Филиал / Адрес", key: "category.name" },
-  { name: "Статус", key: "" },
+  { name: "Статус", key: "status" },
 ];
 
 const Orders: FC<Props> = ({ edit, add, status }) => {
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [sortKey, setSortKey] = useState();
   const { data } = useToken({});
   const perms = data?.permissions;
   const page = Number(useQueryString("page")) || 1;
+  const [sort, $sort] = useState<OrdersType[]>();
 
   const branchJson = useQueryString("branch");
   const branch = branchJson && JSON.parse(branchJson);
@@ -56,15 +55,6 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
     ...(!!created_at && { created_at: dayjs(created_at).format("YYYY-MM-DD") }),
   });
 
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
   return (
     <Container>
       <OrdersFilter add={add} />
@@ -72,14 +62,13 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
         <table>
           <TableHead
             column={column}
-            sort={handleSort}
-            sortKey={sortKey}
-            sortOrder={sortOrder}
+            onSort={(data) => $sort(data)}
+            data={orders?.items}
           />
 
           <tbody className={styles.tableBody}>
             {!!orders?.items.length &&
-              orders?.items?.map((order, idx) => (
+              (sort?.length ? sort : orders?.items)?.map((order, idx) => (
                 <tr
                   key={idx}
                   className={cl(
@@ -157,9 +146,7 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
         {isLoading && <Loading className="py-4" />}
         {!isLoading && !orders?.items.length && <EmptyList />}
 
-        {!!orders?.items.length && (
-          <Pagination className="ml-8 mt-4" totalPages={orders.pages} />
-        )}
+        {!!orders?.items.length && <Pagination totalPages={orders.pages} />}
       </Card>
     </Container>
   );

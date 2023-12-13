@@ -23,30 +23,6 @@ const FillingInfo = () => {
 
   const roles: any[] = [];
   const orderLoading = false;
-
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortData = () => {
-    if (roles && sortKey) {
-      const sortedData = [...roles].sort((a, b) => {
-        if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-        if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-        else return 0;
-      });
-      return sortedData;
-    }
-  };
-
   if (orderLoading) return <Loading />;
 
   return (
@@ -64,12 +40,7 @@ const FillingInfo = () => {
       </Header>
       <div className="table-responsive grid-view content">
         <table className="table table-hover">
-          <TableHead
-            column={column}
-            sort={handleSort}
-            sortKey={sortKey}
-            sortOrder={sortOrder}
-          />
+          <TableHead column={column} />
 
           <tbody>
             {[...Array(4)]?.map((role, idx) => (

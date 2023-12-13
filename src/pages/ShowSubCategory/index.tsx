@@ -12,6 +12,7 @@ import useCategories from "src/hooks/useCategories";
 import useSubCategories from "src/hooks/useSubCategories";
 import useQueryString from "src/hooks/useQueryString";
 import EmptyList from "src/components/EmptyList";
+import { SubCategoryTypes } from "src/utils/types";
 
 const column = [
   { name: "№", key: "" },
@@ -25,8 +26,11 @@ const ShowSubCategory: FC = () => {
   const navigate = useNavigate();
   const update = useQueryString("update");
   const handleNavigate = (route: string) => () => navigate(route);
+  const [sort, $sort] = useState<SubCategoryTypes[]>();
 
-  const { data: parent } = useCategories({ id: Number(id) });
+  const { data: parent, isLoading: parentLoading } = useCategories({
+    id: Number(id),
+  });
   const parentCategry = parent?.[0];
 
   const { data, isLoading, refetch } = useSubCategories({
@@ -34,37 +38,13 @@ const ShowSubCategory: FC = () => {
     // child,
   });
 
-  const [sortKey, setSortKey] = useState();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = (key: any) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortData = () => {
-    if (data && sortKey) {
-      const sortedData = [...data].sort((a, b) => {
-        if (a[sortKey]! < b[sortKey]!) return sortOrder === "asc" ? -1 : 1;
-        if (a[sortKey]! > b[sortKey]!) return sortOrder === "asc" ? 1 : -1;
-        else return 0;
-      });
-      return sortedData;
-    }
-  };
-
   useEffect(() => {
     if (update) refetch();
   }, [update]);
 
-  if (isLoading) return <Loading absolute />;
+  if (isLoading || parentLoading) return <Loading absolute />;
 
   return (
-    // <div className="flex flex-col justify-end mr-4">
     <Card>
       <Header title={parentCategry?.name}>
         <div className="flex gap-2">
@@ -82,25 +62,17 @@ const ShowSubCategory: FC = () => {
         <table className="table table-hover">
           <TableHead
             column={column}
-            sort={handleSort}
-            sortKey={sortKey}
-            sortOrder={sortOrder}
+            onSort={(data) => $sort(data)}
+            data={data}
           />
 
           <tbody>
-            {data?.map((sub, idx) => (
+            {(sort?.length ? sort : data)?.map((sub, idx) => (
               <tr className="bg-blue" key={idx}>
                 <td className="first:pl-16" width="40">
                   {idx + 1}
                 </td>
-                <td>
-                  {/* <Link
-                    to={`/categories/${id}/${sub.id}/show`}
-                    className="text-sky-600"
-                  > */}
-                  {sub.name}
-                  {/* </Link> */}
-                </td>
+                <td>{sub.name}</td>
                 <td>
                   {sub.subcategory_vs_category.status
                     ? "Активный"
@@ -118,11 +90,6 @@ const ShowSubCategory: FC = () => {
           </tbody>
         </table>
         {!data?.length && !isLoading && <EmptyList />}
-        {/* {!isLoading && (
-          <div className="w-100 my-4">
-            <Loading />
-          </div>
-        )} */}
       </div>
     </Card>
   );
