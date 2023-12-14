@@ -419,7 +419,7 @@ const Navigation = () => {
           }
         />
         <Route
-          path="success"
+          path="success/:id"
           element={
             <Suspend>
               <TgSuccessOrder />

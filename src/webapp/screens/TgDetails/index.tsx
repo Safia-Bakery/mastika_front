@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { lazy, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BaseInput from "src/components/BaseInputs";
 import MainDatePicker from "src/components/BaseInputs/MainDatePicker";
 import MainInput, { InputStyle } from "src/components/BaseInputs/MainInput";
@@ -51,6 +51,7 @@ interface Errortypes {
 }
 
 const TgDetails = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const removeParams = useRemoveParams();
@@ -101,7 +102,6 @@ const TgDetails = () => {
       dateRef?.current.scrollIntoView();
       $error({ date: "Обязательное поле" });
     } else {
-      dispatch(tgClearCart());
       const filler = items.filling
         ? Object.keys(items.filling!)?.reduce((acc: any, item) => {
             if (!!items.filling?.[item].value?.toString()) {
@@ -115,26 +115,24 @@ const TgDetails = () => {
         {
           order_user: "name",
           is_delivery,
+          department_id: branch?.id ? branch.id : items.branch?.value,
           ...(phone && { phone_number: phone }),
           ...(extraPhone && { extra_number: extraPhone }),
           ...(address_name && !!is_delivery && { address: address_name }),
-          ...(!is_delivery && {
-            department_id: branch?.id ? branch.id : items.branch?.value,
-          }),
+          ...(!is_delivery && {}),
 
-          ...(lat && !!is_delivery && { lat }),
-          ...(long && !!is_delivery && { long }),
           comment: items.comments,
           deliver_date: delivery_date,
           category_id: items.direction?.value,
           complexity: items.complexity?.value,
           portion: items.portion,
           is_bot: 1,
-
-          ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
-          ...(!!filler && { filler }),
           color_details: items.palette_details,
           color: items.palette,
+          ...(lat && !!is_delivery && { lat }),
+          ...(long && !!is_delivery && { long }),
+          ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),
+          ...(!!filler && { filler }),
         },
         {
           onSuccess: (data: any) => {
@@ -157,9 +155,20 @@ const TgDetails = () => {
                 ],
 
                 {
-                  onSuccess: () => {
-                    dispatch(tgClearCart());
-                    successToast("products submitted");
+                  onSuccess: (data: any) => {
+                    if (!data.success) {
+                      return productMutation([
+                        ...products,
+                        {
+                          order_id: data.id || id,
+                          product_id: String(items.orderPackage?.value),
+                          amount: 1,
+                        },
+                      ]);
+                    } else {
+                      dispatch(tgClearCart());
+                      successToast("products submitted");
+                    }
                   },
                 }
               );
@@ -169,9 +178,9 @@ const TgDetails = () => {
                 {
                   onError: (e: any) => errorToast(e.message),
                   onSuccess: () => {
-                    dispatch(tgClearItems());
+                    // dispatch(tgClearItems());
                     successToast("dynamics submitted");
-                    handleNavigate(`/tg/success?id=${data.id}`);
+                    handleNavigate(`/tg/success/${data.id}`);
                   },
                 }
               );
@@ -357,9 +366,9 @@ const TgDetails = () => {
             className="flex justify-between items-center"
             key={cart?.[item].value}
           >
-            <Texts size={TextSize.L}>{cart?.[item].name}</Texts>
+            <Texts size={TextSize.L}>{cart?.[item]?.name}</Texts>
 
-            <Texts size={TextSize.L}>x{cart?.[item].count}</Texts>
+            <Texts size={TextSize.L}>x{cart?.[item]?.count}</Texts>
           </div>
         ))}
       </>

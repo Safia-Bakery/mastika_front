@@ -16,45 +16,9 @@ export interface BasePaginatedRes {
 }
 
 export enum OrderingType {
-  pickup = 1,
-  delivery = 2,
+  pickup = 0,
+  delivery = 1,
 }
-
-// export enum MainPermissions {
-//   fillings = 1,
-//   filling = 2,
-
-//   roles = 1,
-//   add_roles = 1,
-//   edit_roles = 1,
-
-//   comments = 1,
-//   add_comments = 1,
-
-//   all_orders = 1,
-//   add_all_orders = 1,
-//   edit_all_orders = 1,
-
-//   rec_orders = 1,
-//   edit_rec_orders = 1,
-//   add_rec_orders = 1,
-
-//   users = 1,
-//   add_users = 1,
-//   edit_users = 1,
-
-//   categories = 1,
-//   add_categories = 1,
-//   edit_categories = 1,
-
-//   branches = 1,
-
-//   clients = 1,
-//   add_clients = 1,
-//   edit_clients = 1,
-
-//   products = 1,
-// }
 
 export enum MainPermissions {
   fillings = 16,

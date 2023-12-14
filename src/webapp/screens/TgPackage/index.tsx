@@ -107,7 +107,7 @@ const TgPackage = () => {
         <Texts size={TextSize.M} weight={Weight.bold}>
           {!imageLength
             ? "Загрузить фотографии"
-            : `Загружено ${examplePhoto?.length} фото`}
+            : `Загружено ${imageLength} фото`}
         </Texts>
 
         <input

@@ -1,12 +1,12 @@
+import { useParams } from "react-router-dom";
 import { TextSize } from "src/components/Typography";
-import useQueryString from "src/hooks/useQueryString";
 import Texts from "src/webapp/componets/Texts";
 import TgBtn from "src/webapp/componets/TgBtn";
 import TgContainer from "src/webapp/componets/TgContainer";
 import { TelegramApp } from "src/webapp/tgHelpers";
 
 const TgSuccessOrder = () => {
-  const id = useQueryString("id");
+  const { id } = useParams();
 
   return (
     <TgContainer className="absolute bottom-0 top-0 right-0 left-0">
