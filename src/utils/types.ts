@@ -218,7 +218,7 @@ export interface OrdersType {
     status: number;
     branch_dr: {
       id: string;
-      name: string;
+      name: string; // test
       latitude: null | number;
       langtitude: null | number;
       country: string;
