@@ -65,7 +65,6 @@ const ShowOrder = () => {
   });
   const order = data?.order?.[0];
   const floors = Number(watch("floors"));
-  const { mutate: uploadImage } = tgUploadImage();
 
   const { data: filling } = useFillings({
     ptype: watch("filling_type"),
@@ -261,10 +260,12 @@ const ShowOrder = () => {
       acc[idx + 1] = getValues(`filling${idx + 1}`)?.toString();
       return acc;
     }, {});
+
     const color = [...Array(floors)].reduce((acc: any, _, idx) => {
       acc[idx + 1] = getValues(`color${idx + 1}`);
       return acc;
     }, {});
+
     const dynamic = subCategories?.category_vs_subcategory.reduce(
       (acc: any, item) => {
         if (!!getValues(`${item.id}`))
@@ -396,7 +397,7 @@ const ShowOrder = () => {
         floors: order.order_fill.length,
         reject_reason: order.reject_reason,
         filling_type: order?.order_fill?.[0]?.filler?.ptype,
-        ...(!order.is_delivery && { branch: order.order_br?.branch_dr?.name }),
+        ...(!order.is_delivery && { branch: order.order_br?.name }),
       });
     }
   }, [order]);

@@ -134,7 +134,7 @@ const Orders: FC<Props> = ({ edit, add, status }) => {
                     <div className="text-ellipsis max-w-xs w-full overflow-hidden whitespace-nowrap mx-auto">
                       {order.is_delivery
                         ? order.address
-                        : order?.order_br?.branch_dr?.name}
+                        : order?.order_br?.name}
                     </div>
                   </td>
                   <td>{orderStatus(order.status).text}</td>
