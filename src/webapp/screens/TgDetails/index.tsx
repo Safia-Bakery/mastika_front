@@ -129,6 +129,7 @@ const TgDetails = () => {
           is_bot: 1,
           color_details: items.palette_details,
           color: items.palette,
+          price: calculateVals.total,
           ...(lat && !!is_delivery && { lat }),
           ...(long && !!is_delivery && { long }),
           ...(!!items.examplePhoto?.length && { images: items.examplePhoto }),

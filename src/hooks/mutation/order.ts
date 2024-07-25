@@ -36,6 +36,7 @@ interface Body {
   color_details?: string;
   portion?: number;
   is_bot?: 1 | 0;
+  price?: number;
 }
 
 const orderMutation = () => {
